@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scholz & Friese | Webdesign Flow</title>
+  <meta name="description" content="Nutze unseren optimierten Webdesign Flow für eine schnelle, professionelle Anfrage. Dein maßgeschneidertes Angebot wartet auf dich!">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* =========================================
+       GLOBALE STYLES
+       ========================================= */
+    :root {
+      --gradient-start: #00C9B7;
+      --gradient-mid: #6D7FFB;
+      --gradient-end: #A855F7;
+      --grad-linear: linear-gradient(90deg, #3EC8C0, #6D7FFB, #D16BA5);
+    }
+    body, html { 
+      margin: 0; 
+      padding: 0; 
+      height: 100%; 
+      background: #fafafa; 
+      font-family: 'Outfit', sans-serif;
+      color: #1d1d1f;
+    }
+
+    /* =========================================
+       HEADER STYLES
+       ========================================= */
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 9999;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(200, 200, 200, 0.4);
+      transition: all 0.3s ease;
+    }
+
+    .header-container {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-logo img {
+      height: 45px;
+      width: auto;
+      display: block;
+    }
+
+    .back-link {
+      text-decoration: none;
+      color: #1a1a1a;
+      font-weight: 600;
+      font-size: 1.05rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.3s ease;
+    }
+    
+    .back-link:hover {
+      color: #00C9B7;
+    }
+
+    /* =========================================
+       MAIN LAYOUT
+       ========================================= */
+    .main-content {
+      padding-top: 140px; /* Space from header */
+      padding-bottom: 60px;
+      width: 100%;
+      min-height: calc(100vh - 140px - 60px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .form-heading {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 0 20px;
+    }
+
+    .form-heading h1 {
+      margin: 0 0 10px 0;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+    }
+
+    .form-heading h1 span {
+      background: var(--grad-linear);
+      background-size: 200%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .form-heading p {
+      color: #64748b;
+      font-size: 1.1rem;
+      margin: 0;
+      max-width: 600px;
+      margin-inline: auto;
+    }
+
+    .form-wrapper { 
+      width: 100%; 
+      max-width: 800px; 
+      height: 70vh;
+      min-height: 600px;
+      overflow: hidden;
+    }
+    
+    iframe { 
+      height: 100%; 
+      width: 100%; 
+      border: none; 
+    }
+
+    @media (max-width: 768px) {
+      .main-content { padding-top: 120px; }
+      .form-wrapper { height: calc(100vh - 220px); min-height: 500px; }
+    }
+  </style>
+  <link rel="icon" href="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Logo_SF.avif" type="image/avif">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="index.html" class="header-logo">
+        <img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Logo_SF.avif" alt="SF Webdesign">
+      </a>
+      <a href="index.html" class="back-link">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Zurück zur Website
+      </a>
+    </div>
+  </header>
+
+  <!-- FORMULAR -->
+  <main class="main-content">
+    <div class="form-heading">
+      <h1>Dein Anfrage-<span>Flow</span></h1>
+      <p>Beantworte ein paar kurze Fragen, damit wir direkt mit der Planung deiner neuen Website starten können.</p>
+    </div>
+    
+    <div class="form-wrapper">
+      <iframe data-tally-src="https://tally.so/embed/w4RL55?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="100%" frameborder="0" marginheight="0" marginwidth="0" title="S+F Webdesign Flow Form"></iframe>
+    </div>
+  </main>
+
+  <script>var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}</script>
+</body>
+</html>
+
