@@ -674,14 +674,7 @@
         const result = await response.json();
 
         if (response.ok && result.success) {
-          // Formular und Header ausblenden
-          form.style.display = 'none';
-          progressBlock.style.display = 'none';
-          buttonsBlock.style.display = 'none';
-          document.getElementById('flow-heading-block').style.display = 'none';
-          
-          // Erfolgsmeldung anzeigen
-          successScreen.classList.add('active');
+          window.location.href = 'danke.html';
         } else {
           alert(result.message || 'Fehler beim Senden der Anfrage. Bitte versuche es erneut.');
           btnSubmit.disabled = false;

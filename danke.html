@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scholz & Friese | Vielen Dank für deine Anfrage</title>
+  <meta name="description" content="Vielen Dank für deine Anfrage! Wir haben deine Details erhalten und melden uns in Kürze.">
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Favicon -->
+  <link rel="icon" href="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Logo_SF.avif" type="image/avif">
+
+  <!-- Meta Pixel Code (Conversion-Tracking) -->
+  <!-- 
+  Dieses Script trackt automatisch ein "Lead"-Event für deinen Meta Pixel, 
+  sobald der Nutzer das Formular erfolgreich absendet und hier landet.
+  Ersetze 'DEINE_PIXEL_ID' durch deine tatsächliche Meta-Pixel-ID.
+  -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    
+    // Initialisiere hier deine Pixel-ID
+    fbq('init', '1714524419098732'); // Wenn du deine eigene ID hast, trage sie hier ein
+    fbq('track', 'PageView');
+    fbq('track', 'Lead'); // Feuert das Lead-Event für Meta-Werbeanzeigen
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1714524419098732&ev=Lead&noscript=1"/>
+  </noscript>
+
+  <style>
+    /* =========================================
+       GLOBALE STYLES
+       ========================================= */
+    :root {
+      --gradient-start: #00C9B7;
+      --gradient-mid: #6D7FFB;
+      --gradient-end: #A855F7;
+      --grad-linear: linear-gradient(90deg, #3EC8C0, #6D7FFB, #D16BA5);
+    }
+    body, html { 
+      margin: 0; 
+      padding: 0; 
+      height: 100%; 
+      background: #fafafa; 
+      font-family: 'Outfit', sans-serif;
+      color: #1d1d1f;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* =========================================
+       HEADER STYLES
+       ========================================= */
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 9999;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(200, 200, 200, 0.4);
+      transition: all 0.3s ease;
+    }
+
+    .header-container {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-logo img {
+      height: 45px;
+      width: auto;
+      display: block;
+    }
+
+    .back-link {
+      text-decoration: none;
+      color: #1a1a1a;
+      font-weight: 600;
+      font-size: 1.05rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.3s ease;
+    }
+    
+    .back-link:hover {
+      color: #00C9B7;
+    }
+
+    /* =========================================
+       MAIN LAYOUT
+       ========================================= */
+    .main-content {
+      padding-top: 140px; 
+      padding-bottom: 60px;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* =========================================
+       PREMIUM CARD STYLES
+       ========================================= */
+    .danke-card {
+      width: 100%;
+      max-width: 600px;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 24px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.04), 0 0 40px rgba(109, 127, 251, 0.03);
+      padding: 50px 40px;
+      box-sizing: border-box;
+      margin: 0 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transform: translateY(0);
+      animation: slideUp 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    @keyframes slideUp {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .success-icon-wrapper {
+      width: 96px;
+      height: 96px;
+      background: rgba(0, 201, 183, 0.08);
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #00C9B7;
+      margin-bottom: 30px;
+      animation: pulseGreen 2s infinite;
+    }
+    .success-icon-wrapper svg {
+      width: 48px;
+      height: 48px;
+    }
+
+    .danke-card h1 {
+      margin: 0 0 15px 0;
+      font-size: clamp(2rem, 4vw, 2.5rem);
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .danke-card h1 span {
+      background: var(--grad-linear);
+      background-size: 200%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .danke-card p {
+      font-size: 1.15rem;
+      color: #64748b;
+      line-height: 1.65;
+      margin: 0 auto 35px auto;
+      max-width: 480px;
+    }
+
+    /* Premium buttons */
+    .btn-flow {
+      font-size: 1.05rem;
+      font-weight: 700;
+      font-family: inherit;
+      padding: 16px 32px;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-decoration: none;
+      transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .btn-flow-back {
+      background: var(--grad-linear);
+      background-size: 200%;
+      color: #fff;
+      margin: 0 auto;
+    }
+    
+    .btn-flow-back:hover {
+      transform: scale(1.02) translateY(-1px);
+      box-shadow: 0 10px 25px rgba(109, 127, 251, 0.25);
+    }
+
+    @keyframes pulseGreen {
+      0% { box-shadow: 0 0 0 0 rgba(0, 201, 183, 0.4); }
+      70% { box-shadow: 0 0 0 18px rgba(0, 201, 183, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(0, 201, 183, 0); }
+    }
+
+    @media (max-width: 768px) {
+      .main-content { padding-top: 120px; }
+      .danke-card { padding: 40px 24px; border-radius: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="index.html" class="header-logo">
+        <img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Logo_SF.avif" alt="SF Webdesign">
+      </a>
+      <a href="index.html" class="back-link">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Zurück zur Website
+      </a>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <main class="main-content">
+    <div class="danke-card">
+      <div class="success-icon-wrapper">
+        <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <h1>Anfrage <span>erhalten!</span></h1>
+      <p>Vielen Dank für deine Nachricht. Wir haben deine Details erfolgreich erfasst und melden uns in den nächsten 24 Stunden bei dir.</p>
+      
+      <a href="index.html" class="btn-flow btn-flow-back">
+        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Zurück zur Startseite
+      </a>
+    </div>
+  </main>
+
+</body>
+</html>

@@ -48,34 +48,88 @@ export async function onRequestPost(context) {
         to: 'info@scholz-friese-webdesign.de',
         subject: `Neue Anfrage-Flow: ${companyName}`,
         html: `
-          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px; background: #fff;">
-            <h2 style="color: #00C9B7; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 0;">Neue Anfrage über den Webdesign Flow</h2>
-            <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Neue Anfrage - Scholz & Friese Webdesign</title>
+          </head>
+          <body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f8fafc; padding: 40px 10px;">
               <tr>
-                <td style="padding: 10px; font-weight: bold; width: 40%; border-bottom: 1px solid #eee;">Name des Unternehmens:</td>
-                <td style="padding: 10px; border-bottom: 1px solid #eee;">${companyName}</td>
-              </tr>
-              <tr>
-                <td style="padding: 10px; font-weight: bold; border-bottom: 1px solid #eee;">Ansprechpartner:</td>
-                <td style="padding: 10px; border-bottom: 1px solid #eee;">${contactName}</td>
-              </tr>
-              <tr>
-                <td style="padding: 10px; font-weight: bold; border-bottom: 1px solid #eee;">Telefonnummer:</td>
-                <td style="padding: 10px; border-bottom: 1px solid #eee;">${phone}</td>
-              </tr>
-              <tr>
-                <td style="padding: 10px; font-weight: bold; border-bottom: 1px solid #eee;">E-Mail-Adresse:</td>
-                <td style="padding: 10px; border-bottom: 1px solid #eee;"><a href="mailto:${email}" style="color: #6D7FFB; text-decoration: none;">${email}</a></td>
+                <td align="center">
+                  <!-- MAIN CARD -->
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.03), 0 4px 6px -2px rgba(0, 0, 0, 0.02);">
+                    
+                    <!-- HEADER GRADIENT -->
+                    <tr>
+                      <td style="background: linear-gradient(135deg, #3EC8C0 0%, #6D7FFB 100%); padding: 35px 40px; text-align: left;">
+                        <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 800; letter-spacing: -0.5px;">Scholz & Friese</h1>
+                        <p style="margin: 5px 0 0 0; color: rgba(255, 255, 255, 0.9); font-size: 14px; font-weight: 500;">Webdesign & Digitale Exzellenz</p>
+                      </td>
+                    </tr>
+
+                    <!-- CONTENT BLOCK -->
+                    <tr>
+                      <td style="padding: 40px 40px 30px 40px;">
+                        <h2 style="margin: 0 0 15px 0; color: #0f172a; font-size: 20px; font-weight: 700;">Neue Anfrage über den Webdesign Flow</h2>
+                        <p style="margin: 0 0 25px 0; color: #475569; font-size: 15px; line-height: 1.6;">Hallo Team, über den interaktiven Anfrage-Flow auf eurer Website ist eine neue Anfrage eingegangen. Hier sind die erfassten Details:</p>
+                        
+                        <!-- DETAILS TABLE -->
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 30px; border-collapse: collapse;">
+                          <tr>
+                            <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #64748b; font-size: 14px; font-weight: 600; width: 40%;">Unternehmen:</td>
+                            <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #0f172a; font-size: 15px; font-weight: 600;">${companyName}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #64748b; font-size: 14px; font-weight: 600;">Ansprechpartner:</td>
+                            <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #0f172a; font-size: 15px;">${contactName}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #64748b; font-size: 14px; font-weight: 600;">Telefonnummer:</td>
+                            <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #0f172a; font-size: 15px;">
+                              <a href="tel:${phone}" style="color: #6D7FFB; text-decoration: none; font-weight: 500;">${phone}</a>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #64748b; font-size: 14px; font-weight: 600;">E-Mail-Adresse:</td>
+                            <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9; color: #0f172a; font-size: 15px;">
+                              <a href="mailto:${email}" style="color: #6D7FFB; text-decoration: none; font-weight: 500;">${email}</a>
+                            </td>
+                          </tr>
+                        </table>
+
+                        <!-- WISHES SECTION -->
+                        <h3 style="margin: 0 0 10px 0; color: #0f172a; font-size: 16px; font-weight: 700;">Wünsche, Ergänzungen & Details:</h3>
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f8fafc; border-left: 4px solid #6D7FFB; border-radius: 4px;">
+                          <tr>
+                            <td style="padding: 20px; color: #334155; font-size: 14px; line-height: 1.6; font-style: ${wishes ? 'normal' : 'italic'}; white-space: pre-wrap;">${wishes ? wishes : 'Keine zusätzlichen Wünsche oder Details angegeben.'}</td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+
+                    <!-- FOOTER INSIDE CARD -->
+                    <tr>
+                      <td style="padding: 0 40px 40px 40px;">
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-top: 1px solid #e2e8f0; padding-top: 25px;">
+                          <tr>
+                            <td style="color: #94a3b8; font-size: 12px; line-height: 1.5; text-align: center;">
+                              Diese Anfrage wurde automatisch über den Webdesign Anfrage-Flow der Website <a href="https://scholz-friese-webdesign.de" style="color: #6D7FFB; text-decoration: none;">scholz-friese-webdesign.de</a> gesendet.<br>
+                              Empfänger: info@scholz-friese-webdesign.de | Absender: noreply@scholz-friese-webdesign.de
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+
+                  </table>
+                </td>
               </tr>
             </table>
-            <h3 style="color: #1a1a1a; margin-top: 30px;">Wünsche / Nachricht:</h3>
-            <div style="padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; white-space: pre-wrap; font-size: 15px; line-height: 1.5; color: #334155;">
-              ${wishes ? wishes : '<em>Keine zusätzlichen Wünsche angegeben.</em>'}
-            </div>
-            <footer style="margin-top: 40px; padding-top: 15px; border-top: 1px solid #eee; font-size: 12px; color: #94a3b8; text-align: center;">
-              Gesendet über Scholz & Friese Webdesign Flow & Resend
-            </footer>
-          </div>
+          </body>
+          </html>
         `,
       }),
     });
