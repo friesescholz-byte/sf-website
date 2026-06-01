@@ -21,7 +21,10 @@ export async function onRequestPost(context) {
     }
 
     // 2. Turnstile Token validieren
-    const turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY || '0x4AAAAAADVEq5r1ZKxsxl7Fgj3saWNB2r8';
+    let turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY || '0x4AAAAAADVEq5r1ZKxsxl7Fgj3saWNB2r8';
+    if (source === 'work4palace') {
+      turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_WORK4PALACE || '0x4AAAAAADcY8na6YgQLDx0oSPZuC_DBuco';
+    }
     const verifyResult = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
