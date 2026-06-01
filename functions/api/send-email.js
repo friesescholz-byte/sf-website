@@ -55,10 +55,10 @@ export async function onRequestPost(context) {
       }
 
       const isPlanner = formType === 'planner';
-      fromName = 'work4palace Manufaktur';
+      fromName = 'Scholz & Friese Webdesign';
       emailSubject = isPlanner
-        ? `🏛️ Neue Projektkonfiguration von ${name}`
-        : `✉️ Neue Kontaktanfrage von ${name}`;
+        ? `[work4palace] 🏛️ Neue Projektkonfiguration von ${name}`
+        : `[work4palace] ✉️ Neue Kontaktanfrage von ${name}`;
 
       emailHtml = `
         <!DOCTYPE html>
@@ -244,6 +244,7 @@ export async function onRequestPost(context) {
         reply_to: data.email,
         subject: emailSubject,
         html: emailHtml,
+        attachments: data.attachments || [],
       }),
     });
 
