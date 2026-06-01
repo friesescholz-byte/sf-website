@@ -240,7 +240,7 @@ export async function onRequestPost(context) {
       },
       body: JSON.stringify({
         from: `${fromName} <noreply@scholz-friese-webdesign.de>`,
-        to: 'info@scholz-friese-webdesign.de',
+        to: 'support@scholz-friese-chatbot.de',
         reply_to: data.email,
         subject: emailSubject,
         html: emailHtml,
