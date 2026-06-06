@@ -24,6 +24,10 @@ export async function onRequestPost(context) {
     let turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY || '0x4AAAAAADVEq5r1ZKxsxl7Fgj3saWNB2r8';
     if (source === 'work4palace') {
       turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_WORK4PALACE || '0x4AAAAAADcY8na6YgQLDx0oSPZuC_DBuco';
+    } else if (source === 'Stephan-van-Hausen') {
+      turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_STEPHAN_VAN_HAUSEN || '0x4AAAAAADdygO8vdA6V1PJegyMQHIiJR1E';
+    } else if (source === 'weymann-gebaeudetechnik') {
+      turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_WEYMANN_GEBAEUDETECHNIK || '0x4AAAAAADfUURKAuZiZYwpQqePXh_putgs';
     }
     const verifyResult = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
       method: 'POST',
@@ -43,7 +47,103 @@ export async function onRequestPost(context) {
     const resendApiKey = env.RESEND_API_KEY || 're_23WnEvZS_MiA7sHvE1HVkZC5TDV7TeqXi';
     let emailSubject, emailHtml, fromName;
 
-    if (source === 'work4palace') {
+    if (source === 'Stephan-van-Hausen') {
+      // ───── STEPHAN VAN HAUSEN E-MAIL ─────
+      const { name, email, phone, date, tourType, groupSize, gewandZuschlag, cost, message } = data;
+
+      if (!name || !email || !date) {
+        return new Response(JSON.stringify({ success: false, message: 'Name, E-Mail und Wunschtermin sind Pflichtfelder.' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      fromName = 'Scholz & Friese Webdesign';
+      emailSubject = `[Stephan-van-Hausen] 🏛️ Neue Buchungsanfrage von ${name}`;
+
+      emailHtml = `
+        <!DOCTYPE html>
+        <html lang="de">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body style="margin: 0; padding: 0; background-color: #07090d; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-font-smoothing: antialiased;">
+          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #07090d; padding: 40px 10px;">
+            <tr>
+              <td align="center">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #131722; border: 1px solid rgba(217, 162, 74, 0.15); overflow: hidden; box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);">
+                  <tr>
+                    <td style="background-color: #0d111a; padding: 35px 30px; text-align: center; border-bottom: 2px solid #d9a24a;">
+                      <h1 style="margin: 0; font-family: Georgia, serif; font-size: 24px; letter-spacing: 0.08em; color: #faf6ee; text-transform: uppercase; font-weight: 400;">Stephan van Hausen</h1>
+                      <p style="margin: 6px 0 0 0; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: #d9a24a; font-weight: 500;">Nachtwächter-Führungen Nienburg</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 45px 35px;">
+                      <p style="font-family: Georgia, serif; font-size: 20px; color: #faf6ee; margin: 0 0 15px 0; font-style: italic;">Hallo Team,</p>
+                      <p style="color: #94a3b8; font-size: 14.5px; line-height: 1.65; margin: 0 0 30px 0; font-weight: 300;">
+                        über die Website wurde eine neue Buchungsanfrage übermittelt:
+                      </p>
+                      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 35px; border-collapse: collapse; border: 1px solid rgba(255, 255, 255, 0.05);">
+                        <tr>
+                          <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-weight: 600; color: #d9a24a; width: 38%; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.08em;">Kunde</td>
+                          <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee; font-weight: 300;">${name}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-weight: 600; color: #d9a24a; width: 38%; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.08em;">E-Mail</td>
+                          <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee;"><a href="mailto:${email}" style="color: #d9a24a; text-decoration: none;">${email}</a></td>
+                        </tr>
+                        ${phone ? `<tr>
+                          <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-weight: 600; color: #d9a24a; width: 38%; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.08em;">Telefon</td>
+                          <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee;">${phone}</td>
+                        </tr>` : ''}
+                        <tr>
+                          <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-weight: 600; color: #d9a24a; width: 38%; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.08em;">Wunschtermin</td>
+                          <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee; font-weight: bold;">${date}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-weight: 600; color: #d9a24a; width: 38%; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.08em;">Führungstyp</td>
+                          <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee; font-weight: 300;">${tourType}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-weight: 600; color: #d9a24a; width: 38%; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.08em;">Gruppengröße</td>
+                          <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee; font-weight: 300;">${groupSize} Personen</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-weight: 600; color: #d9a24a; width: 38%; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.08em;">Gewand-Zuschlag</td>
+                          <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee; font-weight: 300;">${gewandZuschlag ? 'Ja (+10,00 €)' : 'Nein'}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-weight: 600; color: #d9a24a; width: 38%; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.08em;">Kalkulierter Preis</td>
+                          <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: bold; font-size: 16px;">${cost},00 €</td>
+                        </tr>
+                      </table>
+                      ${message ? `
+                      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: rgba(217, 162, 74, 0.02); border-left: 2px solid #d9a24a;">
+                        <tr>
+                          <td style="padding: 22px 25px;">
+                            <p style="font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.12em; color: #d9a24a; margin: 0 0 12px 0; font-weight: 600;">Nachricht / Sonderwünsche</p>
+                            <p style="font-style: italic; color: #faf6ee; font-size: 14px; line-height: 1.7; margin: 0; font-weight: 300;">"${message.replace(/\n/g, '<br>')}"</p>
+                          </td>
+                        </tr>
+                      </table>` : ''}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="background-color: #0d111a; padding: 30px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.04); font-size: 11px; color: #94a3b8; line-height: 1.6;">
+                      Anfrage über <a href="https://stephan-van-hausen.de" style="color: #d9a24a; text-decoration: none;">stephan-van-hausen.de</a><br>
+                      Technischer Partner: <strong>Scholz & Friese Webdesign</strong>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </body>
+        </html>
+      `;
+    } else if (source === 'work4palace') {
       // ───── WORK4PALACE E-MAIL ─────
       const { name, email, phone, projectType, message, formType, scopeSize, location, timeframe } = data;
 
@@ -143,6 +243,463 @@ export async function onRequestPost(context) {
         </body>
         </html>
       `;
+
+    } else if (source === 'weymann-gebaeudetechnik') {
+      // ───── WEYMANN GEBÄUDETECHNIK E-MAILS ─────
+      const { formType } = data;
+      fromName = 'Karl Weymann GmbH';
+
+      if (formType === 'waermepumpe') {
+        const { name, ort, email, phone, currentHeizung, baujahr, wohnflaeche, message } = data;
+
+        if (!name || !email || !phone || !ort) {
+          return new Response(JSON.stringify({ success: false, message: 'Bitte alle Pflichtfelder ausfüllen.' }), {
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+
+        emailSubject = `[weymann-gebaeudetechnik] ❄️ Neuer Wärmepumpen-Check von ${name}`;
+        emailHtml = `
+          <!DOCTYPE html>
+          <html lang="de">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          </head>
+          <body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1e293b;">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f8fafc; padding: 40px 10px;">
+              <tr>
+                <td align="center">
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(13, 43, 94, 0.05);">
+                    <tr>
+                      <td style="background-color: #0d2b5e; padding: 30px; text-align: center; border-bottom: 4px solid #d21e26;">
+                        <h1 style="margin: 0; font-size: 22px; color: #ffffff; font-weight: 700; letter-spacing: 0.5px;">Karl Weymann GmbH</h1>
+                        <p style="margin: 5px 0 0 0; font-size: 12px; color: #a0aab2; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">Wärmepumpen-Anfrage</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 40px 35px;">
+                        <p style="font-size: 16px; font-weight: 600; color: #0d2b5e; margin: 0 0 15px 0;">Hallo Team,</p>
+                        <p style="font-size: 14.5px; line-height: 1.6; color: #475569; margin: 0 0 25px 0;">
+                          über die Website wurde eine neue Wärmepumpen-Anfrage gesendet. Hier sind die erfassten Details:
+                        </p>
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 30px; border-collapse: collapse;">
+                          <tr>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; width: 40%; font-size: 12px; text-transform: uppercase;">Kunde</td>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14.5px;">${name}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Ort / PLZ</td>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14.5px;">${ort}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">E-Mail</td>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14.5px;"><a href="mailto:${email}" style="color: #d21e26; text-decoration: none; font-weight: 500;">${email}</a></td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Telefon</td>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14.5px;">${phone}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Aktuelle Heizung</td>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14.5px;">${currentHeizung || '-'}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Baujahr (ca.)</td>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14.5px;">${baujahr || '-'}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Wohnfläche</td>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14.5px;">${wohnflaeche || '-'}</td>
+                          </tr>
+                        </table>
+                        ${message ? `
+                        <div style="background-color: #f8fafc; border-left: 4px solid #d21e26; padding: 15px 20px; border-radius: 4px;">
+                          <h4 style="margin: 0 0 8px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #0d2b5e;">Anmerkungen / Wünsche</h4>
+                          <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #334155; font-style: italic;">"${message.replace(/\n/g, '<br>')}"</p>
+                        </div>` : ''}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="background-color: #f8fafc; padding: 25px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 11px; color: #64748b;">
+                        Karl Weymann GmbH | Burgdorfer Straße 110 | 31275 Lehrte<br>
+                        Technischer Partner: <strong>Scholz & Friese Webdesign</strong>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </body>
+          </html>
+        `;
+      } else if (formType === 'heizung') {
+        const { eigentuemer, objekt, currentHeizung, alterHeizung, fussbodenheizung, wohnflaeche, wunsch, zeitraum, name, phone, email, adresse } = data;
+
+        if (!name || !email || !phone || !adresse) {
+          return new Response(JSON.stringify({ success: false, message: 'Bitte alle Pflichtfelder ausfüllen.' }), {
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+
+        emailSubject = `[weymann-gebaeudetechnik] 🔥 Neuer Heizungs-Check von ${name}`;
+        emailHtml = `
+          <!DOCTYPE html>
+          <html lang="de">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          </head>
+          <body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1e293b;">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f8fafc; padding: 40px 10px;">
+              <tr>
+                <td align="center">
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(13, 43, 94, 0.05);">
+                    <tr>
+                      <td style="background-color: #0d2b5e; padding: 30px; text-align: center; border-bottom: 4px solid #d21e26;">
+                        <h1 style="margin: 0; font-size: 22px; color: #ffffff; font-weight: 700; letter-spacing: 0.5px;">Karl Weymann GmbH</h1>
+                        <p style="margin: 5px 0 0 0; font-size: 12px; color: #a0aab2; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">Heizungs-Anfrage</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 40px 35px;">
+                        <p style="font-size: 16px; font-weight: 600; color: #0d2b5e; margin: 0 0 15px 0;">Hallo Team,</p>
+                        <p style="font-size: 14.5px; line-height: 1.6; color: #475569; margin: 0 0 25px 0;">
+                          über die Website wurde eine neue Heizungs-Anfrage gesendet. Hier sind die Details:
+                        </p>
+                        
+                        <h3 style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: #d21e26; margin: 0 0 10px 0;">Angaben zum Projekt</h3>
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 25px; border-collapse: collapse;">
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; width: 45%; font-size: 12px; text-transform: uppercase;">Eigentümer?</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${eigentuemer || '-'}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Objekttyp</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${objekt || '-'}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Aktuelle Heizung</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${currentHeizung || '-'}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Alter der Anlage (ca.)</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${alterHeizung || '-'}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Fußbodenheizung?</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${fussbodenheizung || '-'}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Wohnfläche</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${wohnflaeche || '-'}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Gewünschte Maßnahme</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${wunsch || '-'}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Zeitraum</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${zeitraum || '-'}</td>
+                          </tr>
+                        </table>
+
+                        <h3 style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: #d21e26; margin: 20px 0 10px 0;">Kontaktdaten</h3>
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 10px; border-collapse: collapse;">
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; width: 45%; font-size: 12px; text-transform: uppercase;">Name</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${name}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Telefon</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${phone}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">E-Mail</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;"><a href="mailto:${email}" style="color: #d21e26; text-decoration: none;">${email}</a></td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Adresse</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${adresse}</td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="background-color: #f8fafc; padding: 25px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 11px; color: #64748b;">
+                        Karl Weymann GmbH | Burgdorfer Straße 110 | 31275 Lehrte<br>
+                        Technischer Partner: <strong>Scholz & Friese Webdesign</strong>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </body>
+          </html>
+        `;
+      } else if (formType === 'bad') {
+        const { eigentuemer, objekt, vorhaben, alterBad, groesse, wanne, dusche, barrierefrei, stil, zeitraum, name, phone, email, adresse } = data;
+
+        if (!name || !email || !phone || !adresse) {
+          return new Response(JSON.stringify({ success: false, message: 'Bitte alle Pflichtfelder ausfüllen.' }), {
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+
+        emailSubject = `[weymann-gebaeudetechnik] 🛁 Neuer Bad-Check von ${name}`;
+        emailHtml = `
+          <!DOCTYPE html>
+          <html lang="de">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          </head>
+          <body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1e293b;">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f8fafc; padding: 40px 10px;">
+              <tr>
+                <td align="center">
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(13, 43, 94, 0.05);">
+                    <tr>
+                      <td style="background-color: #0d2b5e; padding: 30px; text-align: center; border-bottom: 4px solid #d21e26;">
+                        <h1 style="margin: 0; font-size: 22px; color: #ffffff; font-weight: 700; letter-spacing: 0.5px;">Karl Weymann GmbH</h1>
+                        <p style="margin: 5px 0 0 0; font-size: 12px; color: #a0aab2; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">Bad-Anfrage</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 40px 35px;">
+                        <p style="font-size: 16px; font-weight: 600; color: #0d2b5e; margin: 0 0 15px 0;">Hallo Team,</p>
+                        <p style="font-size: 14.5px; line-height: 1.6; color: #475569; margin: 0 0 25px 0;">
+                          über die Website wurde eine neue Badsanierungs-Anfrage gesendet. Hier sind die Details:
+                        </p>
+                        
+                        <h3 style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: #d21e26; margin: 0 0 10px 0;">Angaben zum Bad</h3>
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 25px; border-collapse: collapse;">
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; width: 45%; font-size: 12px; text-transform: uppercase;">Eigentümer?</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${eigentuemer || '-'}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Objekttyp</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${objekt || '-'}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Vorhaben</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${vorhaben || '-'}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Alter des Bades</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${alterBad || '-'}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Größe (ca.)</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${groesse || '-'}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Badewanne vorhanden?</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${wanne || '-'}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Bodengleiche Dusche?</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${dusche || '-'}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Barrierefrei wichtig?</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${barrierefrei || '-'}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Gewünschter Stil</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${stil || '-'}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Zeitraum</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${zeitraum || '-'}</td>
+                          </tr>
+                        </table>
+
+                        <h3 style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: #d21e26; margin: 20px 0 10px 0;">Kontaktdaten</h3>
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 10px; border-collapse: collapse;">
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; width: 45%; font-size: 12px; text-transform: uppercase;">Name</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${name}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Telefon</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${phone}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">E-Mail</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;"><a href="mailto:${email}" style="color: #d21e26; text-decoration: none;">${email}</a></td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Adresse</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${adresse}</td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="background-color: #f8fafc; padding: 25px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 11px; color: #64748b;">
+                        Karl Weymann GmbH | Burgdorfer Straße 110 | 31275 Lehrte<br>
+                        Technischer Partner: <strong>Scholz & Friese Webdesign</strong>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </body>
+          </html>
+        `;
+      } else if (formType === 'karriere') {
+        const { name, phone, email, position, erfahrung, message } = data;
+
+        if (!name || !email || !phone || !position) {
+          return new Response(JSON.stringify({ success: false, message: 'Bitte alle Pflichtfelder ausfüllen.' }), {
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+
+        emailSubject = `[weymann-gebaeudetechnik] 💼 Neue 60-Sekunden-Bewerbung von ${name}`;
+        emailHtml = `
+          <!DOCTYPE html>
+          <html lang="de">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          </head>
+          <body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1e293b;">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f8fafc; padding: 40px 10px;">
+              <tr>
+                <td align="center">
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(13, 43, 94, 0.05);">
+                    <tr>
+                      <td style="background-color: #0d2b5e; padding: 30px; text-align: center; border-bottom: 4px solid #d21e26;">
+                        <h1 style="margin: 0; font-size: 22px; color: #ffffff; font-weight: 700; letter-spacing: 0.5px;">Karl Weymann GmbH</h1>
+                        <p style="margin: 5px 0 0 0; font-size: 12px; color: #a0aab2; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">Online-Bewerbung</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 40px 35px;">
+                        <p style="font-size: 16px; font-weight: 600; color: #0d2b5e; margin: 0 0 15px 0;">Hallo Team,</p>
+                        <p style="font-size: 14.5px; line-height: 1.6; color: #475569; margin: 0 0 25px 0;">
+                          über das Online-Bewerbungsformular ist eine neue Kurzbewerbung eingegangen:
+                        </p>
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 30px; border-collapse: collapse;">
+                          <tr>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; width: 45%; font-size: 12px; text-transform: uppercase;">Name</td>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14.5px;">${name}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Telefon</td>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14.5px;">${phone}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">E-Mail</td>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14.5px;"><a href="mailto:${email}" style="color: #d21e26; text-decoration: none; font-weight: 500;">${email}</a></td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Gewünschte Position</td>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14.5px; font-weight: 600; color: #d21e26;">${position}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Berufserfahrung</td>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14.5px;">${erfahrung || '-'}</td>
+                          </tr>
+                        </table>
+                        ${message ? `
+                        <div style="background-color: #f8fafc; border-left: 4px solid #d21e26; padding: 15px 20px; border-radius: 4px;">
+                          <h4 style="margin: 0 0 8px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #0d2b5e;">Nachricht / Ergänzung</h4>
+                          <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #334155; font-style: italic;">"${message.replace(/\n/g, '<br>')}"</p>
+                        </div>` : ''}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="background-color: #f8fafc; padding: 25px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 11px; color: #64748b;">
+                        Karl Weymann GmbH | Burgdorfer Straße 110 | 31275 Lehrte<br>
+                        Technischer Partner: <strong>Scholz & Friese Webdesign</strong>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </body>
+          </html>
+        `;
+      } else {
+        const { name, email, phone, message } = data;
+
+        if (!name || !email || !phone || !message) {
+          return new Response(JSON.stringify({ success: false, message: 'Bitte alle Pflichtfelder ausfüllen.' }), {
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+
+        emailSubject = `[weymann-gebaeudetechnik] ✉️ Neue Kontaktanfrage von ${name}`;
+        emailHtml = `
+          <!DOCTYPE html>
+          <html lang="de">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          </head>
+          <body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1e293b;">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f8fafc; padding: 40px 10px;">
+              <tr>
+                <td align="center">
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(13, 43, 94, 0.05);">
+                    <tr>
+                      <td style="background-color: #0d2b5e; padding: 30px; text-align: center; border-bottom: 4px solid #d21e26;">
+                        <h1 style="margin: 0; font-size: 22px; color: #ffffff; font-weight: 700; letter-spacing: 0.5px;">Karl Weymann GmbH</h1>
+                        <p style="margin: 5px 0 0 0; font-size: 12px; color: #a0aab2; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">Kontaktanfrage</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 40px 35px;">
+                        <p style="font-size: 16px; font-weight: 600; color: #0d2b5e; margin: 0 0 15px 0;">Hallo Team,</p>
+                        <p style="font-size: 14.5px; line-height: 1.6; color: #475569; margin: 0 0 25px 0;">
+                          über das Kontaktformular wurde eine neue Nachricht gesendet:
+                        </p>
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 30px; border-collapse: collapse;">
+                          <tr>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; width: 45%; font-size: 12px; text-transform: uppercase;">Name</td>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14.5px;">${name}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">E-Mail</td>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14.5px;"><a href="mailto:${email}" style="color: #d21e26; text-decoration: none; font-weight: 500;">${email}</a></td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Telefon</td>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14.5px;">${phone}</td>
+                          </tr>
+                        </table>
+                        <div style="background-color: #f8fafc; border-left: 4px solid #d21e26; padding: 15px 20px; border-radius: 4px;">
+                          <h4 style="margin: 0 0 8px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #0d2b5e;">Nachricht / Anliegen</h4>
+                          <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #334155; font-style: italic;">"${message.replace(/\n/g, '<br>')}"</p>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="background-color: #f8fafc; padding: 25px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 11px; color: #64748b;">
+                        Karl Weymann GmbH | Burgdorfer Straße 110 | 31275 Lehrte<br>
+                        Technischer Partner: <strong>Scholz & Friese Webdesign</strong>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </body>
+          </html>
+        `;
+      }
 
     } else {
       // ───── STANDARD SF WEBDESIGN E-MAIL (Original) ─────

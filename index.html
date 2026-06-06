@@ -2244,36 +2244,51 @@
     /* =========================================
        PRICING CARDS
        ========================================= */
+    /* =========================================
+       PRICING CARDS REDESIGN (Scholz & Friese Style)
+       ========================================= */
     .pricing-cards-container {
       display: flex;
       flex-wrap: wrap;
-      gap: 30px;
+      gap: 35px;
       justify-content: center;
       max-width: 1200px;
-      margin: 40px auto 0;
+      margin: 50px auto 0;
       align-items: flex-start;
     }
 
     .pricing-card {
-      background: #ffffff;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-      border: 1px solid rgba(0, 0, 0, 0.05);
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 24px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.5);
       padding: 40px 30px;
       width: 100%;
-      max-width: 350px;
+      max-width: 360px;
       display: flex;
       flex-direction: column;
       position: relative;
       box-sizing: border-box;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
+    }
+
+    .pricing-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+      border-color: rgba(109, 127, 251, 0.3);
     }
 
     .pricing-card.bestseller {
-      transform: scale(1.08);
-      box-shadow: 0 20px 50px rgba(109, 127, 251, 0.2);
+      background: rgba(255, 255, 255, 0.85);
       border: 2px solid #6D7FFB;
+      box-shadow: 0 25px 60px rgba(109, 127, 251, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.9);
       z-index: 2;
+    }
+    
+    .pricing-card.bestseller:hover {
+      box-shadow: 0 35px 80px rgba(109, 127, 251, 0.22), inset 0 1px 1px rgba(255, 255, 255, 0.9);
     }
 
     .bestseller-badge {
@@ -2281,91 +2296,156 @@
       top: -15px;
       left: 50%;
       transform: translateX(-50%);
-      background: linear-gradient(90deg, #6D7FFB, #A855F7);
+      background: linear-gradient(90deg, #3EC8C0, #6D7FFB, #D16BA5);
+      background-size: 200% auto;
+      animation: gradientPulse 6s linear infinite;
       color: white;
-      padding: 5px 20px;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      letter-spacing: 1px;
+      padding: 6px 22px;
+      border-radius: 99px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
       text-transform: uppercase;
+      box-shadow: 0 8px 20px rgba(109, 127, 251, 0.3);
     }
 
     .pricing-header {
       text-align: center;
-      margin-bottom: 15px;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 15px;
+      margin-bottom: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .pricing-icon-wrapper {
+      width: 70px;
+      height: 70px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(62, 200, 192, 0.1), rgba(109, 127, 251, 0.1));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      color: #6D7FFB;
+      border: 1px solid rgba(109, 127, 251, 0.15);
+      transition: transform 0.3s ease;
+    }
+    
+    .pricing-card:hover .pricing-icon-wrapper {
+      transform: scale(1.1) rotate(3deg);
+    }
+    
+    .pricing-card.bestseller .pricing-icon-wrapper {
+      background: linear-gradient(135deg, rgba(109, 127, 251, 0.15), rgba(209, 107, 165, 0.15));
+      color: #D16BA5;
+      border-color: rgba(209, 107, 165, 0.2);
+    }
+
+    .pricing-icon-wrapper svg {
+      width: 32px;
+      height: 32px;
     }
 
     .pricing-header h3 {
-      font-size: clamp(1.5rem, 5vw, 1.8rem);
-      margin-bottom: 4px;
-      color: #11141e;
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin: 0 0 6px 0;
+      color: #0F172A;
+      letter-spacing: -0.5px;
     }
 
     .pricing-header .subtitle {
-      font-size: 0.8rem;
-      color: #6D7FFB;
-      font-weight: 700;
+      font-size: 0.85rem;
+      color: #64748b;
+      font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-top: 0;
-      line-height: 1.3;
+      letter-spacing: 1px;
     }
 
-    .pricing-card.bestseller .pricing-header .subtitle {
-      background: linear-gradient(90deg, #6D7FFB, #A855F7);
+    .pricing-card.bestseller .pricing-header h3 {
+      background: linear-gradient(90deg, #6D7FFB, #D16BA5);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
-    .pricing-features-main,
-    .accordion-content ul {
+    /* Features Layout */
+    .pricing-features-list {
       list-style: none;
       padding: 0;
       margin: 0;
-    }
-
-    .pricing-features-main li,
-    .accordion-content ul li {
       display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 15px;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .pricing-features-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
       font-size: 0.95rem;
-      color: #444;
+      color: #334155;
       line-height: 1.4;
+      text-align: left;
     }
 
-    .pricing-features-main li i,
-    .accordion-content ul li i {
-      color: #00C9B7;
+    .pricing-features-list li i,
+    .pricing-features-list li svg {
       flex-shrink: 0;
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
+      margin-top: 1px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .pricing-btn {
+    .pricing-features-list li .icon-check {
+      color: #10b981;
+    }
+
+    .pricing-features-list li .icon-x {
+      color: #ef4444;
+    }
+
+    .pricing-features-collapsed {
+      opacity: 1;
+      max-height: 150px;
+      overflow: hidden;
+      transition: opacity 0.3s ease, max-height 0.3s ease, margin-bottom 0.3s ease;
+      margin-bottom: 20px;
+    }
+
+    .pricing-card.open .pricing-features-collapsed {
+      opacity: 0;
+      max-height: 0;
+      margin-bottom: 0;
+      pointer-events: none;
+    }
+    
+    .detail-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* Accordion Container */
+    .accordion-container {
       margin-top: auto;
       width: 100%;
-      text-align: center;
-      padding: 15px;
     }
 
-    .dark-button {
-      background: linear-gradient(90deg, #6D7FFB, #A855F7);
-      border-color: transparent;
-      color: #fff;
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .dark-button:hover {
-      box-shadow: 0 0 20px rgba(109, 127, 251, 0.4);
-      color: #fff;
+    .accordion-content.open {
+      max-height: 600px;
     }
 
-    .accordion-container {
-      margin-bottom: 20px;
+    .accordion-inner {
+      padding: 5px 0;
     }
 
     .accordion-toggle {
@@ -2373,33 +2453,30 @@
       background: none;
       border: none;
       color: #6D7FFB;
-      font-weight: 600;
-      font-size: 1rem;
+      font-weight: 700;
+      font-size: 0.95rem;
       cursor: pointer;
-      padding: 10px 0;
+      padding: 15px 0 0 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 5px;
-      margin-top: 20px;
+      gap: 6px;
+      transition: color 0.3s ease;
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
+      margin-top: 15px;
     }
 
-    .accordion-content {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.3s ease;
+    .accordion-toggle:hover {
+      color: #D16BA5;
     }
 
-    .accordion-content.open {
-      max-height: 500px;
-    }
-
-    .accordion-toggle span {
+    .accordion-toggle svg {
+      width: 18px;
+      height: 18px;
       transition: transform 0.3s ease;
-      display: inline-block;
     }
 
-    .accordion-toggle.open span {
+    .accordion-toggle.open svg {
       transform: rotate(180deg);
     }
 
@@ -2896,87 +2973,121 @@
         <!-- BASIC -->
         <div class="pricing-card" data-aos="fade-up">
           <div class="pricing-header">
+            <div class="pricing-icon-wrapper">
+              <i data-lucide="send"></i>
+            </div>
             <h3>Basic</h3>
             <div class="subtitle">Ideal für Starter</div>
           </div>
-          <ul class="pricing-features-main">
-            <li><i data-lucide="check"></i> SEO & GEO Optimierung: Standard</li>
-            <li><i data-lucide="x" style="color:#ef4444;"></i> Google Analytics & Berichte</li>
-            <li><i data-lucide="check"></i> Support per E-Mail & Telefon</li>
+          
+          <!-- Collapsed list (shows 3 distinguishing features before expand) -->
+          <ul class="pricing-features-list pricing-features-collapsed">
+            <li><i data-lucide="check" class="icon-check"></i> SEO & GEO Optimierung: Standard</li>
+            <li><i data-lucide="x" class="icon-x"></i> Design- & Inhaltsanpassungen</li>
+            <li><i data-lucide="x" class="icon-x"></i> Individuelle Erweiterungen</li>
           </ul>
+
           <div class="accordion-container">
             <div class="accordion-content">
-              <ul>
-                <li><i data-lucide="check"></i> Persönlicher Ansprechpartner</li>
-                <li><i data-lucide="x" style="color:#ef4444;"></i> Infoanpassungen: Bilder, Name, Adresse</li>
-                <li><i data-lucide="x" style="color:#ef4444;"></i> Design- & Inhaltsanpassungen</li>
-                <li><i data-lucide="x" style="color:#ef4444;"></i> Individuelle Erweiterungen</li>
-                <li><i data-lucide="check"></i> Backups: monatlich</li>
-                <li><i data-lucide="check"></i> Sicherheitsschutz (DDoS etc.)</li>
-                <li><i data-lucide="check"></i> Globale Ladezeiten (CDN)</li>
-                <li><i data-lucide="check"></i> SSL-Zertifikat (HTTPS)</li>
-              </ul>
+              <div class="accordion-inner">
+                <!-- Expanded list (all features, checkmarks first, crossmarks last) -->
+                <ul class="pricing-features-list detail-list">
+                  <li><i data-lucide="check" class="icon-check"></i> SEO & GEO Optimierung: Standard</li>
+                  <li><i data-lucide="check" class="icon-check"></i> Support per E-Mail & Telefon</li>
+                  <li><i data-lucide="check" class="icon-check"></i> Persönlicher Ansprechpartner</li>
+                  <li><i data-lucide="check" class="icon-check"></i> Backups: monatlich</li>
+                  <li><i data-lucide="check" class="icon-check"></i> Sicherheitsschutz (DDoS etc.)</li>
+                  <li><i data-lucide="check" class="icon-check"></i> Globale Ladezeiten (CDN)</li>
+                  <li><i data-lucide="check" class="icon-check"></i> SSL-Zertifikat (HTTPS)</li>
+                  <li><i data-lucide="x" class="icon-x"></i> Google Analytics & Berichte</li>
+                  <li><i data-lucide="x" class="icon-x"></i> Infoanpassungen: Bilder, Name, Adresse</li>
+                  <li><i data-lucide="x" class="icon-x"></i> Design- & Inhaltsanpassungen</li>
+                  <li><i data-lucide="x" class="icon-x"></i> Individuelle Erweiterungen</li>
+                </ul>
+              </div>
             </div>
-            <button class="accordion-toggle" aria-expanded="false">Alle Features anzeigen <span>▼</span></button>
+            <button class="accordion-toggle" aria-expanded="false"><span class="toggle-text">Alle Features anzeigen</span> <i data-lucide="chevron-down"></i></button>
           </div>
-
         </div>
 
         <!-- PRO (Bestseller) -->
         <div class="pricing-card bestseller" data-aos="fade-up" data-aos-delay="100">
           <div class="bestseller-badge">Bestseller</div>
           <div class="pricing-header">
+            <div class="pricing-icon-wrapper">
+              <i data-lucide="rocket"></i>
+            </div>
             <h3>Pro</h3>
             <div class="subtitle">Für wachsende Unternehmen</div>
           </div>
-          <ul class="pricing-features-main">
-            <li><i data-lucide="check"></i> SEO & GEO Optimierung: Erweitert</li>
-            <li><i data-lucide="check"></i> Google Analytics & Berichte</li>
-            <li><i data-lucide="check"></i> Support per E-Mail & Telefon (priorisiert)</li>
+          
+          <!-- Collapsed list (shows 3 distinguishing features before expand) -->
+          <ul class="pricing-features-list pricing-features-collapsed">
+            <li><i data-lucide="check" class="icon-check"></i> SEO & GEO Optimierung: Erweitert</li>
+            <li><i data-lucide="check" class="icon-check"></i> Design- & Inhaltsanpassungen inbegriffen</li>
+            <li><i data-lucide="x" class="icon-x"></i> Individuelle Erweiterungen</li>
           </ul>
+
           <div class="accordion-container">
             <div class="accordion-content">
-              <ul>
-                <li><i data-lucide="check"></i> Persönlicher Ansprechpartner</li>
-                <li><i data-lucide="check"></i> Infoanpassungen: wie Basic + 1 Std/Monat</li>
-                <li><i data-lucide="check"></i> Design- & Inhaltsanpassungen inbegriffen</li>
-                <li><i data-lucide="x" style="color:#ef4444;"></i> Individuelle Erweiterungen</li>
-                <li><i data-lucide="check"></i> Backups: wöchentlich</li>
-                <li><i data-lucide="check"></i> Sicherheitsschutz (DDoS etc.)</li>
-                <li><i data-lucide="check"></i> Globale Ladezeiten (CDN)</li>
-                <li><i data-lucide="check"></i> SSL-Zertifikat (HTTPS)</li>
-              </ul>
+              <div class="accordion-inner">
+                <!-- Expanded list (all features, checkmarks first, crossmarks last) -->
+                <ul class="pricing-features-list detail-list">
+                  <li><i data-lucide="check" class="icon-check"></i> SEO & GEO Optimierung: Erweitert</li>
+                  <li><i data-lucide="check" class="icon-check"></i> Google Analytics & Berichte</li>
+                  <li><i data-lucide="check" class="icon-check"></i> Support per E-Mail & Telefon (priorisiert)</li>
+                  <li><i data-lucide="check" class="icon-check"></i> Persönlicher Ansprechpartner</li>
+                  <li><i data-lucide="check" class="icon-check"></i> Infoanpassung: Bilder, Name, Adresse</li>
+                  <li><i data-lucide="check" class="icon-check"></i> Design- & Inhaltsanpassungen inbegriffen</li>
+                  <li><i data-lucide="check" class="icon-check"></i> Backups: wöchentlich</li>
+                  <li><i data-lucide="check" class="icon-check"></i> Sicherheitsschutz (DDoS etc.)</li>
+                  <li><i data-lucide="check" class="icon-check"></i> Globale Ladezeiten (CDN)</li>
+                  <li><i data-lucide="check" class="icon-check"></i> SSL-Zertifikat (HTTPS)</li>
+                  <li><i data-lucide="x" class="icon-x"></i> Individuelle Erweiterungen</li>
+                </ul>
+              </div>
             </div>
-            <button class="accordion-toggle" aria-expanded="false">Alle Features anzeigen <span>▼</span></button>
+            <button class="accordion-toggle" aria-expanded="false"><span class="toggle-text">Alle Features anzeigen</span> <i data-lucide="chevron-down"></i></button>
           </div>
-
         </div>
 
         <!-- ENTERPRISE -->
         <div class="pricing-card" data-aos="fade-up" data-aos-delay="200">
           <div class="pricing-header">
+            <div class="pricing-icon-wrapper">
+              <i data-lucide="crown"></i>
+            </div>
             <h3>Enterprise</h3>
             <div class="subtitle">Maßgeschneiderte Lösung</div>
           </div>
-          <ul class="pricing-features-main">
-            <li><i data-lucide="check"></i> SEO & GEO Optimierung: Erweitert</li>
-            <li><i data-lucide="check"></i> Google Analytics & Berichte</li>
-            <li><i data-lucide="check"></i> Support: höchste Priorität</li>
+          
+          <!-- Collapsed list (shows 3 distinguishing features before expand) -->
+          <ul class="pricing-features-list pricing-features-collapsed">
+            <li><i data-lucide="check" class="icon-check"></i> SEO & GEO Optimierung: Erweitert</li>
+            <li><i data-lucide="check" class="icon-check"></i> Design- & Inhaltsanpassungen: individuell</li>
+            <li><i data-lucide="check" class="icon-check"></i> Individuelle Erweiterungen: vollständig flexibel</li>
           </ul>
+
           <div class="accordion-container">
             <div class="accordion-content">
-              <ul>
-                <li><i data-lucide="check"></i> Persönlicher Ansprechpartner</li>
-                <li><i data-lucide="check"></i> Informationsanpassungen: individuell</li>
-                <li><i data-lucide="check"></i> Design- & Inhaltsanpassungen: individuell</li>
-                <li><i data-lucide="check"></i> Individuelle Erweiterungen: vollständig flexibel</li>
-                <li><i data-lucide="check"></i> Backups: nach Bedarf</li>
-                <li><i data-lucide="check"></i> Sicherheitsschutz (DDoS etc.)</li>
-                <li><i data-lucide="check"></i> Globale Ladezeiten (CDN)</li>
-                <li><i data-lucide="check"></i> SSL-Zertifikat (HTTPS)</li>
-              </ul>
+              <div class="accordion-inner">
+                <!-- Expanded list (all features, checkmarks first, crossmarks last) -->
+                <ul class="pricing-features-list detail-list">
+                  <li><i data-lucide="check" class="icon-check"></i> SEO & GEO Optimierung: Erweitert</li>
+                  <li><i data-lucide="check" class="icon-check"></i> Google Analytics & Berichte</li>
+                  <li><i data-lucide="check" class="icon-check"></i> Support: höchste Priorität</li>
+                  <li><i data-lucide="check" class="icon-check"></i> Persönlicher Ansprechpartner</li>
+                  <li><i data-lucide="check" class="icon-check"></i> Informationsanpassungen: individuell</li>
+                  <li><i data-lucide="check" class="icon-check"></i> Design- & Inhaltsanpassungen: individuell</li>
+                  <li><i data-lucide="check" class="icon-check"></i> Individuelle Erweiterungen: vollständig flexibel</li>
+                  <li><i data-lucide="check" class="icon-check"></i> Backups: nach Bedarf</li>
+                  <li><i data-lucide="check" class="icon-check"></i> Sicherheitsschutz (DDoS etc.)</li>
+                  <li><i data-lucide="check" class="icon-check"></i> Globale Ladezeiten (CDN)</li>
+                  <li><i data-lucide="check" class="icon-check"></i> SSL-Zertifikat (HTTPS)</li>
+                </ul>
+              </div>
             </div>
-            <button class="accordion-toggle" aria-expanded="false">Alle Features anzeigen <span>▼</span></button>
+            <button class="accordion-toggle" aria-expanded="false"><span class="toggle-text">Alle Features anzeigen</span> <i data-lucide="chevron-down"></i></button>
           </div>
         </div>
       </div>
@@ -3564,14 +3675,21 @@
       document.querySelectorAll(".accordion-toggle").forEach(button => {
         button.addEventListener("click", () => {
           button.classList.toggle("open");
+          const card = button.closest(".pricing-card");
+          if (card) {
+            card.classList.toggle("open");
+          }
           const content = button.previousElementSibling;
           if (content) {
             content.classList.toggle("open");
           }
-          if (button.classList.contains("open")) {
-            button.innerHTML = 'Weniger anzeigen <span>▼</span>';
-          } else {
-            button.innerHTML = 'Alle Features anzeigen <span>▼</span>';
+          const textSpan = button.querySelector(".toggle-text");
+          if (textSpan) {
+            if (button.classList.contains("open")) {
+              textSpan.textContent = 'Weniger anzeigen';
+            } else {
+              textSpan.textContent = 'Alle Features anzeigen';
+            }
           }
         });
       });
