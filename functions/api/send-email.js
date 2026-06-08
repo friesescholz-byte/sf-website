@@ -28,6 +28,8 @@ export async function onRequestPost(context) {
       turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_STEPHAN_VAN_HAUSEN || '0x4AAAAAADdygO8vdA6V1PJegyMQHIiJR1E';
     } else if (source === 'weymann-gebaeudetechnik') {
       turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_WEYMANN_GEBAEUDETECHNIK || '0x4AAAAAADfUURKAuZiZYwpQqePXh_putgs';
+    } else if (source === 'elementbau-nienburg') {
+      turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_ELEMENTBAU_NIENBURG || '0x4AAAAAADYkqblgcNFy2414q1-0SYR3RH8';
     }
     const verifyResult = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
       method: 'POST',
@@ -690,6 +692,141 @@ export async function onRequestPost(context) {
                       <td style="background-color: #f8fafc; padding: 25px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 11px; color: #64748b;">
                         Karl Weymann GmbH | Burgdorfer Straße 110 | 31275 Lehrte<br>
                         Technischer Partner: <strong>Scholz & Friese Webdesign</strong>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </body>
+          </html>
+        `;
+      }
+
+    } else if (source === 'elementbau-nienburg') {
+      // ───── ELEMENTBAU NIENBURG E-MAILS ─────
+      const { name, email, phone, projectType, experience, message, formType } = data;
+
+      if (!name || !email || !phone) {
+        return new Response(JSON.stringify({ success: false, message: 'Bitte Name, E-Mail und Telefonnummer ausfüllen.' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      fromName = 'Scholz & Friese Webdesign';
+
+      if (formType === 'bewerbung') {
+        emailSubject = `[elementbau-nienburg] 💼 Neue Bewerbung: Kellerabdichter - ${name}`;
+        emailHtml = `
+          <!DOCTYPE html>
+          <html lang="de">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          </head>
+          <body style="margin: 0; padding: 0; background-color: #080A0F; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #FFFFFF;">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #080A0F; padding: 40px 10px;">
+              <tr>
+                <td align="center">
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #151923; border: 1px solid #ff8c00; border-top: 4px solid #ff8c00; border-radius: 6px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                    <tr>
+                      <td style="padding: 30px; border-bottom: 1px solid #1f2937;">
+                        <h2 style="margin: 0; color: #FFFFFF; font-size: 20px; font-weight: 700; text-transform: uppercase;">Neue Online-Bewerbung</h2>
+                        <p style="margin: 5px 0 0 0; font-size: 14px; color: #ff8c00;">Stelle: Kellerabdichter / Helfer Handwerk</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 30px;">
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 25px; border-collapse: collapse;">
+                          <tr>
+                            <td style="padding: 10px 0; border-bottom: 1px solid #1f2937; color: #A1A1AA; font-size: 13px; font-weight: 600; width: 35%;">Bewerber:</td>
+                            <td style="padding: 10px 0; border-bottom: 1px solid #1f2937; color: #FFFFFF; font-size: 14px;">${name}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 0; border-bottom: 1px solid #1f2937; color: #A1A1AA; font-size: 13px; font-weight: 600;">E-Mail:</td>
+                            <td style="padding: 10px 0; border-bottom: 1px solid #1f2937; color: #FFFFFF; font-size: 14px;"><a href="mailto:${email}" style="color: #ff8c00; text-decoration: none;">${email}</a></td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 0; border-bottom: 1px solid #1f2937; color: #A1A1AA; font-size: 13px; font-weight: 600;">Telefon:</td>
+                            <td style="padding: 10px 0; border-bottom: 1px solid #1f2937; color: #FFFFFF; font-size: 14px;"><a href="tel:${phone}" style="color: #ff8c00; text-decoration: none;">${phone}</a></td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 0; border-bottom: 1px solid #1f2937; color: #A1A1AA; font-size: 13px; font-weight: 600;">Erfahrung:</td>
+                            <td style="padding: 10px 0; border-bottom: 1px solid #1f2937; color: #ff8c00; font-size: 14px; font-weight: bold;">${experience}</td>
+                          </tr>
+                        </table>
+                        
+                        <div style="background-color: #1f2937; border-left: 3px solid #ff8c00; padding: 15px; border-radius: 0 4px 4px 0;">
+                          <h4 style="margin: 0 0 10px 0; color: #FFFFFF; font-size: 12px; text-transform: uppercase;">Nachricht / Motivation:</h4>
+                          <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #D1D5DB; white-space: pre-wrap;">${message || 'Keine Nachricht hinterlassen.'}</p>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="background-color: #0b0d13; padding: 20px; text-align: center; border-top: 1px solid #1f2937; font-size: 11px; color: #A1A1AA;">
+                        Bewerbung über <a href="https://elementbau-ni.de" style="color: #ff8c00; text-decoration: none;">elementbau-ni.de</a><br>
+                        Design by <strong>Scholz & Friese Webdesign</strong>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </body>
+          </html>
+        `;
+      } else {
+        emailSubject = `[elementbau-nienburg] ✉️ Neue Projektanfrage: ${projectType} - ${name}`;
+        emailHtml = `
+          <!DOCTYPE html>
+          <html lang="de">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          </head>
+          <body style="margin: 0; padding: 0; background-color: #080A0F; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #FFFFFF;">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #080A0F; padding: 40px 10px;">
+              <tr>
+                <td align="center">
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #151923; border: 1px solid #ff8c00; border-top: 4px solid #ff8c00; border-radius: 6px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                    <tr>
+                      <td style="padding: 30px; border-bottom: 1px solid #1f2937;">
+                        <h2 style="margin: 0; color: #FFFFFF; font-size: 20px; font-weight: 700; text-transform: uppercase;">Neue Projektanfrage</h2>
+                        <p style="margin: 5px 0 0 0; font-size: 14px; color: #ff8c00;">Elementbau Nienburg</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 30px;">
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 25px; border-collapse: collapse;">
+                          <tr>
+                            <td style="padding: 10px 0; border-bottom: 1px solid #1f2937; color: #A1A1AA; font-size: 13px; font-weight: 600; width: 35%;">Name:</td>
+                            <td style="padding: 10px 0; border-bottom: 1px solid #1f2937; color: #FFFFFF; font-size: 14px;">${name}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 0; border-bottom: 1px solid #1f2937; color: #A1A1AA; font-size: 13px; font-weight: 600;">E-Mail:</td>
+                            <td style="padding: 10px 0; border-bottom: 1px solid #1f2937; color: #FFFFFF; font-size: 14px;"><a href="mailto:${email}" style="color: #ff8c00; text-decoration: none;">${email}</a></td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 0; border-bottom: 1px solid #1f2937; color: #A1A1AA; font-size: 13px; font-weight: 600;">Telefon:</td>
+                            <td style="padding: 10px 0; border-bottom: 1px solid #1f2937; color: #FFFFFF; font-size: 14px;"><a href="tel:${phone}" style="color: #ff8c00; text-decoration: none;">${phone}</a></td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 0; border-bottom: 1px solid #1f2937; color: #A1A1AA; font-size: 13px; font-weight: 600;">Projektart:</td>
+                            <td style="padding: 10px 0; border-bottom: 1px solid #1f2937; color: #ff8c00; font-size: 14px; font-weight: bold;">${projectType}</td>
+                          </tr>
+                        </table>
+                        
+                        <div style="background-color: #1f2937; border-left: 3px solid #ff8c00; padding: 15px; border-radius: 0 4px 4px 0;">
+                          <h4 style="margin: 0 0 10px 0; color: #FFFFFF; font-size: 12px; text-transform: uppercase;">Projektbeschreibung:</h4>
+                          <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #D1D5DB; white-space: pre-wrap;">${message}</p>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="background-color: #0b0d13; padding: 20px; text-align: center; border-top: 1px solid #1f2937; font-size: 11px; color: #A1A1AA;">
+                        Anfrage über <a href="https://elementbau-ni.de" style="color: #ff8c00; text-decoration: none;">elementbau-ni.de</a><br>
+                        Design by <strong>Scholz & Friese Webdesign</strong>
                       </td>
                     </tr>
                   </table>
