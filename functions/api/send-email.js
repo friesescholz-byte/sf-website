@@ -48,6 +48,7 @@ export async function onRequestPost(context) {
     // 3. E-Mail bauen – je nach Quelle (source)
     const resendApiKey = env.RESEND_API_KEY || 're_23WnEvZS_MiA7sHvE1HVkZC5TDV7TeqXi';
     let emailSubject, emailHtml, fromName;
+    let recipientEmail = 'support@scholz-friese-chatbot.de';
 
     if (source === 'Stephan-van-Hausen') {
       // ───── STEPHAN VAN HAUSEN E-MAIL ─────
@@ -715,6 +716,7 @@ export async function onRequestPost(context) {
       }
 
       fromName = 'Scholz & Friese Webdesign';
+      recipientEmail = 'scholz.friese@gmail.com';
 
       if (formType === 'bewerbung') {
         emailSubject = `[elementbau-nienburg] 💼 Neue Bewerbung: Kellerabdichter - ${name}`;
@@ -934,7 +936,7 @@ export async function onRequestPost(context) {
       },
       body: JSON.stringify({
         from: `${fromName} <noreply@scholz-friese-webdesign.de>`,
-        to: 'support@scholz-friese-chatbot.de',
+        to: recipientEmail,
         reply_to: data.email,
         subject: emailSubject,
         html: emailHtml,
