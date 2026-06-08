@@ -716,7 +716,7 @@ export async function onRequestPost(context) {
       }
 
       fromName = 'Scholz & Friese Webdesign';
-      recipientEmail = 'scholz.friese@gmail.com';
+      recipientEmail = 'info@elementbau-ni.de';
 
       if (formType === 'bewerbung') {
         emailSubject = `[elementbau-nienburg] 💼 Neue Bewerbung: Kellerabdichter - ${name}`;
