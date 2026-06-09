@@ -30,6 +30,8 @@ export async function onRequestPost(context) {
       turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_WEYMANN_GEBAEUDETECHNIK || '0x4AAAAAADfUURKAuZiZYwpQqePXh_putgs';
     } else if (source === 'elementbau-nienburg') {
       turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_ELEMENTBAU_NIENBURG || '0x4AAAAAADYkqblgcNFy2414q1-0SYR3RH8';
+    } else if (source === 'bestattungen-eberhardt') {
+      turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_BESTATTUNGEN_EBERHARDT || '0x4AAAAAADg25YrMjOJ1aNvVqzbVKj7kqQE';
     }
     const verifyResult = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
       method: 'POST',
@@ -839,6 +841,80 @@ export async function onRequestPost(context) {
           </html>
         `;
       }
+
+    } else if (source === 'bestattungen-eberhardt') {
+      // ───── BESTATTUNGEN EBERHARDT E-MAIL ─────
+      const { name, email, phone, subject, message } = data;
+
+      if (!name || !email || !message) {
+        return new Response(JSON.stringify({ success: false, message: 'Bitte Name, E-Mail und Ihre Nachricht eingeben.' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      fromName = 'Bestattungen Eberhardt';
+      recipientEmail = 'scholz.friese@gmail.com';
+      emailSubject = `[bestattungen-eberhardt] ✉️ Neue Nachricht von ${name}`;
+
+      emailHtml = `
+        <!DOCTYPE html>
+        <html lang="de">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body style="margin: 0; padding: 0; background-color: #161816; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #FFFFFF;">
+          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #161816; padding: 40px 10px;">
+            <tr>
+              <td align="center">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #1c1f1c; border: 1px solid rgba(255, 255, 255, 0.05); border-top: 4px solid #85a31f; border-radius: 6px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                  <tr>
+                    <td style="padding: 30px; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+                      <h2 style="margin: 0; color: #FFFFFF; font-size: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Bestattungen Eberhardt</h2>
+                      <p style="margin: 5px 0 0 0; font-size: 14px; color: #85a31f;">Neue Kontaktanfrage über die Website</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 30px;">
+                      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 25px; border-collapse: collapse;">
+                        <tr>
+                          <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #A1A1AA; font-size: 13px; font-weight: 600; width: 35%;">Name:</td>
+                          <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #FFFFFF; font-size: 14px;">${name}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #A1A1AA; font-size: 13px; font-weight: 600;">E-Mail:</td>
+                          <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #FFFFFF; font-size: 14px;"><a href="mailto:${email}" style="color: #85a31f; text-decoration: none;">${email}</a></td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #A1A1AA; font-size: 13px; font-weight: 600;">Telefon:</td>
+                          <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #FFFFFF; font-size: 14px;">${phone ? `<a href="tel:${phone}" style="color: #85a31f; text-decoration: none;">${phone}</a>` : '-'}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #A1A1AA; font-size: 13px; font-weight: 600;">Betreff:</td>
+                          <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #85a31f; font-size: 14px; font-weight: bold;">${subject || 'Allgemeine Anfrage'}</td>
+                        </tr>
+                      </table>
+                      
+                      <div style="background-color: rgba(255, 255, 255, 0.02); border-left: 3px solid #85a31f; padding: 15px; border-radius: 0 4px 4px 0;">
+                        <h4 style="margin: 0 0 10px 0; color: #FFFFFF; font-size: 12px; text-transform: uppercase;">Nachricht:</h4>
+                        <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #D1D5DB; white-space: pre-wrap;">${message}</p>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="background-color: #0d0f0c; padding: 20px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.05); font-size: 11px; color: #A1A1AA;">
+                      Gesendet über die Website <a href="https://bestattungen-eberhardt.de" style="color: #85a31f; text-decoration: none;">bestattungen-eberhardt.de</a><br>
+                      Technischer Partner: <strong>Scholz & Friese Webdesign</strong>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </body>
+        </html>
+      `;
 
     } else {
       // ───── STANDARD SF WEBDESIGN E-MAIL (Original) ─────
