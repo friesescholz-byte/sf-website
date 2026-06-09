@@ -854,7 +854,7 @@ export async function onRequestPost(context) {
       }
 
       fromName = 'Bestattungen Eberhardt';
-      recipientEmail = 'scholz.friese@gmail.com';
+      recipientEmail = 'friese.scholz@gmail.com';
       emailSubject = `[bestattungen-eberhardt] ✉️ Neue Nachricht von ${name}`;
 
       emailHtml = `
