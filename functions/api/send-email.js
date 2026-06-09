@@ -928,6 +928,7 @@ export async function onRequestPost(context) {
       }
 
       fromName = 'Scholz & Friese Webdesign';
+      recipientEmail = 'friese.scholz@gmail.com';
       emailSubject = `Neue Anfrage-Flow: ${companyName}`;
       emailHtml = `
         <!DOCTYPE html>
