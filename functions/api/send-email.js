@@ -32,6 +32,8 @@ export async function onRequestPost(context) {
       turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_ELEMENTBAU_NIENBURG;
     } else if (source === 'bestattungen-eberhardt') {
       turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_BESTATTUNGEN_EBERHARDT;
+    } else if (source === 'fm-freie-rednerin') {
+      turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_FM_FREIE_REDNERIN;
     }
     const verifyResult = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
       method: 'POST',
@@ -905,6 +907,106 @@ export async function onRequestPost(context) {
                   <tr>
                     <td style="background-color: #0d0f0c; padding: 20px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.05); font-size: 11px; color: #A1A1AA;">
                       Gesendet über die Website <a href="https://bestattungen-eberhardt.de" style="color: #85a31f; text-decoration: none;">bestattungen-eberhardt.de</a><br>
+                      Technischer Partner: <strong>Scholz & Friese Webdesign</strong>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </body>
+        </html>
+      `;
+
+    } else if (source === 'fm-freie-rednerin') {
+      // ───── FINNJA MARIE (FM-FREIE-REDNERIN) E-MAIL ─────
+      const { formType, name, email, phone, date, location, deceased_name, termin_fest, wishes, message } = data;
+
+      if (!name || !email || !message) {
+        return new Response(JSON.stringify({ success: false, message: 'Name, E-Mail und Nachricht sind Pflichtfelder.' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      fromName = 'Scholz & Friese Webdesign';
+      recipientEmail = 'friese.scholz@gmail.com'; // as requested: "mail erstmal zum testen an friese.scholz@gmail.com"
+      
+      const isTrauer = formType === 'trauerfeier';
+      const typeLabel = isTrauer ? 'Trauerfeier' : 'Freie Trauung';
+      emailSubject = `[fm-freie-rednerin] ✉️ Neue Anfrage (${typeLabel}) von ${name}`;
+
+      emailHtml = `
+        <!DOCTYPE html>
+        <html lang="de">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body style="margin: 0; padding: 0; background-color: #faf6ee; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1e1e1a;">
+          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #faf6ee; padding: 40px 10px;">
+            <tr>
+              <td align="center">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff; border: 1px solid #e8d8bd; border-top: 4px solid ${isTrauer ? '#64748b' : '#D4A373'}; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+                  <tr>
+                    <td style="padding: 30px; border-bottom: 1px solid #e8d8bd; background-color: #faf6ee; text-align: center;">
+                      <h2 style="margin: 0; color: #1e1e1a; font-family: Georgia, serif; font-size: 22px; font-weight: 400;">Finnja Marie</h2>
+                      <p style="margin: 5px 0 0 0; font-size: 13px; color: ${isTrauer ? '#64748b' : '#D4A373'}; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">Neue Anfrage: ${typeLabel}</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 40px 35px;">
+                      <p style="font-size: 15px; line-height: 1.6; color: #1e1e1a; margin: 0 0 25px 0;">
+                        Hallo Finnja,
+                      </p>
+                      <p style="font-size: 14px; line-height: 1.6; color: #5c5950; margin: 0 0 25px 0;">
+                        über das Kontaktformular deiner Website wurde eine neue Anfrage gesendet. Hier sind die erfassten Daten:
+                      </p>
+                      
+                      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 30px; border-collapse: collapse;">
+                        <tr>
+                          <td style="padding: 12px 14px; border-bottom: 1px solid #faf6ee; font-weight: 600; color: #1e1e1a; width: 45%; font-size: 12px; text-transform: uppercase;">Name</td>
+                          <td style="padding: 12px 14px; border-bottom: 1px solid #faf6ee; color: #1e1e1a; font-size: 14px;">${name}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 12px 14px; border-bottom: 1px solid #faf6ee; font-weight: 600; color: #1e1e1a; font-size: 12px; text-transform: uppercase;">E-Mail</td>
+                          <td style="padding: 12px 14px; border-bottom: 1px solid #faf6ee; color: #1e1e1a; font-size: 14px;"><a href="mailto:${email}" style="color: ${isTrauer ? '#64748b' : '#D4A373'}; text-decoration: none; font-weight: 600;">${email}</a></td>
+                        </tr>
+                        ${phone ? `<tr>
+                          <td style="padding: 12px 14px; border-bottom: 1px solid #faf6ee; font-weight: 600; color: #1e1e1a; font-size: 12px; text-transform: uppercase;">Telefonnummer</td>
+                          <td style="padding: 12px 14px; border-bottom: 1px solid #faf6ee; color: #1e1e1a; font-size: 14px;">${phone}</td>
+                        </tr>` : ''}
+                        ${date ? `<tr>
+                          <td style="padding: 12px 14px; border-bottom: 1px solid #faf6ee; font-weight: 600; color: #1e1e1a; font-size: 12px; text-transform: uppercase;">Datum der Feier</td>
+                          <td style="padding: 12px 14px; border-bottom: 1px solid #faf6ee; color: #1e1e1a; font-size: 14px; font-weight: bold;">${date}</td>
+                        </tr>` : ''}
+                        ${location ? `<tr>
+                          <td style="padding: 12px 14px; border-bottom: 1px solid #faf6ee; font-weight: 600; color: #1e1e1a; font-size: 12px; text-transform: uppercase;">Ort der Feier</td>
+                          <td style="padding: 12px 14px; border-bottom: 1px solid #faf6ee; color: #1e1e1a; font-size: 14px;">${location}</td>
+                        </tr>` : ''}
+                        ${isTrauer && deceased_name ? `<tr>
+                          <td style="padding: 12px 14px; border-bottom: 1px solid #faf6ee; font-weight: 600; color: #1e1e1a; font-size: 12px; text-transform: uppercase;">Name d. Verstorbenen</td>
+                          <td style="padding: 12px 14px; border-bottom: 1px solid #faf6ee; color: #1e1e1a; font-size: 14px;">${deceased_name}</td>
+                        </tr>` : ''}
+                        ${!isTrauer && termin_fest ? `<tr>
+                          <td style="padding: 12px 14px; border-bottom: 1px solid #faf6ee; font-weight: 600; color: #1e1e1a; font-size: 12px; text-transform: uppercase;">Termin fest gebucht?</td>
+                          <td style="padding: 12px 14px; border-bottom: 1px solid #faf6ee; color: #1e1e1a; font-size: 14px;">${termin_fest === 'ja' ? 'Ja, steht fest' : 'Nein, noch flexibel'}</td>
+                        </tr>` : ''}
+                        ${!isTrauer && wishes ? `<tr>
+                          <td style="padding: 12px 14px; border-bottom: 1px solid #faf6ee; font-weight: 600; color: #1e1e1a; font-size: 12px; text-transform: uppercase;">Erste Wünsche</td>
+                          <td style="padding: 12px 14px; border-bottom: 1px solid #faf6ee; color: #1e1e1a; font-size: 14px;">${wishes}</td>
+                        </tr>` : ''}
+                      </table>
+
+                      <div style="background-color: #faf6ee; border-left: 4px solid ${isTrauer ? '#64748b' : '#D4A373'}; padding: 15px 20px; border-radius: 4px; margin-top: 25px;">
+                        <h4 style="margin: 0 0 8px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #1e1e1a;">Nachricht / Details:</h4>
+                        <p style="margin: 0; font-size: 14.5px; line-height: 1.6; color: #5c5950; font-style: italic;">"${message.replace(/\n/g, '<br>')}"</p>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="background-color: #faf6ee; padding: 25px; text-align: center; border-top: 1px solid #e8d8bd; font-size: 11px; color: #5c5950; line-height: 1.6;">
+                      Anfrage über <a href="https://fm-freie-rednerin.de" style="color: ${isTrauer ? '#64748b' : '#D4A373'}; text-decoration: none;">fm-freie-rednerin.de</a><br>
                       Technischer Partner: <strong>Scholz & Friese Webdesign</strong>
                     </td>
                   </tr>
