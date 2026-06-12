@@ -930,7 +930,7 @@ export async function onRequestPost(context) {
       }
 
       fromName = 'Scholz & Friese Webdesign';
-      recipientEmail = 'finnjamarie@fm-freierednerin.de';
+      recipientEmail = 'finnjamariesch@t-online.de';
       
       const isTrauer = formType === 'trauerfeier';
       const typeLabel = isTrauer ? 'Trauerfeier' : 'Freie Trauung';
