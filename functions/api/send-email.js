@@ -1006,7 +1006,7 @@ export async function onRequestPost(context) {
                   </tr>
                   <tr>
                     <td style="background-color: #faf6ee; padding: 25px; text-align: center; border-top: 1px solid #e8d8bd; font-size: 11px; color: #5c5950; line-height: 1.6;">
-                      Anfrage über <a href="https://fm-freie-rednerin.de" style="color: ${isTrauer ? '#64748b' : '#D4A373'}; text-decoration: none;">fm-freie-rednerin.de</a><br>
+                      Anfrage über <a href="https://fm-freierednerin.de" style="color: ${isTrauer ? '#64748b' : '#D4A373'}; text-decoration: none;">fm-freierednerin.de</a><br>
                       Technischer Partner: <strong>Scholz & Friese Webdesign</strong>
                     </td>
                   </tr>
