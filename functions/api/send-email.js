@@ -34,6 +34,8 @@ export async function onRequestPost(context) {
       turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_BESTATTUNGEN_EBERHARDT;
     } else if (source === 'fm-freie-rednerin') {
       turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_FM_FREIE_REDNERIN;
+    } else if (source === 'immom') {
+      turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_IMMOM;
     }
     const verifyResult = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
       method: 'POST',
@@ -1018,6 +1020,274 @@ export async function onRequestPost(context) {
         </html>
       `;
 
+    } else if (source === 'immom') {
+      // ───── IMMOM E-MAIL ─────
+      const { type, email } = data;
+
+      if (!email) {
+        return new Response(JSON.stringify({ success: false, message: 'E-Mail ist ein Pflichtfeld.' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      fromName = 'Scholz & Friese Webdesign';
+      recipientEmail = 'friese.scholz@gmail.com';
+
+      if (type === 'checklist') {
+        emailSubject = `[ImmoM] 📚 Eigentümer-Ratgeber angefordert von ${email}`;
+        emailHtml = `
+          <!DOCTYPE html>
+          <html lang="de">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          </head>
+          <body style="margin: 0; padding: 0; background-color: #F7F1E8; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #071B33;">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #F7F1E8; padding: 40px 10px;">
+              <tr>
+                <td align="center">
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff; border: 1px solid #E8E8E8; border-top: 4px solid #D9A24A; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.03);">
+                    <tr>
+                      <td style="padding: 30px; border-bottom: 1px solid #E8E8E8; background-color: #071B33; text-align: center;">
+                        <h2 style="margin: 0; color: #ffffff; font-family: Georgia, serif; font-size: 22px; font-weight: 400; letter-spacing: 1px;">ImmoM</h2>
+                        <p style="margin: 5px 0 0 0; font-size: 11px; color: #D9A24A; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">Eigentümer-Ratgeber Download</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 40px 35px;">
+                        <p style="font-size: 15px; line-height: 1.6; color: #071B33; margin: 0 0 20px 0; font-weight: 600;">
+                          Hallo Christian,
+                        </p>
+                        <p style="font-size: 14.5px; line-height: 1.6; color: #102A4C; margin: 0 0 25px 0;">
+                          über das Formular der kostenlosen Checkliste wurde eine neue Anfrage übermittelt:
+                        </p>
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 30px; border-collapse: collapse;">
+                          <tr>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #E8E8E8; font-weight: 600; color: #071B33; width: 40%; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">E-Mail-Adresse</td>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #E8E8E8; color: #102A4C; font-size: 14.5px;"><a href="mailto:${email}" style="color: #D9A24A; text-decoration: none; font-weight: 600;">${email}</a></td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #E8E8E8; font-weight: 600; color: #071B33; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">Aktion</td>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #E8E8E8; color: #102A4C; font-size: 14.5px;">PDF-Checkliste / Ratgeber angefordert</td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="background-color: #071B33; padding: 25px; text-align: center; font-size: 11px; color: #E8E8E8; line-height: 1.6;">
+                        Anfrage über <a href="https://immom.de" style="color: #D9A24A; text-decoration: none;">immom.de</a><br>
+                        Technischer Partner: <strong>Scholz & Friese Webdesign</strong>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </body>
+          </html>
+        `;
+      } else if (type === 'expose') {
+        const { name, phone, msg, propertyTitle, propertyLocation, propertyPrice } = data;
+        emailSubject = `[ImmoM] 🏡 Exposé- & Besichtigungsanfrage von ${name}`;
+        emailHtml = `
+          <!DOCTYPE html>
+          <html lang="de">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          </head>
+          <body style="margin: 0; padding: 0; background-color: #F7F1E8; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #071B33;">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #F7F1E8; padding: 40px 10px;">
+              <tr>
+                <td align="center">
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff; border: 1px solid #E8E8E8; border-top: 4px solid #D9A24A; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.03);">
+                    <tr>
+                      <td style="padding: 30px; border-bottom: 1px solid #E8E8E8; background-color: #071B33; text-align: center;">
+                        <h2 style="margin: 0; color: #ffffff; font-family: Georgia, serif; font-size: 22px; font-weight: 400; letter-spacing: 1px;">ImmoM</h2>
+                        <p style="margin: 5px 0 0 0; font-size: 11px; color: #D9A24A; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">Exposé- & Besichtigungsanfrage</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 40px 35px;">
+                        <p style="font-size: 15px; line-height: 1.6; color: #071B33; margin: 0 0 20px 0; font-weight: 600;">
+                          Hallo Christian,
+                        </p>
+                        <p style="font-size: 14.5px; line-height: 1.6; color: #102A4C; margin: 0 0 25px 0;">
+                          über das Exposé-Modal wurde eine neue Anfrage übermittelt:
+                        </p>
+                        
+                        <h3 style="margin: 25px 0 10px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; color: #071B33; border-bottom: 1px solid #E8E8E8; padding-bottom: 5px;">Interessent</h3>
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 25px; border-collapse: collapse;">
+                          <tr>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; color: #071B33; width: 40%; font-size: 12px;">Name</td>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;">${name}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; color: #071B33; font-size: 12px;">E-Mail</td>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;"><a href="mailto:${email}" style="color: #D9A24A; text-decoration: none;">${email}</a></td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; color: #071B33; font-size: 12px;">Telefon</td>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;"><a href="tel:${phone}" style="color: #102A4C; text-decoration: none;">${phone}</a></td>
+                          </tr>
+                        </table>
+
+                        <h3 style="margin: 25px 0 10px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; color: #071B33; border-bottom: 1px solid #E8E8E8; padding-bottom: 5px;">Interessantes Objekt</h3>
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 30px; border-collapse: collapse;">
+                          <tr>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; color: #071B33; width: 40%; font-size: 12px;">Titel</td>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px; font-weight: 600;">${propertyTitle}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; color: #071B33; font-size: 12px;">Ort</td>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;">${propertyLocation}</td>
+                          </tr>
+                          ${propertyPrice ? `<tr>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; color: #071B33; font-size: 12px;">Kaufpreis</td>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; color: #D9A24A; font-size: 14px; font-weight: bold;">${propertyPrice}</td>
+                          </tr>` : ''}
+                        </table>
+
+                        <div style="background-color: #F7F1E8; border-left: 4px solid #D9A24A; padding: 15px 20px; border-radius: 4px; margin-top: 25px;">
+                          <h4 style="margin: 0 0 8px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #071B33;">Nachricht / Wünsche:</h4>
+                          <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #102A4C; font-style: italic;">"${msg.replace(/\n/g, '<br>')}"</p>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="background-color: #071B33; padding: 25px; text-align: center; font-size: 11px; color: #E8E8E8; line-height: 1.6;">
+                        Anfrage über <a href="https://immom.de" style="color: #D9A24A; text-decoration: none;">immom.de</a><br>
+                        Technischer Partner: <strong>Scholz & Friese Webdesign</strong>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </body>
+          </html>
+        `;
+      } else if (type === 'valuation') {
+        const { flow, anrede, vorname, nachname, phone, terminwunsch } = data;
+        const nameLabel = `${anrede === 'frau' ? 'Frau' : 'Herr'} ${vorname} ${nachname}`;
+        
+        emailSubject = flow === 'beratung'
+          ? `[ImmoM] 📞 Rückruf- & Beratungstermin angefordert von ${vorname} ${nachname}`
+          : `[ImmoM] 🏛️ Neue Online-Wertermittlung (${flow}) von ${vorname} ${nachname}`;
+        
+        // Build properties list based on the chosen flow
+        let detailsHtml = '';
+        if (flow === 'haus') {
+          const { hausart, subHausart, wohnungenAnzahl, gewerbeAnteil, zimmeranz, etagen, wohnflaeche, grundstueckflaeche, baujahr, besonderheitenHaus, vermietetHaus } = data;
+          detailsHtml = `
+            <tr><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; font-size: 12px; color: #071B33; width: 45%;">Kategorie</td><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;">Haus</td></tr>
+            <tr><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; font-size: 12px; color: #071B33;">Hausart</td><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;">${hausart === 'einfamilienhaus' ? 'Einfamilienhaus' : 'Mehrfamilienhaus'}</td></tr>
+            <tr><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; font-size: 12px; color: #071B33;">Typ</td><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;">${subHausart}</td></tr>
+            ${wohnungenAnzahl ? `<tr><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; font-size: 12px; color: #071B33;">Anzahl Wohnungen</td><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;">${wohnungenAnzahl}</td></tr>` : ''}
+            <tr><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; font-size: 12px; color: #071B33;">Gewerbeanteil</td><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;">${gewerbeAnteil}</td></tr>
+            ${zimmeranz ? `<tr><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; font-size: 12px; color: #071B33;">Zimmer</td><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;">${zimmeranz}</td></tr>` : ''}
+            ${etagen ? `<tr><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; font-size: 12px; color: #071B33;">Etagen</td><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;">${etagen}</td></tr>` : ''}
+            <tr><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; font-size: 12px; color: #071B33;">Wohnfläche</td><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px; font-weight: bold;">${wohnflaeche} m²</td></tr>
+            <tr><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; font-size: 12px; color: #071B33;">Grundstücksfläche</td><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;">${grundstueckflaeche} m²</td></tr>
+            <tr><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; font-size: 12px; color: #071B33;">Baujahr</td><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;">${baujahr}</td></tr>
+            <tr><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; font-size: 12px; color: #071B33;">Vermietet</td><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;">${vermietetHaus}</td></tr>
+            ${besonderheitenHaus && besonderheitenHaus.length > 0 ? `<tr><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; font-size: 12px; color: #071B33;">Besonderheiten</td><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;">${besonderheitenHaus.join(', ')}</td></tr>` : ''}
+          `;
+        } else if (flow === 'wohnung') {
+          const { wohnungsflaeche, wohnungszimmer, wohnungsbaujahr, wohnungsEtage, besonderheitenWohnung, vermietetWohnung } = data;
+          detailsHtml = `
+            <tr><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; font-size: 12px; color: #071B33; width: 45%;">Kategorie</td><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;">Wohnung</td></tr>
+            <tr><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; font-size: 12px; color: #071B33;">Wohnfläche</td><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px; font-weight: bold;">${wohnungsflaeche} m²</td></tr>
+            <tr><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; font-size: 12px; color: #071B33;">Zimmer</td><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;">${wohnungszimmer}</td></tr>
+            <tr><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; font-size: 12px; color: #071B33;">Baujahr</td><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;">${wohnungsbaujahr}</td></tr>
+            <tr><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; font-size: 12px; color: #071B33;">Etage</td><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;">${wohnungsEtage}</td></tr>
+            <tr><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; font-size: 12px; color: #071B33;">Vermietet</td><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;">${vermietetWohnung}</td></tr>
+            ${besonderheitenWohnung && besonderheitenWohnung.length > 0 ? `<tr><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; font-size: 12px; color: #071B33;">Besonderheiten</td><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;">${besonderheitenWohnung.join(', ')}</td></tr>` : ''}
+          `;
+        } else if (flow === 'gewerbe') {
+          const { gewerbeart, gewerbeflaeche, gewerbebaujahr } = data;
+          detailsHtml = `
+            <tr><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; font-size: 12px; color: #071B33; width: 45%;">Kategorie</td><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;">Gewerbe</td></tr>
+            <tr><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; font-size: 12px; color: #071B33;">Gewerbeart</td><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;">${gewerbeart}</td></tr>
+            <tr><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; font-size: 12px; color: #071B33;">Fläche</td><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px; font-weight: bold;">${gewerbeflaeche} m²</td></tr>
+            <tr><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; font-size: 12px; color: #071B33;">Baujahr</td><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;">${gewerbebaujahr}</td></tr>
+          `;
+        } else if (flow === 'beratung') {
+          detailsHtml = `
+            <tr><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; font-size: 12px; color: #071B33; width: 45%;">Kategorie</td><td style="padding: 8px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;">Direkte Beratung / Rückruf</td></tr>
+          `;
+        }
+
+        emailHtml = `
+          <!DOCTYPE html>
+          <html lang="de">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          </head>
+          <body style="margin: 0; padding: 0; background-color: #F7F1E8; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #071B33;">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #F7F1E8; padding: 40px 10px;">
+              <tr>
+                <td align="center">
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff; border: 1px solid #E8E8E8; border-top: 4px solid #D9A24A; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.03);">
+                    <tr>
+                      <td style="padding: 30px; border-bottom: 1px solid #E8E8E8; background-color: #071B33; text-align: center;">
+                        <h2 style="margin: 0; color: #ffffff; font-family: Georgia, serif; font-size: 22px; font-weight: 400; letter-spacing: 1px;">ImmoM</h2>
+                        <p style="margin: 5px 0 0 0; font-size: 11px; color: #D9A24A; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">${flow === 'beratung' ? 'Beratungsanfrage' : 'Online-Wertermittlung'}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 40px 35px;">
+                        <p style="font-size: 15px; line-height: 1.6; color: #071B33; margin: 0 0 20px 0; font-weight: 600;">
+                          Hallo Christian,
+                        </p>
+                        <p style="font-size: 14.5px; line-height: 1.6; color: #102A4C; margin: 0 0 25px 0;">
+                          über das Formular der Online-Wertermittlung wurde eine neue Anfrage übermittelt:
+                        </p>
+                        
+                        <h3 style="margin: 25px 0 10px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; color: #071B33; border-bottom: 1px solid #E8E8E8; padding-bottom: 5px;">Kontaktdaten</h3>
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 25px; border-collapse: collapse;">
+                          <tr>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; color: #071B33; width: 40%; font-size: 12px;">Name</td>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;">${nameLabel}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; color: #071B33; font-size: 12px;">E-Mail</td>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;"><a href="mailto:${email}" style="color: #D9A24A; text-decoration: none;">${email}</a></td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; color: #071B33; font-size: 12px;">Telefon</td>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;"><a href="tel:${phone}" style="color: #102A4C; text-decoration: none;">${phone}</a></td>
+                          </tr>
+                          ${terminwunsch ? `<tr>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; color: #071B33; font-size: 12px;">Rückruf/Termin Wunsch</td>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;">${terminwunsch}</td>
+                          </tr>` : ''}
+                        </table>
+
+                        ${flow !== 'beratung' ? `
+                          <h3 style="margin: 25px 0 10px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; color: #071B33; border-bottom: 1px solid #E8E8E8; padding-bottom: 5px;">Immobiliendetails</h3>
+                          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 30px; border-collapse: collapse;">
+                            ${detailsHtml}
+                          </table>
+                        ` : ''}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="background-color: #071B33; padding: 25px; text-align: center; font-size: 11px; color: #E8E8E8; line-height: 1.6;">
+                        Anfrage über <a href="https://immom.de" style="color: #D9A24A; text-decoration: none;">immom.de</a><br>
+                        Technischer Partner: <strong>Scholz & Friese Webdesign</strong>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </body>
+          </html>
+        `;
+      }
     } else {
       // ───── STANDARD SF WEBDESIGN E-MAIL (Original) ─────
       const { companyName, contactName, phone, email, wishes } = data;
