@@ -36,6 +36,8 @@ export async function onRequestPost(context) {
       turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_FM_FREIE_REDNERIN;
     } else if (source === 'immom') {
       turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_IMMOM;
+    } else if (source === 'Rodes-Hotel') {
+      turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_RODES_HOTEL;
     }
     const verifyResult = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
       method: 'POST',
@@ -1288,6 +1290,81 @@ export async function onRequestPost(context) {
           </html>
         `;
       }
+    } else if (source === 'Rodes-Hotel') {
+      const { name, email, phone, type, message } = data;
+
+      if (!name || !email || !phone || !message) {
+        return new Response(JSON.stringify({ success: false, message: 'Bitte alle Pflichtfelder ausfüllen.' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      fromName = 'Rodes Hotel';
+      recipientEmail = 'info@rodes-hotel.de';
+      emailSubject = `[Rodes Hotel] ✉️ Neue Online-Anfrage von ${name}`;
+      emailHtml = `
+        <!DOCTYPE html>
+        <html lang="de">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body style="margin: 0; padding: 0; background-color: #F7F1E8; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-font-smoothing: antialiased; color: #102A4C;">
+          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #F7F1E8; padding: 40px 10px;">
+            <tr>
+              <td align="center">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff; border: 1px solid #E8E8E8; border-top: 4px solid #D9A24A; border-radius: 8px; overflow: hidden; box-shadow: 0 15px 40px rgba(0, 0, 0, 0.05);">
+                  <tr>
+                    <td style="background-color: #071B33; padding: 35px 30px; text-align: center; border-bottom: 2px solid #D9A24A;">
+                      <h1 style="margin: 0; font-family: Georgia, serif; font-size: 24px; letter-spacing: 0.08em; color: #ffffff; text-transform: uppercase; font-weight: 400;">Rodes Hotel</h1>
+                      <p style="margin: 6px 0 0 0; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: #D9A24A; font-weight: 500;">Online-Anfrage & Buchung</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 40px 35px;">
+                      <p style="font-family: Georgia, serif; font-size: 18px; color: #071B33; margin: 0 0 15px 0; font-style: italic;">Hallo Team,</p>
+                      <p style="color: #102A4C; font-size: 14.5px; line-height: 1.6; margin: 0 0 30px 0; font-weight: 300;">
+                        über die Website wurde eine neue Anfrage eingereicht:
+                      </p>
+                      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 30px; border-collapse: collapse; border: 1px solid #E8E8E8;">
+                        <tr>
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #E8E8E8; font-weight: 600; color: #071B33; width: 35%; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.08em; background-color: #fcfbfa;">Name</td>
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #E8E8E8; color: #102A4C; font-size: 14px;">${name}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #E8E8E8; font-weight: 600; color: #071B33; width: 35%; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.08em; background-color: #fcfbfa;">E-Mail</td>
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #E8E8E8; color: #102A4C; font-size: 14px;"><a href="mailto:${email}" style="color: #D9A24A; text-decoration: none;">${email}</a></td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #E8E8E8; font-weight: 600; color: #071B33; width: 35%; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.08em; background-color: #fcfbfa;">Telefon</td>
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #E8E8E8; color: #102A4C; font-size: 14px;"><a href="tel:${phone}" style="color: #102A4C; text-decoration: none;">${phone}</a></td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #E8E8E8; font-weight: 600; color: #071B33; width: 35%; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.08em; background-color: #fcfbfa;">Anfragetyp</td>
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #E8E8E8; color: #102A4C; font-size: 14px; font-weight: bold; text-transform: capitalize;">${type}</td>
+                        </tr>
+                      </table>
+                      
+                      <div style="background-color: #F7F1E8; border-left: 4px solid #D9A24A; padding: 20px; border-radius: 4px;">
+                        <h4 style="margin: 0 0 10px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #071B33; font-weight: 600;">Nachricht / Anfrage:</h4>
+                        <p style="font-style: italic; color: #102A4C; font-size: 14.5px; line-height: 1.6; margin: 0; white-space: pre-wrap;">"${message.replace(/\n/g, '<br>')}"</p>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="background-color: #071B33; padding: 25px; text-align: center; border-top: 1px solid #E8E8E8; font-size: 11px; color: #ffffff; line-height: 1.6;">
+                      Anfrage über <a href="https://rodes-hotel.de" style="color: #D9A24A; text-decoration: none;">rodes-hotel.de</a><br>
+                      Technischer Partner: <strong>Scholz & Friese Webdesign</strong>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </body>
+        </html>
+      `;
     } else {
       // ───── STANDARD SF WEBDESIGN E-MAIL (Original) ─────
       const { companyName, contactName, phone, email, wishes } = data;
