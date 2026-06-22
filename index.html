@@ -1696,22 +1696,19 @@
       }
 
       .team-container {
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        gap: 20px;
-        padding-bottom: 20px;
-        justify-content: flex-start;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+        margin-top: 30px;
       }
 
       .team-member {
-        flex: 0 0 auto;
-        width: 240px;
-        scroll-snap-align: center;
+        width: 260px;
       }
 
       .team-name {
-        font-size: 1rem;
+        font-size: 1.1rem;
       }
     }
 
