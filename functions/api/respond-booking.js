@@ -1,4 +1,3 @@
-const https = require('https');
 
 export async function onRequestGet(context) {
   const { request, env } = context;
