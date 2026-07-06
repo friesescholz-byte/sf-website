@@ -1113,7 +1113,7 @@ export async function onRequestPost(context) {
           </html>
         `;
       } else if (type === 'expose') {
-        const { name, phone, msg, propertyTitle, propertyLocation, propertyPrice } = data;
+        const { name, phone, msg, propertyTitle, propertyLocation, propertyPrice, exposeUrl } = data;
         emailSubject = `[ImmoM] 🏡 Exposé- & Besichtigungsanfrage von ${name}`;
         emailHtml = `
           <!DOCTYPE html>
@@ -1172,11 +1172,15 @@ export async function onRequestPost(context) {
                             <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; color: #071B33; font-size: 12px;">Kaufpreis</td>
                             <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; color: #D9A24A; font-size: 14px; font-weight: bold;">${propertyPrice}</td>
                           </tr>` : ''}
+                          <tr>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; color: #071B33; font-size: 12px;">Auto-PDF Versendet?</td>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; color: ${exposeUrl ? '#2e7d32' : '#d97706'}; font-size: 14px; font-weight: bold;">${exposeUrl ? 'Ja (PDF-Link per E-Mail)' : 'Nein (kein PDF hinterlegt)'}</td>
+                          </tr>
                         </table>
 
                         <div style="background-color: #F7F1E8; border-left: 4px solid #D9A24A; padding: 15px 20px; border-radius: 4px; margin-top: 25px;">
                           <h4 style="margin: 0 0 8px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #071B33;">Nachricht / Wünsche:</h4>
-                          <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #102A4C; font-style: italic;">"${msg.replace(/\n/g, '<br>')}"</p>
+                          <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #102A4C; font-style: italic;">"${(msg || '').replace(/\n/g, '<br>')}"</p>
                         </div>
                       </td>
                     </tr>
@@ -1510,6 +1514,99 @@ export async function onRequestPost(context) {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
+    }
+
+    // Secondary autoresponder email for exposé requests to user
+    if (source === 'immom' && data.type === 'expose' && data.email) {
+      try {
+        const userSubject = `[ImmoM] Ihr angefordertes Exposé: ${data.propertyTitle || 'Immobilie'}`;
+        const hasPdf = !!data.exposeUrl;
+        const userHtml = `
+          <!DOCTYPE html>
+          <html lang="de">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          </head>
+          <body style="margin: 0; padding: 0; background-color: #F7F1E8; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #071B33;">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #F7F1E8; padding: 40px 10px;">
+              <tr>
+                <td align="center">
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff; border: 1px solid #E8E8E8; border-top: 4px solid #D9A24A; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.03);">
+                    <tr>
+                      <td style="padding: 30px; border-bottom: 1px solid #E8E8E8; background-color: #071B33; text-align: center;">
+                        <h2 style="margin: 0; color: #ffffff; font-family: Georgia, serif; font-size: 22px; font-weight: 400; letter-spacing: 1px;">ImmoM</h2>
+                        <p style="margin: 5px 0 0 0; font-size: 11px; color: #D9A24A; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">Exposé & Informationen</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 40px 35px;">
+                        <p style="font-size: 16px; line-height: 1.6; color: #071B33; margin: 0 0 20px 0; font-weight: 600;">
+                          Guten Tag ${data.name || ''},
+                        </p>
+                        <p style="font-size: 14.5px; line-height: 1.6; color: #102A4C; margin: 0 0 25px 0;">
+                          vielen Dank für Ihr Interesse an der Immobilie <strong>"${data.propertyTitle || ''}"</strong> in ${data.propertyLocation || ''}.
+                        </p>
+                        
+                        ${hasPdf ? `
+                          <div style="background-color: #F7F1E8; border-left: 4px solid #D9A24A; border-radius: 4px; padding: 20px; margin-bottom: 25px; text-align: left;">
+                            <h4 style="margin: 0 0 8px 0; font-size: 15px; color: #071B33; font-weight: 700;">Exposé jetzt als PDF herunterladen</h4>
+                            <p style="margin: 0 0 15px 0; font-size: 13.5px; line-height: 1.5; color: #102A4C;">
+                              Klicken Sie auf den folgenden Button, um das vollständige Exposé inklusive allen Raumaufteilungen und Details einzusehen:
+                            </p>
+                            <a href="${data.exposeUrl}" target="_blank" style="display: inline-block; background-color: #071B33; color: #ffffff; text-decoration: none; padding: 12px 22px; border-radius: 6px; font-size: 14px; font-weight: 700;">PDF-Exposé herunterladen</a>
+                          </div>
+                        ` : `
+                          <p style="font-size: 14px; line-height: 1.6; color: #102A4C; margin: 0 0 25px 0; background-color: #F7F1E8; padding: 15px; border-radius: 6px;">
+                            Wir bereiten das individuelle Exposé für dieses Objekt gerade vor und lassen es Ihnen in Kürze persönlich zukommen.
+                          </p>
+                        `}
+
+                        <p style="font-size: 14px; line-height: 1.6; color: #102A4C; margin: 25px 0 0 0;">
+                          Möchten Sie einen persönlichen Besichtigungstermin vereinbaren oder haben Sie Fragen zum Objekt? Wir stehen Ihnen jederzeit gerne zur Verfügung.
+                        </p>
+                        <p style="font-size: 14px; line-height: 1.6; color: #102A4C; margin: 20px 0 0 0; font-weight: 600;">
+                          Herzliche Grüße,<br>
+                          Christian Menzel
+                        </p>
+                        <p style="font-size: 12.5px; line-height: 1.5; color: #7a92a3; margin: 5px 0 0 0;">
+                          ImmoM / CM-Immobilien<br>
+                          Büro: An den Teichen 30, 31608 Marklohe<br>
+                          Telefon: 05021 8601001 | E-Mail: mail@immom.eu
+                        </p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="background-color: #071B33; padding: 25px; text-align: center; font-size: 11px; color: #E8E8E8; line-height: 1.6;">
+                        Anfrage über <a href="https://immom.de" style="color: #D9A24A; text-decoration: none;">immom.de</a><br>
+                        Technischer Partner: <strong>Scholz & Friese Webdesign</strong>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </body>
+          </html>
+        `;
+
+        await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${resendApiKey}`,
+          },
+          body: JSON.stringify({
+            from: `${fromName} <noreply@scholz-friese-webdesign.de>`,
+            to: data.email,
+            reply_to: 'mail@immom.eu',
+            subject: userSubject,
+            html: userHtml,
+          }),
+        });
+      } catch (err) {
+        console.error("Error sending user expose email:", err);
+      }
     }
 
     return new Response(JSON.stringify({ success: true, message: 'Anfrage erfolgreich übermittelt!' }), {
