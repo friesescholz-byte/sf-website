@@ -38,6 +38,8 @@ export async function onRequestPost(context) {
       turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_IMMOM;
     } else if (source === 'Rodes-Hotel') {
       turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_RODES_HOTEL;
+    } else if (source === 'Bickbeernhof-Brokeloh') {
+      turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_BICKBEERNHOF;
     }
     const verifyResult = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
       method: 'POST',
@@ -1037,7 +1039,7 @@ export async function onRequestPost(context) {
       recipientEmail = 'friese.scholz@gmail.com';
 
       if (type === 'checklist') {
-        emailSubject = `[ImmoM] 📚 Eigentümer-Ratgeber angefordert von ${email}`;
+        emailSubject = `[ImmoM] 📚 Ihre angeforderten Checklisten für den Immobilienverkauf`;
         emailHtml = `
           <!DOCTYPE html>
           <html lang="de">
@@ -1053,27 +1055,48 @@ export async function onRequestPost(context) {
                     <tr>
                       <td style="padding: 30px; border-bottom: 1px solid #E8E8E8; background-color: #071B33; text-align: center;">
                         <h2 style="margin: 0; color: #ffffff; font-family: Georgia, serif; font-size: 22px; font-weight: 400; letter-spacing: 1px;">ImmoM</h2>
-                        <p style="margin: 5px 0 0 0; font-size: 11px; color: #D9A24A; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">Eigentümer-Ratgeber Download</p>
+                        <p style="margin: 5px 0 0 0; font-size: 11px; color: #D9A24A; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">Ihre angeforderten Checklisten</p>
                       </td>
                     </tr>
                     <tr>
                       <td style="padding: 40px 35px;">
-                        <p style="font-size: 15px; line-height: 1.6; color: #071B33; margin: 0 0 20px 0; font-weight: 600;">
-                          Hallo Christian,
+                        <p style="font-size: 16px; line-height: 1.6; color: #071B33; margin: 0 0 20px 0; font-weight: 600;">
+                          Guten Tag,
                         </p>
                         <p style="font-size: 14.5px; line-height: 1.6; color: #102A4C; margin: 0 0 25px 0;">
-                          über das Formular der kostenlosen Checkliste wurde eine neue Anfrage übermittelt:
+                          vielen Dank für Ihr Interesse an unseren Eigentümer-Ratgebern. Wie gewünscht senden wir Ihnen hiermit die Download-Links zu Ihren beiden kostenlosen Checklisten direkt in Ihr Postfach:
                         </p>
-                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 30px; border-collapse: collapse;">
-                          <tr>
-                            <td style="padding: 12px 14px; border-bottom: 1px solid #E8E8E8; font-weight: 600; color: #071B33; width: 40%; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">E-Mail-Adresse</td>
-                            <td style="padding: 12px 14px; border-bottom: 1px solid #E8E8E8; color: #102A4C; font-size: 14.5px;"><a href="mailto:${email}" style="color: #D9A24A; text-decoration: none; font-weight: 600;">${email}</a></td>
-                          </tr>
-                          <tr>
-                            <td style="padding: 12px 14px; border-bottom: 1px solid #E8E8E8; font-weight: 600; color: #071B33; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">Aktion</td>
-                            <td style="padding: 12px 14px; border-bottom: 1px solid #E8E8E8; color: #102A4C; font-size: 14.5px;">PDF-Checkliste / Ratgeber angefordert</td>
-                          </tr>
-                        </table>
+                        
+                        <!-- Checkliste 1 -->
+                        <div style="background-color: #F7F1E8; border-left: 4px solid #D9A24A; border-radius: 4px; padding: 20px; margin-bottom: 20px; text-align: left;">
+                          <h4 style="margin: 0 0 8px 0; font-size: 15px; color: #071B33; font-weight: 700;">1. Checkliste: Optimale Immobilien-Aufbereitung</h4>
+                          <p style="margin: 0 0 15px 0; font-size: 13.5px; line-height: 1.5; color: #102A4C;">
+                            Wertsteigerung mit System: Erfahren Sie, wie Sie Ihre Immobilie für Besichtigungen perfekt vorbereiten, um den besten ersten Eindruck zu hinterlassen.
+                          </p>
+                          <a href="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/ImmoM/Checkliste-Aufbereitung.pdf" style="display: inline-block; background-color: #071B33; color: #ffffff; text-decoration: none; padding: 10px 18px; border-radius: 6px; font-size: 13px; font-weight: 700;">Checkliste Aufbereitung herunterladen (PDF)</a>
+                        </div>
+                        
+                        <!-- Checkliste 2 -->
+                        <div style="background-color: #F7F1E8; border-left: 4px solid #D9A24A; border-radius: 4px; padding: 20px; margin-bottom: 25px; text-align: left;">
+                          <h4 style="margin: 0 0 8px 0; font-size: 15px; color: #071B33; font-weight: 700;">2. Checkliste: Fahrplan für den Haus-Verkauf</h4>
+                          <p style="margin: 0 0 15px 0; font-size: 13.5px; line-height: 1.5; color: #102A4C;">
+                            Schritt für Schritt zum Bestpreis: Vermeiden Sie die 10 typischen Fehler beim Immobilienverkauf und führen Sie den Verkauf rechtssicher durch.
+                          </p>
+                          <a href="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/ImmoM/Checkliste-Haus-Verkauf.pdf" style="display: inline-block; background-color: #071B33; color: #ffffff; text-decoration: none; padding: 10px 18px; border-radius: 6px; font-size: 13px; font-weight: 700;">Checkliste Haus-Verkauf herunterladen (PDF)</a>
+                        </div>
+
+                        <p style="font-size: 14px; line-height: 1.6; color: #102A4C; margin: 25px 0 0 0;">
+                          Haben Sie Fragen zur Bewertung oder Vermarktung Ihrer Immobilie? Wir stehen Ihnen gerne für ein persönliches, kostenloses Beratungsgespräch zur Verfügung.
+                        </p>
+                        <p style="font-size: 14px; line-height: 1.6; color: #102A4C; margin: 20px 0 0 0; font-weight: 600;">
+                          Herzliche Grüße,<br>
+                          Christian Menzel
+                        </p>
+                        <p style="font-size: 12.5px; line-height: 1.5; color: #7a92a3; margin: 5px 0 0 0;">
+                          ImmoM / CM-Immobilien<br>
+                          Büro: An den Teichen 30, 31608 Marklohe<br>
+                          Telefon: 05021 8601001 | E-Mail: mail@immom.eu
+                        </p>
                       </td>
                     </tr>
                     <tr>
@@ -1454,6 +1477,16 @@ export async function onRequestPost(context) {
     }
 
     // 4. E-Mail über Resend senden
+    let emailTo = recipientEmail;
+    let emailBcc = undefined;
+    let replyToEmail = data.email;
+
+    if (source === 'immom' && data.type === 'checklist') {
+      emailTo = data.email;
+      emailBcc = recipientEmail;
+      replyToEmail = 'mail@immom.eu';
+    }
+
     const resendResponse = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -1462,8 +1495,9 @@ export async function onRequestPost(context) {
       },
       body: JSON.stringify({
         from: `${fromName} <noreply@scholz-friese-webdesign.de>`,
-        to: recipientEmail,
-        reply_to: data.email,
+        to: emailTo,
+        bcc: emailBcc,
+        reply_to: replyToEmail,
         subject: emailSubject,
         html: emailHtml,
         attachments: data.attachments || [],
