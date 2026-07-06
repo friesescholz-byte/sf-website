@@ -61,6 +61,7 @@ export async function onRequestPost(context) {
     let recipientEmail = 'support@scholz-friese-chatbot.de';
 
     if (source === 'Stephan-van-Hausen') {
+      recipientEmail = 'friese.scholz@gmail.com';
       // ───── STEPHAN VAN HAUSEN E-MAIL ─────
       const { name, email, phone, date, tourType, groupSize, gewandZuschlag, cost, message } = data;
 
