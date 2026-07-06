@@ -1090,7 +1090,7 @@ export async function onRequestPost(context) {
                         </p>
                         <p style="font-size: 14px; line-height: 1.6; color: #102A4C; margin: 20px 0 0 0; font-weight: 600;">
                           Herzliche Grüße,<br>
-                          Christian Menzel
+                          Carsten Meyer
                         </p>
                         <p style="font-size: 12.5px; line-height: 1.5; color: #7a92a3; margin: 5px 0 0 0;">
                           ImmoM / CM-Immobilien<br>
@@ -1136,7 +1136,7 @@ export async function onRequestPost(context) {
                     <tr>
                       <td style="padding: 40px 35px;">
                         <p style="font-size: 15px; line-height: 1.6; color: #071B33; margin: 0 0 20px 0; font-weight: 600;">
-                          Hallo Christian,
+                          Hallo Carsten,
                         </p>
                         <p style="font-size: 14.5px; line-height: 1.6; color: #102A4C; margin: 0 0 25px 0;">
                           über das Exposé-Modal wurde eine neue Anfrage übermittelt:
@@ -1269,7 +1269,7 @@ export async function onRequestPost(context) {
                     <tr>
                       <td style="padding: 40px 35px;">
                         <p style="font-size: 15px; line-height: 1.6; color: #071B33; margin: 0 0 20px 0; font-weight: 600;">
-                          Hallo Christian,
+                          Hallo Carsten,
                         </p>
                         <p style="font-size: 14.5px; line-height: 1.6; color: #102A4C; margin: 0 0 25px 0;">
                           über das Formular der Online-Wertermittlung wurde eine neue Anfrage übermittelt:
@@ -1599,7 +1599,7 @@ export async function onRequestPost(context) {
 
                         <p style="font-size: 14px; line-height: 1.6; color: #102A4C; margin: 30px 0 0 0; font-weight: 600;">
                           Herzliche Grüße,<br>
-                          Christian Menzel
+                          Carsten Meyer
                         </p>
                         <p style="font-size: 12.5px; line-height: 1.5; color: #7a92a3; margin: 5px 0 0 0;">
                           ImmoM / CM-Immobilien<br>
