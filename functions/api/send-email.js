@@ -1520,7 +1520,27 @@ export async function onRequestPost(context) {
     if (source === 'immom' && data.type === 'expose' && data.email) {
       try {
         const userSubject = `[ImmoM] Ihr angefordertes Exposé: ${data.propertyTitle || 'Immobilie'}`;
-        const hasPdf = !!data.exposeUrl;
+        
+        let attachments = [];
+        let hasPdf = false;
+        let isLink = false;
+        let pdfUrl = '';
+
+        if (data.exposeUrl) {
+          hasPdf = true;
+          if (data.exposeUrl.startsWith('data:application/pdf;base64,')) {
+            const base64Content = data.exposeUrl.split(';base64,')[1];
+            const cleanTitle = (data.propertyTitle || 'Expose_Immobilie').replace(/[^a-zA-Z0-9]/g, '_');
+            attachments.push({
+              content: base64Content,
+              filename: `${cleanTitle}.pdf`
+            });
+          } else if (data.exposeUrl.startsWith('http')) {
+            isLink = true;
+            pdfUrl = data.exposeUrl;
+          }
+        }
+
         const userHtml = `
           <!DOCTYPE html>
           <html lang="de">
@@ -1548,24 +1568,36 @@ export async function onRequestPost(context) {
                           vielen Dank für Ihr Interesse an der Immobilie <strong>"${data.propertyTitle || ''}"</strong> in ${data.propertyLocation || ''}.
                         </p>
                         
-                        ${hasPdf ? `
+                        ${isLink ? `
                           <div style="background-color: #F7F1E8; border-left: 4px solid #D9A24A; border-radius: 4px; padding: 20px; margin-bottom: 25px; text-align: left;">
                             <h4 style="margin: 0 0 8px 0; font-size: 15px; color: #071B33; font-weight: 700;">Exposé jetzt als PDF herunterladen</h4>
                             <p style="margin: 0 0 15px 0; font-size: 13.5px; line-height: 1.5; color: #102A4C;">
-                              Klicken Sie auf den folgenden Button, um das vollständige Exposé inklusive allen Raumaufteilungen und Details einzusehen:
+                              Klicken Sie auf den folgenden Button, um das vollständige Exposé inklusive allen Details als PDF herunterzuladen:
                             </p>
-                            <a href="${data.exposeUrl}" target="_blank" style="display: inline-block; background-color: #071B33; color: #ffffff; text-decoration: none; padding: 12px 22px; border-radius: 6px; font-size: 14px; font-weight: 700;">PDF-Exposé herunterladen</a>
+                            <a href="${pdfUrl}" target="_blank" style="display: inline-block; background-color: #071B33; color: #ffffff; text-decoration: none; padding: 12px 22px; border-radius: 6px; font-size: 14px; font-weight: 700;">PDF-Exposé herunterladen</a>
+                          </div>
+                        ` : (attachments.length > 0 ? `
+                          <div style="background-color: #F7F1E8; border-left: 4px solid #D9A24A; border-radius: 4px; padding: 20px; margin-bottom: 25px; text-align: left;">
+                            <h4 style="margin: 0 0 8px 0; font-size: 15px; color: #071B33; font-weight: 700;">Exposé im Anhang</h4>
+                            <p style="margin: 0; font-size: 13.5px; line-height: 1.5; color: #102A4C;">
+                              Das vollständige Exposé als PDF-Datei wurde dieser E-Mail direkt als <strong>Anlage beigefügt</strong>. Sie finden die Datei im Anhang.
+                            </p>
                           </div>
                         ` : `
                           <p style="font-size: 14px; line-height: 1.6; color: #102A4C; margin: 0 0 25px 0; background-color: #F7F1E8; padding: 15px; border-radius: 6px;">
-                            Wir bereiten das individuelle Exposé für dieses Objekt gerade vor und lassen es Ihnen in Kürze persönlich zukommen.
+                            Wir bereiten das Exposé für Sie vor und senden es Ihnen in Kürze zu.
                           </p>
-                        `}
+                        `)}
 
-                        <p style="font-size: 14px; line-height: 1.6; color: #102A4C; margin: 25px 0 0 0;">
-                          Möchten Sie einen persönlichen Besichtigungstermin vereinbaren oder haben Sie Fragen zum Objekt? Wir stehen Ihnen jederzeit gerne zur Verfügung.
+                        <p style="font-size: 14.5px; line-height: 1.65; color: #102A4C; margin: 25px 0 0 0;">
+                          Wir werden uns in Kürze persönlich bei Ihnen melden, um eventuelle Fragen zu besprechen und auf Wunsch einen gemeinsamen Besichtigungstermin vor Ort zu vereinbaren.
                         </p>
-                        <p style="font-size: 14px; line-height: 1.6; color: #102A4C; margin: 20px 0 0 0; font-weight: 600;">
+
+                        <p style="font-size: 14.5px; line-height: 1.65; color: #102A4C; margin: 20px 0 0 0;">
+                          Sollten Sie vorab bereits Fragen haben, erreichen Sie mich jederzeit direkt unter Telefon <strong>05021 - 860 10 01</strong> oder per E-Mail unter <a href="mailto:mail@immom.eu" style="color: #D9A24A; text-decoration: none; font-weight: 600;">mail@immom.eu</a>.
+                        </p>
+
+                        <p style="font-size: 14px; line-height: 1.6; color: #102A4C; margin: 30px 0 0 0; font-weight: 600;">
                           Herzliche Grüße,<br>
                           Christian Menzel
                         </p>
@@ -1602,6 +1634,7 @@ export async function onRequestPost(context) {
             reply_to: 'mail@immom.eu',
             subject: userSubject,
             html: userHtml,
+            attachments: attachments
           }),
         });
       } catch (err) {
