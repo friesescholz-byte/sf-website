@@ -63,7 +63,36 @@ export async function onRequestPost(context) {
     if (source === 'Stephan-van-Hausen') {
       recipientEmail = 'friese.scholz@gmail.com';
       // ───── STEPHAN VAN HAUSEN E-MAIL ─────
-      const { name, email, phone, date, tourType, groupSize, gewandZuschlag, cost, message } = data;
+      const { name, email, phone, date, time, tourType, groupSize, gewandZuschlag, cost, message } = data;
+
+      // Helper to generate a verification signature
+      async function generateSignature(secret, dataStr) {
+        const encoder = new TextEncoder();
+        const keyData = encoder.encode(secret);
+        const dataData = encoder.encode(dataStr);
+        const cryptoKey = await crypto.subtle.importKey(
+          'raw',
+          keyData,
+          { name: 'HMAC', hash: 'SHA-256' },
+          false,
+          ['sign']
+        );
+        const signature = await crypto.subtle.sign('HMAC', cryptoKey, dataData);
+        return Array.from(new Uint8Array(signature))
+          .map(b => b.toString(16).padStart(2, '0'))
+          .join('');
+      }
+
+      const secretKey = resendApiKey || 'stephan-secret';
+      const tokenDataAccept = `accept|${email}|${date}|${time || ''}|${cost}`;
+      const tokenDataReject = `reject|${email}|${date}|${time || ''}|${cost}`;
+      
+      const sigAccept = await generateSignature(secretKey, tokenDataAccept);
+      const sigReject = await generateSignature(secretKey, tokenDataReject);
+      
+      const baseActionUrl = 'https://friesescholzwebdesign.pages.dev/api/respond-booking';
+      const acceptLink = `${baseActionUrl}?action=accept&email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}&date=${encodeURIComponent(date)}&time=${encodeURIComponent(time || '')}&tourType=${encodeURIComponent(tourType)}&cost=${cost}&sig=${sigAccept}`;
+      const rejectLink = `${baseActionUrl}?action=reject&email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}&date=${encodeURIComponent(date)}&time=${encodeURIComponent(time || '')}&tourType=${encodeURIComponent(tourType)}&cost=${cost}&sig=${sigReject}`;
 
       if (!name || !email || !date) {
         return new Response(JSON.stringify({ success: false, message: 'Name, E-Mail und Wunschtermin sind Pflichtfelder.' }), {
@@ -72,7 +101,7 @@ export async function onRequestPost(context) {
         });
       }
 
-      fromName = 'Scholz & Friese Webdesign';
+      fromName = 'Stephan van Hausen Anfragen';
       emailSubject = `[Stephan-van-Hausen] 🏛️ Neue Buchungsanfrage von ${name}`;
 
       emailHtml = `
@@ -117,6 +146,10 @@ export async function onRequestPost(context) {
                           <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee; font-weight: bold;">${date}</td>
                         </tr>
                         <tr>
+                          <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-weight: 600; color: #d9a24a; width: 38%; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.08em;">Uhrzeit</td>
+                          <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee; font-weight: bold;">${time || 'Nicht angegeben'} Uhr</td>
+                        </tr>
+                        <tr>
                           <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-weight: 600; color: #d9a24a; width: 38%; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.08em;">Führungstyp</td>
                           <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee; font-weight: 300;">${tourType}</td>
                         </tr>
@@ -134,7 +167,7 @@ export async function onRequestPost(context) {
                         </tr>
                       </table>
                       ${message ? `
-                      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: rgba(217, 162, 74, 0.02); border-left: 2px solid #d9a24a;">
+                      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: rgba(217, 162, 74, 0.02); border-left: 2px solid #d9a24a; margin-bottom: 30px;">
                         <tr>
                           <td style="padding: 22px 25px;">
                             <p style="font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.12em; color: #d9a24a; margin: 0 0 12px 0; font-weight: 600;">Nachricht / Sonderwünsche</p>
@@ -142,6 +175,26 @@ export async function onRequestPost(context) {
                           </td>
                         </tr>
                       </table>` : ''}
+
+                      <!-- Action Buttons -->
+                      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-top: 30px; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 30px;">
+                        <tr>
+                          <td align="center">
+                            <p style="color: #94a3b8; font-size: 13px; margin: 0 0 16px 0; text-align: center; font-weight: 300;">Anfrage direkt bearbeiten:</p>
+                            <table border="0" cellpadding="0" cellspacing="0" style="margin: 0 auto;">
+                              <tr>
+                                <td style="border-radius: 4px; background-color: #10b981;" align="center">
+                                  <a href="${acceptLink}" target="_blank" style="padding: 12px 24px; border: 1px solid #10b981; border-radius: 4px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; color: #ffffff; text-decoration: none; font-weight: bold; display: inline-block;">🏛️ ANNEHMEN (Zusagen)</a>
+                                </td>
+                                <td width="20"></td>
+                                <td style="border-radius: 4px; background-color: #ef4444;" align="center">
+                                  <a href="${rejectLink}" target="_blank" style="padding: 12px 24px; border: 1px solid #ef4444; border-radius: 4px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; color: #ffffff; text-decoration: none; font-weight: bold; display: inline-block;">❌ ABLEHNEN (Absagen)</a>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
                     </td>
                   </tr>
                   <tr>
