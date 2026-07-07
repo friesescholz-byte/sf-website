@@ -63,7 +63,241 @@ export async function onRequestPost(context) {
     if (source === 'Stephan-van-Hausen') {
       recipientEmail = 'friese.scholz@gmail.com';
       // ───── STEPHAN VAN HAUSEN E-MAIL ─────
-      const { name, email, phone, date, time, tourType, groupSize, gewandZuschlag, cost, message } = data;
+      const { name, email, phone, date, time, tourType, groupSize, gewandZuschlag, cost, message, isPublic } = data;
+
+      if (!name || !email || !date) {
+        return new Response(JSON.stringify({ success: false, message: 'Name, E-Mail und Wunschtermin sind Pflichtfelder.' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      if (isPublic) {
+        // --- 1. Admin Email HTML ---
+        const adminEmailHtml = `
+          <!DOCTYPE html>
+          <html lang="de">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          </head>
+          <body style="margin: 0; padding: 0; background-color: #07090d; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-font-smoothing: antialiased;">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #07090d; padding: 40px 10px;">
+              <tr>
+                <td align="center">
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #131722; border: 1px solid rgba(217, 162, 74, 0.15); overflow: hidden; box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);">
+                    <tr>
+                      <td style="background-color: #0d111a; padding: 35px 30px; text-align: center; border-bottom: 2px solid #d9a24a;">
+                        <h1 style="margin: 0; font-family: Georgia, serif; font-size: 24px; letter-spacing: 0.08em; color: #faf6ee; text-transform: uppercase; font-weight: 400;">Stephan van Hausen</h1>
+                        <p style="margin: 6px 0 0 0; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: #d9a24a; font-weight: 500;">Nachtwächter-Führungen Nienburg</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 45px 35px;">
+                        <p style="font-family: Georgia, serif; font-size: 20px; color: #faf6ee; margin: 0 0 15px 0; font-style: italic;">Hallo Stephan,</p>
+                        <p style="color: #94a3b8; font-size: 14.5px; line-height: 1.65; margin: 0 0 30px 0; font-weight: 300;">
+                          eine neue Anmeldung zur **öffentlichen Führung** wurde übermittelt:
+                        </p>
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 35px; border-collapse: collapse; border: 1px solid rgba(255, 255, 255, 0.05);">
+                          <tr>
+                            <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-weight: 600; color: #d9a24a; width: 38%; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.08em;">Kunde</td>
+                            <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee; font-weight: 300;">${name}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-weight: 600; color: #d9a24a; width: 38%; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.08em;">E-Mail</td>
+                            <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee;"><a href="mailto:${email}" style="color: #d9a24a; text-decoration: none;">${email}</a></td>
+                          </tr>
+                          ${phone ? `<tr>
+                            <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-weight: 600; color: #d9a24a; width: 38%; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.08em;">Telefon</td>
+                            <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee;">${phone}</td>
+                          </tr>` : ''}
+                          <tr>
+                            <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-weight: 600; color: #d9a24a; width: 38%; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.08em;">Wunschtermin</td>
+                            <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee; font-weight: bold;">${date}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-weight: 600; color: #d9a24a; width: 38%; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.08em;">Uhrzeit</td>
+                            <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee; font-weight: bold;">18:00 Uhr</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-weight: 600; color: #d9a24a; width: 38%; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.08em;">Treffpunkt</td>
+                            <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee; font-weight: bold;">Lange Straße, Höhe Cup&amp;Cino</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-weight: 600; color: #d9a24a; width: 38%; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.08em;">Führungstyp</td>
+                            <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee; font-weight: 300;">${tourType}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-weight: 600; color: #d9a24a; width: 38%; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.08em;">Teilnehmer</td>
+                            <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee; font-weight: bold;">${groupSize} Personen</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-weight: 600; color: #d9a24a; width: 38%; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.08em;">Zahlungsart</td>
+                            <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee; font-weight: 300;">Barzahlung vor Ort (10,- € p.P.)</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-weight: 600; color: #d9a24a; width: 38%; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.08em;">Preis gesamt vor Ort</td>
+                            <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: bold; font-size: 16px;">${cost},00 €</td>
+                          </tr>
+                        </table>
+                        ${message ? `
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: rgba(217, 162, 74, 0.02); border-left: 2px solid #d9a24a; margin-bottom: 30px;">
+                          <tr>
+                            <td style="padding: 22px 25px;">
+                              <p style="font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.12em; color: #d9a24a; margin: 0 0 12px 0; font-weight: 600;">Nachricht / Sonderwünsche</p>
+                              <p style="font-style: italic; color: #faf6ee; font-size: 14px; line-height: 1.7; margin: 0; font-weight: 300;">"${message.replace(/\n/g, '<br>')}"</p>
+                            </td>
+                          </tr>
+                        </table>` : ''}
+
+                        <!-- Confirmation status -->
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-top: 30px; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 30px;">
+                          <tr>
+                            <td align="center" style="background-color: rgba(16, 185, 129, 0.08); border: 1px solid #10b981; padding: 20px; border-radius: 4px;">
+                              <p style="color: #10b981; font-size: 14px; margin: 0; font-weight: bold;">✓ Automatisch bestätigt</p>
+                              <p style="color: #94a3b8; font-size: 13px; margin: 5px 0 0 0; line-height: 1.5;">Diese Anmeldung zur öffentlichen Führung wurde automatisch bestätigt. Keine Aktion erforderlich.</p>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="background-color: #0d111a; padding: 30px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.04); font-size: 11px; color: #94a3b8; line-height: 1.6;">
+                        Anfrage über <a href="https://stephan-van-hausen.de" style="color: #d9a24a; text-decoration: none;">stephan-van-hausen.de</a><br>
+                        Technischer Partner: <strong>Scholz &amp; Friese Webdesign</strong>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </body>
+          </html>
+        `;
+
+        // --- 2. Customer Email HTML ---
+        const customerEmailHtml = `
+          <!DOCTYPE html>
+          <html lang="de">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          </head>
+          <body style="margin: 0; padding: 0; background-color: #07090d; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #faf6ee;">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #07090d; padding: 40px 10px;">
+              <tr>
+                <td align="center">
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #131722; border: 1px solid rgba(217, 162, 74, 0.15); border-radius: 8px; overflow: hidden; box-shadow: 0 25px 60px rgba(0,0,0,0.5);">
+                    <tr>
+                      <td style="background-color: #0d111a; padding: 35px 30px; text-align: center; border-bottom: 2px solid #d9a24a;">
+                        <h1 style="margin: 0; font-family: Georgia, serif; font-size: 24px; color: #faf6ee; font-weight: 400; text-transform: uppercase; letter-spacing: 0.05em;">Stephan van Hausen</h1>
+                        <p style="margin: 6px 0 0 0; font-size: 11px; color: #d9a24a; text-transform: uppercase; font-weight: 500; letter-spacing: 0.15em;">Nachtwächter-Führungen Nienburg</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 40px 30px;">
+                        <p style="font-family: Georgia, serif; font-size: 18px; color: #faf6ee; margin-bottom: 20px; font-style: italic;">Hallo ${name},</p>
+                        <p style="color: #94a3b8; font-size: 15px; line-height: 1.6; margin-bottom: 25px;">
+                          vielen Dank für Ihre Anmeldung! Ich freue mich sehr über Ihre Teilnahme und bestätige Ihnen hiermit Ihre Plätze für die öffentliche Nachtwächter-Führung.
+                        </p>
+                        
+                        <h3 style="color: #d9a24a; font-size: 13px; text-transform: uppercase; margin-bottom: 15px; font-weight: 600; letter-spacing: 0.05em;">Details Ihrer Anmeldung:</h3>
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 30px; border-collapse: collapse; border: 1px solid rgba(255, 255, 255, 0.05);">
+                          <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: 600; width: 40%; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">Termin</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee; font-weight: bold;">${date}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">Uhrzeit</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee; font-weight: bold;">18:00 Uhr</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">Treffpunkt</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee; font-weight: bold;">Lange Straße (Höhe Cup&amp;Cino)</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">Führungstyp</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee;">Öffentliche Führung</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">Teilnehmer</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee;">${groupSize} Personen</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">Bezahlung</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: bold;">Vor Ort in bar (10,00 € pro Person)</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">Zu bezahlen vor Ort</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: bold; font-size: 16px;">${cost},00 €</td>
+                          </tr>
+                        </table>
+                        
+                        <p style="color: #94a3b8; font-size: 15px; line-height: 1.6; margin-bottom: 25px;">
+                          Bitte finden Sie sich ca. 5–10 Minuten vor Beginn der Führung am Treffpunkt (Lange Straße, Höhe Cup&amp;Cino) ein.
+                        </p>
+                        
+                        <p style="color: #faf6ee; font-size: 15px; font-weight: bold; margin-bottom: 5px;">Ich freue mich sehr auf unseren gemeinsamen Termin und eine spannende Zeitreise mit Ihnen!</p>
+                        <p style="color: #94a3b8; font-size: 14px; margin: 0;">Herzliche Grüße,<br>Stephan van Hausen</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="background-color: #0d111a; padding: 25px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.04); font-size: 11px; color: #94a3b8; line-height: 1.5;">
+                        Kontakt: Stephan Hilker (Stephan van Hausen als Nienburger Nachtwächter) <br>
+                        Im Osterfeld 44, 31632 Husum | Mobil: 0160 / 94813232 | Mail: Info@nienburger-nachtwaechter.de
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </body>
+          </html>
+        `;
+
+        // Send Admin Email
+        const res1 = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${resendApiKey}`,
+          },
+          body: JSON.stringify({
+            from: `Stephan van Hausen Anfragen <noreply@scholz-friese-webdesign.de>`,
+            to: recipientEmail,
+            reply_to: email,
+            subject: `[Stephan-van-Hausen] 🎫 Neue Anmeldung öffentliche Führung: ${name}`,
+            html: adminEmailHtml
+          }),
+        });
+
+        // Send Customer Email
+        const res2 = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${resendApiKey}`,
+          },
+          body: JSON.stringify({
+            from: `Stephan van Hausen <noreply@scholz-friese-webdesign.de>`,
+            to: email,
+            reply_to: 'Info@nienburger-nachtwaechter.de',
+            subject: `Bestätigung Ihrer Teilnahme: Öffentliche Nachtwächter-Führung am ${date}`,
+            html: customerEmailHtml
+          }),
+        });
+
+        if (!res1.ok || !res2.ok) {
+          return new Response(JSON.stringify({ success: false, message: 'Fehler beim E-Mail-Versand.' }), {
+            status: 500,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+
+        return new Response(JSON.stringify({ success: true }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
 
       // Helper to generate a verification signature
       async function generateSignature(secret, dataStr) {
@@ -144,6 +378,10 @@ export async function onRequestPost(context) {
                         <tr>
                           <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-weight: 600; color: #d9a24a; width: 38%; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.08em;">Wunschtermin</td>
                           <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee; font-weight: bold;">${date}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-weight: 600; color: #d9a24a; width: 38%; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.08em;">Treffpunkt</td>
+                          <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee; font-weight: bold;">Lange Straße, Höhe Cup&amp;Cino</td>
                         </tr>
                         <tr>
                           <td style="padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-weight: 600; color: #d9a24a; width: 38%; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.08em;">Uhrzeit</td>

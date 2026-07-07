@@ -97,6 +97,10 @@ export async function onRequestGet(context) {
                         <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee; font-weight: bold;">${time} Uhr</td>
                       </tr>
                       <tr>
+                        <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">Treffpunkt</td>
+                        <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee; font-weight: bold;">Lange Straße (Höhe Cup&amp;Cino)</td>
+                      </tr>
+                      <tr>
                         <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">Führungstyp</td>
                         <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee;">${tourType}</td>
                       </tr>
@@ -111,7 +115,7 @@ export async function onRequestGet(context) {
                     </table>
                     
                     <p style="color: #94a3b8; font-size: 15px; line-height: 1.6; margin-bottom: 25px;">
-                      Wir treffen uns am vereinbarten Treffpunkt in der Nienburger Altstadt. Bitte seien Sie ca. 5–10 Minuten vor Beginn der Führung vor Ort. Falls Sie Fragen haben oder sich die Personenzahl ändert, antworten Sie einfach direkt auf diese E-Mail.
+                      Wir treffen uns am vereinbarten Treffpunkt (Lange Straße, Höhe Cup&amp;Cino). Bitte seien Sie ca. 5–10 Minuten vor Beginn der Führung vor Ort. Falls Sie Fragen haben oder sich die Personenzahl ändert, antworten Sie einfach direkt auf diese E-Mail.
                     </p>
                     
                     <p style="color: #faf6ee; font-size: 15px; font-weight: bold; margin-bottom: 5px;">Ich freue mich auf eine spannende Zeitreise mit Ihnen!</p>
