@@ -61,7 +61,7 @@ export async function onRequestPost(context) {
     let recipientEmail = 'support@scholz-friese-chatbot.de';
 
     if (source === 'Stephan-van-Hausen') {
-      recipientEmail = 'friese.scholz@gmail.com';
+      recipientEmail = 'info@nienburger-nachtwaechter.de';
       // ───── STEPHAN VAN HAUSEN E-MAIL ─────
       const { name, email, phone, date, time, tourType, groupSize, gewandZuschlag, cost, message, isPublic } = data;
 
