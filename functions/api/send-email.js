@@ -186,7 +186,7 @@ export async function onRequestPost(context) {
                     </tr>
                     <tr>
                       <td style="background-color: #0d111a; padding: 30px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.04); font-size: 11px; color: #94a3b8; line-height: 1.6;">
-                        Anfrage über <a href="https://stephan-van-hausen.de" style="color: #d9a24a; text-decoration: none;">stephan-van-hausen.de</a><br>
+                        Anfrage über <a href="https://nienburger-nachtwaechter.de" style="color: #d9a24a; text-decoration: none;">nienburger-nachtwaechter.de</a><br>
                         Technischer Partner: <strong>Scholz &amp; Friese Webdesign</strong>
                       </td>
                     </tr>
@@ -460,7 +460,7 @@ export async function onRequestPost(context) {
                   </tr>
                   <tr>
                     <td style="background-color: #0d111a; padding: 30px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.04); font-size: 11px; color: #94a3b8; line-height: 1.6;">
-                      Anfrage über <a href="https://stephan-van-hausen.de" style="color: #d9a24a; text-decoration: none;">stephan-van-hausen.de</a><br>
+                      Anfrage über <a href="https://nienburger-nachtwaechter.de" style="color: #d9a24a; text-decoration: none;">nienburger-nachtwaechter.de</a><br>
                       Technischer Partner: <strong>Scholz & Friese Webdesign</strong>
                     </td>
                   </tr>
