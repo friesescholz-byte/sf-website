@@ -1,15 +1,12 @@
 export async function onRequestGet(context) {
   const { request, env } = context;
-  const url = new URL(request.url);
 
-  // CORS headers
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   };
 
-  // Auth check
   const authHeader = request.headers.get('Authorization') || '';
   const password = authHeader.replace(/^Bearer\s+/i, '').trim();
   const correctPassword = env.ADMIN_PASSWORD || 'sfwebdesign2026';
@@ -21,7 +18,6 @@ export async function onRequestGet(context) {
     });
   }
 
-  // Fetch config from KV
   const apiToken = env.CLOUDFLARE_API_TOKEN;
   const accountId = env.CLOUDFLARE_ACCOUNT_ID;
   const namespaceId = '8d2fe320c4134c368f28c18153d4f82d'; // KUNDEN_DB
@@ -85,7 +81,6 @@ export async function onRequestGet(context) {
 
 export async function onRequestPost(context) {
   const { request, env } = context;
-  const url = new URL(request.url);
 
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -93,25 +88,6 @@ export async function onRequestPost(context) {
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   };
 
-  const action = url.pathname.split('/').pop();
-
-  if (action === 'login') {
-    const { password } = await request.json();
-    const correctPassword = env.ADMIN_PASSWORD || 'sfwebdesign2026';
-
-    if (password === correctPassword) {
-      return new Response(JSON.stringify({ success: true }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    } else {
-      return new Response(JSON.stringify({ success: false, message: 'Falsches Passwort.' }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-  }
-
-  // Update Config action
   const authHeader = request.headers.get('Authorization') || '';
   const password = authHeader.replace(/^Bearer\s+/i, '').trim();
   const correctPassword = env.ADMIN_PASSWORD || 'sfwebdesign2026';
@@ -123,22 +99,22 @@ export async function onRequestPost(context) {
     });
   }
 
-  const { config } = await request.json();
-  if (!config) {
-    return new Response(JSON.stringify({ success: false, message: 'Keine Konfiguration übermittelt.' }), {
-      status: 400,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  }
-
-  const apiToken = env.CLOUDFLARE_API_TOKEN;
-  const accountId = env.CLOUDFLARE_ACCOUNT_ID;
-  const namespaceId = '8d2fe320c4134c368f28c18153d4f82d'; // KUNDEN_DB
-  const key = 'email_config';
-
-  const kvUrl = `https://api.cloudflare.com/client/v4/accounts/${accountId}/storage/kv/namespaces/${namespaceId}/values/${key}`;
-
   try {
+    const { config } = await request.json();
+    if (!config) {
+      return new Response(JSON.stringify({ success: false, message: 'Keine Konfiguration übermittelt.' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const apiToken = env.CLOUDFLARE_API_TOKEN;
+    const accountId = env.CLOUDFLARE_ACCOUNT_ID;
+    const namespaceId = '8d2fe320c4134c368f28c18153d4f82d'; // KUNDEN_DB
+    const key = 'email_config';
+
+    const kvUrl = `https://api.cloudflare.com/client/v4/accounts/${accountId}/storage/kv/namespaces/${namespaceId}/values/${key}`;
+
     const kvResponse = await fetch(kvUrl, {
       method: 'PUT',
       headers: {
