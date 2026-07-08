@@ -59,9 +59,32 @@ export async function onRequestPost(context) {
     const resendApiKey = env.RESEND_API_KEY;
     let emailSubject, emailHtml, fromName;
     let recipientEmail = 'support@scholz-friese-chatbot.de';
+    let isKvRecipient = false;
+
+    // Fetch dynamic email config from Cloudflare KV
+    try {
+      const apiToken = env.CLOUDFLARE_API_TOKEN;
+      const accountId = env.CLOUDFLARE_ACCOUNT_ID;
+      const namespaceId = '8d2fe320c4134c368f28c18153d4f82d'; // KUNDEN_DB
+      const kvUrl = `https://api.cloudflare.com/client/v4/accounts/${accountId}/storage/kv/namespaces/${namespaceId}/values/email_config`;
+      const kvResponse = await fetch(kvUrl, {
+        headers: {
+          'Authorization': `Bearer ${apiToken}`
+        }
+      });
+      if (kvResponse.status === 200) {
+        const emailConfig = await kvResponse.json();
+        if (emailConfig && emailConfig[source] && emailConfig[source].email) {
+          recipientEmail = emailConfig[source].email;
+          isKvRecipient = true;
+        }
+      }
+    } catch (e) {
+      // ignore, fallback to hardcoded
+    }
 
     if (source === 'Stephan-van-Hausen') {
-      recipientEmail = 'info@nienburger-nachtwaechter.de';
+      if (!isKvRecipient) recipientEmail = 'info@nienburger-nachtwaechter.de';
       // ───── STEPHAN VAN HAUSEN E-MAIL ─────
       const { name, email, phone, date, time, tourType, groupSize, gewandZuschlag, cost, message, isPublic } = data;
 
@@ -1018,7 +1041,7 @@ export async function onRequestPost(context) {
       }
 
       fromName = 'Scholz & Friese Webdesign';
-      recipientEmail = 'info@elementbau-ni.de';
+      if (!isKvRecipient) recipientEmail = 'info@elementbau-ni.de';
 
       if (formType === 'bewerbung') {
         emailSubject = `[elementbau-nienburg] 💼 Neue Bewerbung: Kellerabdichter - ${name}`;
@@ -1154,7 +1177,7 @@ export async function onRequestPost(context) {
       }
 
       fromName = 'Bestattungen Eberhardt';
-      recipientEmail = 'info@bestattungen-eberhardt.de';
+      if (!isKvRecipient) recipientEmail = 'info@bestattungen-eberhardt.de';
       emailSubject = `[bestattungen-eberhardt] ✉️ Neue Nachricht von ${name}`;
 
       emailHtml = `
@@ -1228,7 +1251,7 @@ export async function onRequestPost(context) {
       }
 
       fromName = 'Scholz & Friese Webdesign';
-      recipientEmail = 'finnjamariesch@t-online.de';
+      if (!isKvRecipient) recipientEmail = 'finnjamariesch@t-online.de';
       
       const isTrauer = formType === 'trauerfeier';
       const typeLabel = isTrauer ? 'Trauerfeier' : 'Freie Trauung';
@@ -1328,7 +1351,7 @@ export async function onRequestPost(context) {
       }
 
       fromName = 'Scholz & Friese Webdesign';
-      recipientEmail = 'friese.scholz@gmail.com';
+      if (!isKvRecipient) recipientEmail = 'friese.scholz@gmail.com';
 
       if (type === 'checklist') {
         emailSubject = `[ImmoM] 📚 Ihre angeforderten Checklisten für den Immobilienverkauf`;
@@ -1620,7 +1643,7 @@ export async function onRequestPost(context) {
       }
 
       fromName = 'Rodes Hotel';
-      recipientEmail = 'info@rodes-hotel.de';
+      if (!isKvRecipient) recipientEmail = 'info@rodes-hotel.de';
       emailSubject = `[Rodes Hotel] ✉️ Neue Online-Anfrage von ${name}`;
       emailHtml = `
         <!DOCTYPE html>
@@ -1696,7 +1719,7 @@ export async function onRequestPost(context) {
       }
 
       fromName = 'Scholz & Friese Webdesign';
-      recipientEmail = 'friese.scholz@gmail.com';
+      if (!isKvRecipient) recipientEmail = 'friese.scholz@gmail.com';
       emailSubject = `Neue Anfrage-Flow: ${companyName}`;
       emailHtml = `
         <!DOCTYPE html>
