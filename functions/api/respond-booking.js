@@ -167,7 +167,7 @@ export async function onRequestGet(context) {
                     </p>
                     
                     <p style="color: #94a3b8; font-size: 15px; line-height: 1.6; margin-bottom: 25px;">
-                      Gerne können Sie über meine Website <a href="https://stephan-van-hausen.de" style="color: #d9a24a; text-decoration: none; font-weight: bold;">stephan-van-hausen.de</a> einen alternativen Wunschtermin anfragen oder mich direkt per Telefon oder E-Mail kontaktieren, um einen passenden Ausweichtermin zu vereinbaren.
+                      Gerne können Sie über meine Website <a href="https://nienburger-nachtwaechter.de" style="color: #d9a24a; text-decoration: none; font-weight: bold;">nienburger-nachtwaechter.de</a> einen alternativen Wunschtermin anfragen oder mich direkt per Telefon oder E-Mail kontaktieren, um einen passenden Ausweichtermin zu vereinbaren.
                     </p>
                     
                     <p style="color: #94a3b8; font-size: 14px; margin: 0;">Herzliche Grüße,<br>Stephan van Hausen</p>
@@ -278,7 +278,7 @@ export async function onRequestGet(context) {
         <p>
           Eine entsprechende E-Mail wurde an den Kunden (<strong>${email}</strong>) gesendet.
         </p>
-        <a href="https://stephan-van-hausen.de" class="btn">Zurück zur Website</a>
+        <a href="https://nienburger-nachtwaechter.de" class="btn">Zurück zur Website</a>
       </div>
     </body>
     </html>
