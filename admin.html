@@ -112,49 +112,6 @@
       flex-grow: 1;
     }
 
-    /* Tabs System */
-    .admin-tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 30px;
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 10px;
-    }
-
-    .tab-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      padding: 12px 24px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      border-radius: 6px;
-      transition: all 0.2s ease;
-    }
-
-    .tab-btn:hover {
-      color: var(--text-main);
-      background-color: rgba(255, 255, 255, 0.03);
-    }
-
-    .tab-btn.active {
-      color: var(--accent);
-      background-color: rgba(217, 162, 74, 0.08);
-      border: 1px solid rgba(217, 162, 74, 0.2);
-    }
-
-    .tab-pane {
-      display: none;
-    }
-
-    .tab-pane.active {
-      display: block;
-    }
-
     /* Login Area */
     .login-container {
       max-width: 420px;
@@ -199,7 +156,7 @@
       letter-spacing: 0.05em;
     }
 
-    input[type="password"], input[type="text"], input[type="email"], input[type="date"], select {
+    input[type="password"], input[type="text"], input[type="email"] {
       width: 100%;
       padding: 12px 16px;
       background-color: #0b0e14;
@@ -211,7 +168,7 @@
       transition: all 0.2s ease;
     }
 
-    input:focus, select:focus {
+    input:focus {
       outline: none;
       border-color: var(--accent);
       box-shadow: 0 0 0 3px rgba(217, 162, 74, 0.1);
@@ -253,12 +210,6 @@
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-      padding: 30px;
-      margin-bottom: 30px;
-    }
-
-    .card.no-padding {
-      padding: 0;
     }
 
     table {
@@ -309,82 +260,6 @@
     .actions-cell {
       display: flex;
       gap: 10px;
-    }
-
-    /* Config radio/options styles */
-    .radio-group {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-
-    .radio-option {
-      background-color: #0b0e14;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 16px;
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .radio-option:hover {
-      border-color: rgba(217, 162, 74, 0.4);
-    }
-
-    .radio-option input[type="radio"] {
-      margin-top: 3px;
-      accent-color: var(--accent);
-    }
-
-    .radio-label-text {
-      font-weight: 600;
-      font-size: 0.95rem;
-      color: var(--text-main);
-      margin-bottom: 4px;
-    }
-
-    .radio-desc-text {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      line-height: 1.4;
-    }
-
-    .custom-dates-section {
-      display: none;
-      margin-top: 24px;
-      border-top: 1px dashed var(--border-color);
-      padding-top: 24px;
-    }
-
-    .add-date-row {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-
-    .dates-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      max-height: 250px;
-      overflow-y: auto;
-      padding-right: 8px;
-    }
-
-    .date-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background-color: #0b0e14;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 6px;
-      padding: 10px 16px;
-      font-family: monospace;
-      font-size: 0.95rem;
     }
 
     /* Modal */
@@ -474,7 +349,7 @@
 </head>
 <body>
   <header>
-    <h1>Scholz & Friese | <span>Kunden-Cockpit</span></h1>
+    <h1>Scholz & Friese | <span>E-Mail-Verteiler</span></h1>
     <button id="logout-btn" class="btn btn-outline" style="display: none;" onclick="logout()">
       <i data-lucide="log-out"></i> Abmelden
     </button>
@@ -504,97 +379,30 @@
 
     <!-- DASHBOARD VIEW -->
     <div id="dashboard-view" class="dashboard-view">
-      <!-- Tabs Navigation -->
-      <div id="admin-tabs" class="admin-tabs">
-        <button class="tab-btn active" id="tab-btn-verteiler" onclick="switchTab('verteiler')">
-          <i data-lucide="mail"></i> E-Mail-Verteiler
-        </button>
-        <button class="tab-btn" id="tab-btn-nachtwaechter" onclick="switchTab('nachtwaechter')">
-          <i data-lucide="calendar"></i> Nachtwächter-Termine
+      <div class="dashboard-header">
+        <div>
+          <h2>Kunden & E-Mail-Empfänger</h2>
+          <p>Hier siehst du, wohin die Buchungs- und Kontaktanfragen deiner Kunden geleitet werden.</p>
+        </div>
+        <button class="btn" onclick="openAddModal()">
+          <i data-lucide="plus-circle"></i> Kunde hinzufügen
         </button>
       </div>
 
-      <!-- TAB 1: VERTEILER -->
-      <div id="pane-verteiler" class="tab-pane active">
-        <div class="dashboard-header">
-          <div>
-            <h2>Kunden & E-Mail-Empfänger</h2>
-            <p>Hier siehst du, wohin die Buchungs- und Kontaktanfragen deiner Kunden geleitet werden.</p>
-          </div>
-          <button class="btn" onclick="openAddModal()">
-            <i data-lucide="plus-circle"></i> Kunde hinzufügen
-          </button>
-        </div>
-
-        <div class="card no-padding">
-          <table>
-            <thead>
-              <tr>
-                <th>Kunde / Projekt</th>
-                <th>Verteiler-ID (source)</th>
-                <th>Empfänger-E-Mail (to mail)</th>
-                <th>Aktionen</th>
-              </tr>
-            </thead>
-            <tbody id="clients-table-body">
-              <!-- Dynamic rows will be inserted here -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- TAB 2: NACHTWÄCHTER-TERMINE -->
-      <div id="pane-nachtwaechter" class="tab-pane">
-        <div class="dashboard-header">
-          <div>
-            <h2>Nachtwächter Nienburg | Öffentliche Führungen</h2>
-            <p>Verwalte die Tage, an denen öffentliche Stadtführungen stattfinden. Diese werden auf der Website angezeigt und buchbar gemacht.</p>
-          </div>
-        </div>
-
-        <div class="card" style="max-width: 800px;">
-          <h3 style="margin-bottom: 20px; font-size: 1.2rem; font-weight: 600;">Modus für öffentliche Termine</h3>
-          
-          <div class="radio-group">
-            <label class="radio-option">
-              <input type="radio" name="tour-type-mode" value="default" checked onchange="toggleTourMode(this.value)">
-              <div>
-                <div class="radio-label-text">Standard-Regel (1. und 3. Freitag)</div>
-                <div class="radio-desc-text">Die Führungen finden standardmäßig immer am ersten und dritten Freitag des Monats um 18:00 Uhr statt. Dies wird vollautomatisch berechnet.</div>
-              </div>
-            </label>
-            
-            <label class="radio-option">
-              <input type="radio" name="tour-type-mode" value="custom" onchange="toggleTourMode(this.value)">
-              <div>
-                <div class="radio-label-text">Manuell festgelegte Termine</div>
-                <div class="radio-desc-text">Wähle spezifische Tage aus, an denen eine öffentliche Führung angeboten werden soll. Nur diese Termine sind im Formular buchbar.</div>
-              </div>
-            </label>
-          </div>
-
-          <!-- Custom Dates Picker / List -->
-          <div id="custom-dates-wrapper" class="custom-dates-section">
-            <h4 style="font-size: 1rem; margin-bottom: 12px; font-weight: 600;">Termine hinzufügen / bearbeiten</h4>
-            <div class="add-date-row">
-              <input type="date" id="new-tour-date" style="max-width: 250px;">
-              <button type="button" class="btn" onclick="addCustomDate()">
-                <i data-lucide="plus"></i> Hinzufügen
-              </button>
-            </div>
-
-            <h4 style="font-size: 0.9rem; margin-bottom: 10px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Geplante Termine:</h4>
-            <div id="custom-dates-container" class="dates-list">
-              <!-- Dates will be populated here -->
-            </div>
-          </div>
-
-          <div style="margin-top: 30px; display: flex; justify-content: flex-end;">
-            <button class="btn" onclick="saveNachtwaechterConfig()">
-              <i data-lucide="save"></i> Einstellungen speichern
-            </button>
-          </div>
-        </div>
+      <div class="card">
+        <table>
+          <thead>
+            <tr>
+              <th>Kunde / Projekt</th>
+              <th>Verteiler-ID (source)</th>
+              <th>Empfänger-E-Mail (to mail)</th>
+              <th>Aktionen</th>
+            </tr>
+          </thead>
+          <tbody id="clients-table-body">
+            <!-- Dynamic rows will be inserted here -->
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -641,12 +449,6 @@
     let currentConfig = {};
     let isEditMode = false;
 
-    // Tab 2 Config
-    let nachtwaechterConfig = {
-      publicTourType: 'default',
-      customDates: []
-    };
-
     // Check auth on load
     window.addEventListener('DOMContentLoaded', () => {
       const savedPass = localStorage.getItem('sf_admin_password');
@@ -691,52 +493,27 @@
 
     async function loadDashboard(password) {
       try {
-        // Load Client Mail-Verteiler config
         const response = await fetch('/api/admin/config', {
           headers: {
             'Authorization': `Bearer ${password}`
           }
         });
         
-        // Load Nachtwaechter config
-        const nwResponse = await fetch('/api/admin/nachtwaechter-config', {
-          headers: {
-            'Authorization': `Bearer ${password}`
-          }
-        });
-
-        if (response.ok && nwResponse.ok) {
+        if (response.ok) {
           const data = await response.json();
           currentConfig = data.config;
+          
           renderTable();
-
-          const nwData = await nwResponse.json();
-          nachtwaechterConfig = nwData.config;
-          renderNachtwaechterConfig();
           
           document.getElementById('login-view').style.display = 'none';
           document.getElementById('logout-btn').style.display = 'flex';
           document.getElementById('dashboard-view').style.display = 'block';
-          switchTab('verteiler');
         } else {
+          // Token expired or invalid
           logout();
         }
       } catch (err) {
         alert('Fehler beim Laden des Dashboards.');
-      }
-    }
-
-    // Tabs switching logic
-    function switchTab(tab) {
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
-
-      if (tab === 'verteiler') {
-        document.getElementById('tab-btn-verteiler').classList.add('active');
-        document.getElementById('pane-verteiler').classList.add('active');
-      } else if (tab === 'nachtwaechter') {
-        document.getElementById('tab-btn-nachtwaechter').classList.add('active');
-        document.getElementById('pane-nachtwaechter').classList.add('active');
       }
     }
 
@@ -773,128 +550,12 @@
       lucide.createIcons();
     }
 
-    // Nachtwaechter config management
-    function renderNachtwaechterConfig() {
-      const type = nachtwaechterConfig.publicTourType || 'default';
-      const radios = document.getElementsByName('tour-type-mode');
-      
-      radios.forEach(radio => {
-        if (radio.value === type) {
-          radio.checked = true;
-        }
-      });
-
-      toggleTourMode(type);
-      renderCustomDates();
-    }
-
-    function toggleTourMode(mode) {
-      const wrapper = document.getElementById('custom-dates-wrapper');
-      if (mode === 'custom') {
-        wrapper.style.display = 'block';
-      } else {
-        wrapper.style.display = 'none';
-      }
-    }
-
-    function renderCustomDates() {
-      const container = document.getElementById('custom-dates-container');
-      container.innerHTML = '';
-
-      if (!nachtwaechterConfig.customDates) {
-        nachtwaechterConfig.customDates = [];
-      }
-
-      // Sort dates ascending
-      const sortedDates = [...nachtwaechterConfig.customDates].sort();
-
-      if (sortedDates.length === 0) {
-        container.innerHTML = '<div style="color: var(--text-muted); font-size: 0.9rem; font-style: italic;">Keine Termine eingetragen.</div>';
-        return;
-      }
-
-      const todayStr = new Date().toISOString().split('T')[0];
-
-      sortedDates.forEach(dateStr => {
-        const dateObj = new Date(dateStr);
-        const formatted = dateObj.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', weekday: 'short' });
-        
-        const isPast = dateStr < todayStr;
-        const style = isPast ? 'opacity: 0.5;' : '';
-
-        const item = document.createElement('div');
-        item.className = 'date-item';
-        item.style = style;
-        item.innerHTML = `
-          <span>${formatted} ${isPast ? '<strong style="color: var(--danger); font-size:0.75rem; margin-left: 10px;">(Vergangen)</strong>' : ''}</span>
-          <button class="btn btn-danger" style="padding: 4px 8px; font-size: 0.75rem;" onclick="removeCustomDate('${dateStr}')">
-            <i data-lucide="trash-2" style="width: 12px; height: 12px;"></i>
-          </button>
-        `;
-        container.appendChild(item);
-      });
-
-      lucide.createIcons();
-    }
-
-    function addCustomDate() {
-      const picker = document.getElementById('new-tour-date');
-      const val = picker.value;
-      if (!val) {
-        alert('Bitte ein gültiges Datum auswählen.');
-        return;
-      }
-
-      if (!nachtwaechterConfig.customDates) {
-        nachtwaechterConfig.customDates = [];
-      }
-
-      if (nachtwaechterConfig.customDates.includes(val)) {
-        alert('Dieses Datum existiert bereits in der Liste.');
-        return;
-      }
-
-      nachtwaechterConfig.customDates.push(val);
-      renderCustomDates();
-      picker.value = '';
-    }
-
-    function removeCustomDate(dateStr) {
-      nachtwaechterConfig.customDates = (nachtwaechterConfig.customDates || []).filter(d => d !== dateStr);
-      renderCustomDates();
-    }
-
-    async function saveNachtwaechterConfig() {
-      const password = localStorage.getItem('sf_admin_password');
-      
-      try {
-        const response = await fetch('/api/admin/nachtwaechter-config', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${password}`
-          },
-          body: JSON.stringify({ config: nachtwaechterConfig })
-        });
-
-        if (response.ok) {
-          showToast('Nachtwächter-Termine erfolgreich gespeichert.');
-        } else {
-          const errData = await response.json();
-          alert('Fehler beim Speichern: ' + errData.message);
-        }
-      } catch (err) {
-        alert('Netzwerkfehler beim Speichern.');
-      }
-    }
-
-    // Modal forms code
     function openEditModal(id) {
       isEditMode = true;
       document.getElementById('modal-title').textContent = 'Kunde bearbeiten';
       document.getElementById('edit-original-id').value = id;
       document.getElementById('client-input-id').value = id;
-      document.getElementById('client-input-id').disabled = true;
+      document.getElementById('client-input-id').disabled = true; // Don't let them edit ID to avoid key conflicts
       document.getElementById('client-input-name').value = currentConfig[id].name;
       document.getElementById('client-input-email').value = currentConfig[id].email;
       
