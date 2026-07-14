@@ -577,6 +577,13 @@ export async function onRequestPost(context) {
       const { formType } = data;
       fromName = 'Karl Weymann GmbH';
 
+      // Route dynamically depending on form type: career vs project/general requests
+      if (formType === 'karriere') {
+        recipientEmail = 'bewerbung@karl-weymann-gmbh.de';
+      } else {
+        recipientEmail = 'Anfragen@karl-weymann-gmbh.de';
+      }
+
       if (formType === 'waermepumpe') {
         const { name, ort, email, phone, currentHeizung, baujahr, wohnflaeche, message } = data;
 
