@@ -95,6 +95,35 @@ export async function onRequestPost(context) {
         });
       }
 
+      // Helper to generate a verification signature
+      async function generateSignature(secret, dataStr) {
+        const encoder = new TextEncoder();
+        const keyData = encoder.encode(secret);
+        const dataData = encoder.encode(dataStr);
+        const cryptoKey = await crypto.subtle.importKey(
+          'raw',
+          keyData,
+          { name: 'HMAC', hash: 'SHA-256' },
+          false,
+          ['sign']
+        );
+        const signature = await crypto.subtle.sign('HMAC', cryptoKey, dataData);
+        return Array.from(new Uint8Array(signature))
+          .map(b => b.toString(16).padStart(2, '0'))
+          .join('');
+      }
+
+      const secretKey = resendApiKey || 'stephan-secret';
+      const tokenDataAccept = `accept|${email}|${date}|${time || ''}|${cost}`;
+      const tokenDataReject = `reject|${email}|${date}|${time || ''}|${cost}`;
+      
+      const sigAccept = await generateSignature(secretKey, tokenDataAccept);
+      const sigReject = await generateSignature(secretKey, tokenDataReject);
+      
+      const baseActionUrl = 'https://friesescholzwebdesign.pages.dev/api/respond-booking';
+      const acceptLink = `${baseActionUrl}?action=accept&email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}&date=${encodeURIComponent(date)}&time=${encodeURIComponent(time || '')}&tourType=${encodeURIComponent(tourType)}&cost=${cost}&sig=${sigAccept}`;
+      const rejectLink = `${baseActionUrl}?action=reject&email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}&date=${encodeURIComponent(date)}&time=${encodeURIComponent(time || '')}&tourType=${encodeURIComponent(tourType)}&cost=${cost}&sig=${sigReject}`;
+
       if (isPublic) {
         // --- 1. Admin Email HTML ---
         const adminEmailHtml = `
@@ -173,12 +202,22 @@ export async function onRequestPost(context) {
                           </tr>
                         </table>` : ''}
 
-                        <!-- Confirmation status -->
+                        <!-- Action Buttons -->
                         <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-top: 30px; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 30px;">
                           <tr>
-                            <td align="center" style="background-color: rgba(16, 185, 129, 0.08); border: 1px solid #10b981; padding: 20px; border-radius: 4px;">
-                              <p style="color: #10b981; font-size: 14px; margin: 0; font-weight: bold;">✓ Automatisch bestätigt</p>
-                              <p style="color: #94a3b8; font-size: 13px; margin: 5px 0 0 0; line-height: 1.5;">Diese Anmeldung zur öffentlichen Führung wurde automatisch bestätigt. Keine Aktion erforderlich.</p>
+                            <td align="center">
+                              <p style="color: #94a3b8; font-size: 13px; margin: 0 0 16px 0; text-align: center; font-weight: 300;">Anmeldung direkt bearbeiten:</p>
+                              <table border="0" cellpadding="0" cellspacing="0" style="margin: 0 auto;">
+                                <tr>
+                                  <td style="border-radius: 4px; background-color: #10b981;" align="center">
+                                    <a href="${acceptLink}" target="_blank" style="padding: 12px 24px; border: 1px solid #10b981; border-radius: 4px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; color: #ffffff; text-decoration: none; font-weight: bold; display: inline-block;">🏛️ ANNEHMEN (Zusagen)</a>
+                                  </td>
+                                  <td width="20"></td>
+                                  <td style="border-radius: 4px; background-color: #ef4444;" align="center">
+                                    <a href="${rejectLink}" target="_blank" style="padding: 12px 24px; border: 1px solid #ef4444; border-radius: 4px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; color: #ffffff; text-decoration: none; font-weight: bold; display: inline-block;">❌ ABLEHNEN (Absagen)</a>
+                                  </td>
+                                </tr>
+                              </table>
                             </td>
                           </tr>
                         </table>
@@ -199,7 +238,7 @@ export async function onRequestPost(context) {
         `;
 
         // --- 2. Customer Email HTML ---
-        const customerEmailHtml = `
+        const customerPendingEmailHtml = `
           <!DOCTYPE html>
           <html lang="de">
           <head>
@@ -221,10 +260,13 @@ export async function onRequestPost(context) {
                       <td style="padding: 40px 30px;">
                         <p style="font-family: Georgia, serif; font-size: 18px; color: #faf6ee; margin-bottom: 20px; font-style: italic;">Hallo ${name},</p>
                         <p style="color: #94a3b8; font-size: 15px; line-height: 1.6; margin-bottom: 25px;">
-                          vielen Dank für Ihre Anmeldung! Ich freue mich sehr über Ihre Teilnahme und bestätige Ihnen hiermit Ihre Plätze für die öffentliche Nachtwächter-Führung.
+                          vielen Dank für Ihre Anmeldung zur öffentlichen Nachtwächter-Führung am ${date}!
+                        </p>
+                        <p style="color: #94a3b8; font-size: 15px; line-height: 1.6; margin-bottom: 25px;">
+                          Da die Teilnehmerzahl für unsere öffentlichen Führungen begrenzt ist, wird Ihre Anmeldung derzeit von mir geprüft. Sie erhalten in Kürze eine weitere E-Mail mit der verbindlichen Bestätigung oder Rückmeldung.
                         </p>
                         
-                        <h3 style="color: #d9a24a; font-size: 13px; text-transform: uppercase; margin-bottom: 15px; font-weight: 600; letter-spacing: 0.05em;">Details Ihrer Anmeldung:</h3>
+                        <h3 style="color: #d9a24a; font-size: 13px; text-transform: uppercase; margin-bottom: 15px; font-weight: 600; letter-spacing: 0.05em;">Details Ihrer Anfrage:</h3>
                         <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 30px; border-collapse: collapse; border: 1px solid rgba(255, 255, 255, 0.05);">
                           <tr>
                             <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: 600; width: 40%; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">Termin</td>
@@ -239,28 +281,11 @@ export async function onRequestPost(context) {
                             <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee; font-weight: bold;">Lange Straße (Höhe Cup&amp;Cino)</td>
                           </tr>
                           <tr>
-                            <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">Führungstyp</td>
-                            <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee;">Öffentliche Führung</td>
-                          </tr>
-                          <tr>
                             <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">Teilnehmer</td>
                             <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee;">${groupSize} Personen</td>
                           </tr>
-                          <tr>
-                            <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">Bezahlung</td>
-                            <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: bold;">Vor Ort in bar (10,00 € pro Person)</td>
-                          </tr>
-                          <tr>
-                            <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">Zu bezahlen vor Ort</td>
-                            <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: bold; font-size: 16px;">${cost},00 €</td>
-                          </tr>
                         </table>
                         
-                        <p style="color: #94a3b8; font-size: 15px; line-height: 1.6; margin-bottom: 25px;">
-                          Bitte finden Sie sich ca. 5–10 Minuten vor Beginn der Führung am Treffpunkt (Lange Straße, Höhe Cup&amp;Cino) ein.
-                        </p>
-                        
-                        <p style="color: #faf6ee; font-size: 15px; font-weight: bold; margin-bottom: 5px;">Ich freue mich sehr auf unseren gemeinsamen Termin und eine spannende Zeitreise mit Ihnen!</p>
                         <p style="color: #94a3b8; font-size: 14px; margin: 0;">Herzliche Grüße,<br>Stephan van Hausen</p>
                       </td>
                     </tr>
@@ -294,7 +319,7 @@ export async function onRequestPost(context) {
           }),
         });
 
-        // Send Customer Email
+        // Send Customer Pending Email
         const res2 = await fetch('https://api.resend.com/emails', {
           method: 'POST',
           headers: {
@@ -305,8 +330,8 @@ export async function onRequestPost(context) {
             from: `Stephan van Hausen <noreply@scholz-friese-webdesign.de>`,
             to: email,
             reply_to: 'Info@nienburger-nachtwaechter.de',
-            subject: `Bestätigung Ihrer Teilnahme: Öffentliche Nachtwächter-Führung am ${date}`,
-            html: customerEmailHtml
+            subject: `Eingangsbestätigung: Anmeldung zur öffentlichen Nachtwächter-Führung am ${date}`,
+            html: customerPendingEmailHtml
           }),
         });
 
@@ -321,35 +346,6 @@ export async function onRequestPost(context) {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         });
       }
-
-      // Helper to generate a verification signature
-      async function generateSignature(secret, dataStr) {
-        const encoder = new TextEncoder();
-        const keyData = encoder.encode(secret);
-        const dataData = encoder.encode(dataStr);
-        const cryptoKey = await crypto.subtle.importKey(
-          'raw',
-          keyData,
-          { name: 'HMAC', hash: 'SHA-256' },
-          false,
-          ['sign']
-        );
-        const signature = await crypto.subtle.sign('HMAC', cryptoKey, dataData);
-        return Array.from(new Uint8Array(signature))
-          .map(b => b.toString(16).padStart(2, '0'))
-          .join('');
-      }
-
-      const secretKey = resendApiKey || 'stephan-secret';
-      const tokenDataAccept = `accept|${email}|${date}|${time || ''}|${cost}`;
-      const tokenDataReject = `reject|${email}|${date}|${time || ''}|${cost}`;
-      
-      const sigAccept = await generateSignature(secretKey, tokenDataAccept);
-      const sigReject = await generateSignature(secretKey, tokenDataReject);
-      
-      const baseActionUrl = 'https://friesescholzwebdesign.pages.dev/api/respond-booking';
-      const acceptLink = `${baseActionUrl}?action=accept&email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}&date=${encodeURIComponent(date)}&time=${encodeURIComponent(time || '')}&tourType=${encodeURIComponent(tourType)}&cost=${cost}&sig=${sigAccept}`;
-      const rejectLink = `${baseActionUrl}?action=reject&email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}&date=${encodeURIComponent(date)}&time=${encodeURIComponent(time || '')}&tourType=${encodeURIComponent(tourType)}&cost=${cost}&sig=${sigReject}`;
 
       if (!name || !email || !date) {
         return new Response(JSON.stringify({ success: false, message: 'Name, E-Mail und Wunschtermin sind Pflichtfelder.' }), {
