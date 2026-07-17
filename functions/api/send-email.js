@@ -579,7 +579,7 @@ export async function onRequestPost(context) {
 
       // Route dynamically depending on form type: career vs project/general requests
       if (formType === 'karriere') {
-        recipientEmail = 'bewerbung@karl-weymann-gmbh.de';
+        recipientEmail = 't.weymann@karl-weymann-gmbh.de';
       } else {
         recipientEmail = 'Anfragen@karl-weymann-gmbh.de';
       }
