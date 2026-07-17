@@ -58,9 +58,19 @@ export async function onRequestGet(context) {
 
   // 3. E-Mail bauen
   let subject, emailHtml;
+  const isPublicTour = tourType && (tourType.includes('Öffentliche') || tourType.includes('öffentliche'));
   
   if (action === 'accept') {
-    subject = `Bestätigung Ihrer Nachtwächter-Führung am ${date}`;
+    subject = isPublicTour 
+      ? `Teilnahmebestätigung: Öffentliche Nachtwächter-Führung am ${date}`
+      : `Bestätigung Ihrer Nachtwächter-Führung am ${date}`;
+
+    const introText = isPublicTour
+      ? `vielen Dank für Ihre Anmeldung! Ich freue mich sehr über Ihre Teilnahme und bestätige Ihnen hiermit Ihre Plätze für die öffentliche Nachtwächter-Führung.`
+      : `vielen Dank für Ihre Buchungsanfrage! Ich freue mich sehr über Ihr Interesse und bestätige Ihnen hiermit Ihren Wunschtermin für die Nachtwächter-Führung.`;
+
+    const detailsTitle = isPublicTour ? `Details Ihrer Anmeldung:` : `Details Ihrer Buchung:`;
+
     emailHtml = `
       <!DOCTYPE html>
       <html lang="de">
@@ -83,10 +93,10 @@ export async function onRequestGet(context) {
                   <td style="padding: 40px 30px;">
                     <p style="font-family: Georgia, serif; font-size: 18px; color: #faf6ee; margin-bottom: 20px; font-style: italic;">Hallo ${name},</p>
                     <p style="color: #94a3b8; font-size: 15px; line-height: 1.6; margin-bottom: 25px;">
-                      vielen Dank für Ihre Buchungsanfrage! Ich freue mich sehr über Ihr Interesse und bestätige Ihnen hiermit Ihren Wunschtermin für die Nachtwächter-Führung.
+                      ${introText}
                     </p>
                     
-                    <h3 style="color: #d9a24a; font-size: 13px; text-transform: uppercase; margin-bottom: 15px; font-weight: 600; letter-spacing: 0.05em;">Details Ihrer Buchung:</h3>
+                    <h3 style="color: #d9a24a; font-size: 13px; text-transform: uppercase; margin-bottom: 15px; font-weight: 600; letter-spacing: 0.05em;">${detailsTitle}</h3>
                     <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 30px; border-collapse: collapse; border: 1px solid rgba(255, 255, 255, 0.05);">
                       <tr>
                         <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: 600; width: 40%; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">Termin</td>
@@ -136,7 +146,22 @@ export async function onRequestGet(context) {
       </html>
     `;
   } else {
-    subject = `Rückmeldung zu Ihrer Buchungsanfrage – Nienburger Nachtwächter`;
+    subject = isPublicTour
+      ? `Rückmeldung zu Ihrer Anmeldung: Öffentliche Nachtwächter-Führung`
+      : `Rückmeldung zu Ihrer Buchungsanfrage – Nienburger Nachtwächter`;
+
+    const rejectIntro = isPublicTour
+      ? `vielen Dank für Ihre Anmeldung zur öffentlichen Nachtwächter-Führung am ${date} um ${time} Uhr.`
+      : `vielen Dank für Ihre Anfrage zu einer Nachtwächter-Führung am ${date} um ${time} Uhr.`;
+
+    const rejectReason = isPublicTour
+      ? `Leider muss ich Ihnen mitteilen, dass für diesen Termin keine Plätze mehr verfügbar sind oder die Führung aus organisatorischen Gründen abgesagt werden muss.`
+      : `Leider muss ich Ihnen mitteilen, dass dieser Wunschtermin aus organisatorischen Gründen oder wegen einer Terminüberschneidung bereits belegt ist.`;
+
+    const rejectAlternative = isPublicTour
+      ? `Gerne können Sie über meine Website <a href="https://nienburger-nachtwaechter.de" style="color: #d9a24a; text-decoration: none; font-weight: bold;">nienburger-nachtwaechter.de</a> einen alternativen Termin buchen oder mich direkt kontaktieren.`
+      : `Gerne können Sie über meine Website <a href="https://nienburger-nachtwaechter.de" style="color: #d9a24a; text-decoration: none; font-weight: bold;">nienburger-nachtwaechter.de</a> einen alternativen Wunschtermin anfragen oder mich direkt per Telefon oder E-Mail kontaktieren, um einen passenden Ausweichtermin zu vereinbaren.`;
+
     emailHtml = `
       <!DOCTYPE html>
       <html lang="de">
@@ -159,15 +184,15 @@ export async function onRequestGet(context) {
                   <td style="padding: 40px 30px;">
                     <p style="font-family: Georgia, serif; font-size: 18px; color: #faf6ee; margin-bottom: 20px; font-style: italic;">Hallo ${name},</p>
                     <p style="color: #94a3b8; font-size: 15px; line-height: 1.6; margin-bottom: 25px;">
-                      vielen Dank für Ihre Anfrage zu einer Nachtwächter-Führung am ${date} um ${time} Uhr.
+                      ${rejectIntro}
                     </p>
                     
                     <p style="color: #94a3b8; font-size: 15px; line-height: 1.6; margin-bottom: 25px;">
-                      Leider muss ich Ihnen mitteilen, dass dieser Wunschtermin aus organisatorischen Gründen oder wegen einer Terminüberschneidung bereits belegt ist.
+                      ${rejectReason}
                     </p>
                     
                     <p style="color: #94a3b8; font-size: 15px; line-height: 1.6; margin-bottom: 25px;">
-                      Gerne können Sie über meine Website <a href="https://nienburger-nachtwaechter.de" style="color: #d9a24a; text-decoration: none; font-weight: bold;">nienburger-nachtwaechter.de</a> einen alternativen Wunschtermin anfragen oder mich direkt per Telefon oder E-Mail kontaktieren, um einen passenden Ausweichtermin zu vereinbaren.
+                      ${rejectAlternative}
                     </p>
                     
                     <p style="color: #94a3b8; font-size: 14px; margin: 0;">Herzliche Grüße,<br>Stephan van Hausen</p>

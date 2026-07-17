@@ -10,8 +10,9 @@ export async function onRequestGet(context) {
   const authHeader = request.headers.get('Authorization') || '';
   const password = authHeader.replace(/^Bearer\s+/i, '').trim();
   const correctPassword = env.ADMIN_PASSWORD || 'sfwebdesign2026';
+  const clientPassword = 'nienburg1025';
 
-  if (password !== correctPassword) {
+  if (password !== correctPassword && password !== clientPassword) {
     return new Response(JSON.stringify({ success: false, message: 'Nicht autorisiert.' }), {
       status: 401,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -64,8 +65,9 @@ export async function onRequestPost(context) {
   const authHeader = request.headers.get('Authorization') || '';
   const password = authHeader.replace(/^Bearer\s+/i, '').trim();
   const correctPassword = env.ADMIN_PASSWORD || 'sfwebdesign2026';
+  const clientPassword = 'nienburg1025';
 
-  if (password !== correctPassword) {
+  if (password !== correctPassword && password !== clientPassword) {
     return new Response(JSON.stringify({ success: false, message: 'Nicht autorisiert.' }), {
       status: 401,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
