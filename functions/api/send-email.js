@@ -40,6 +40,8 @@ export async function onRequestPost(context) {
       turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_RODES_HOTEL;
     } else if (source === 'Bickbeernhof-Brokeloh') {
       turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_BICKBEERNHOF;
+    } else if (source === 'homan-madical') {
+      turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_HOMAN_MADICAL || env.CLOUDFLARE_TURNSTILE_SECRET_KEY;
     }
     const verifyResult = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
       method: 'POST',
@@ -1700,6 +1702,91 @@ export async function onRequestPost(context) {
                   <tr>
                     <td style="background-color: #071B33; padding: 25px; text-align: center; border-top: 1px solid #E8E8E8; font-size: 11px; color: #ffffff; line-height: 1.6;">
                       Anfrage über <a href="https://rodes-hotel.de" style="color: #D9A24A; text-decoration: none;">rodes-hotel.de</a><br>
+                      Technischer Partner: <strong>Scholz & Friese Webdesign</strong>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </body>
+        </html>
+      `;
+    } else if (source === 'homan-madical') {
+      const { name, company, email, phone, product, message } = data;
+
+      if (!name || !email || !message) {
+        return new Response(JSON.stringify({ success: false, message: 'Bitte alle Pflichtfelder ausfüllen.' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      fromName = 'HOMANN-MEDICAL Website';
+      if (!isKvRecipient) recipientEmail = 'contact@homann-medical.de';
+      emailSubject = `[HOMANN-MEDICAL] ✉️ Neue Anfrage von ${name}${company ? ' (' + company + ')' : ''}`;
+      emailHtml = `
+        <!DOCTYPE html>
+        <html lang="de">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body style="margin: 0; padding: 0; background-color: #FAF6F0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-font-smoothing: antialiased; color: #2C251E;">
+          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #FAF6F0; padding: 40px 10px;">
+            <tr>
+              <td align="center">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff; border: 1px solid #E8DCC4; border-top: 4px solid #C81D25; border-radius: 12px; overflow: hidden; box-shadow: 0 15px 40px rgba(31, 27, 22, 0.08);">
+                  <tr>
+                    <td style="background-color: #1F1B16; padding: 35px 30px; text-align: center; border-bottom: 2px solid #D9A24A;">
+                      <h1 style="margin: 0; font-family: sans-serif; font-size: 22px; letter-spacing: 0.05em; color: #ffffff; text-transform: uppercase; font-weight: 700;">HOMANN-MEDICAL</h1>
+                      <p style="margin: 6px 0 0 0; font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; color: #D9A24A; font-weight: 600;">Medizinische Verbandstoffe • Neue Anfrage</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 40px 35px;">
+                      <p style="font-size: 16px; color: #1F1B16; margin: 0 0 15px 0; font-weight: 600;">Sehr geehrtes HOMANN-MEDICAL Team,</p>
+                      <p style="color: #7A6F65; font-size: 14.5px; line-height: 1.6; margin: 0 0 30px 0;">
+                        über das Kontaktformular Ihrer Website ist eine neue Kundenanfrage eingegangen:
+                      </p>
+                      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 30px; border-collapse: collapse; border: 1px solid #E8DCC4; border-radius: 8px; overflow: hidden;">
+                        <tr>
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #E8DCC4; font-weight: 600; color: #1F1B16; width: 35%; text-transform: uppercase; font-size: 11px; letter-spacing: 0.08em; background-color: #FAF6F0;">Name</td>
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #E8DCC4; color: #2C251E; font-size: 14px; font-weight: 600;">${name}</td>
+                        </tr>
+                        ${company ? `
+                        <tr>
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #E8DCC4; font-weight: 600; color: #1F1B16; width: 35%; text-transform: uppercase; font-size: 11px; letter-spacing: 0.08em; background-color: #FAF6F0;">Firma / Organisation</td>
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #E8DCC4; color: #2C251E; font-size: 14px;">${company}</td>
+                        </tr>
+                        ` : ''}
+                        <tr>
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #E8DCC4; font-weight: 600; color: #1F1B16; width: 35%; text-transform: uppercase; font-size: 11px; letter-spacing: 0.08em; background-color: #FAF6F0;">E-Mail</td>
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #E8DCC4; color: #2C251E; font-size: 14px;"><a href="mailto:${email}" style="color: #C81D25; text-decoration: none; font-weight: 600;">${email}</a></td>
+                        </tr>
+                        ${phone ? `
+                        <tr>
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #E8DCC4; font-weight: 600; color: #1F1B16; width: 35%; text-transform: uppercase; font-size: 11px; letter-spacing: 0.08em; background-color: #FAF6F0;">Telefon</td>
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #E8DCC4; color: #2C251E; font-size: 14px;"><a href="tel:${phone}" style="color: #2C251E; text-decoration: none;">${phone}</a></td>
+                        </tr>
+                        ` : ''}
+                        ${product ? `
+                        <tr>
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #E8DCC4; font-weight: 600; color: #1F1B16; width: 35%; text-transform: uppercase; font-size: 11px; letter-spacing: 0.08em; background-color: #FAF6F0;">Produktbereich</td>
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #E8DCC4; color: #2C251E; font-size: 14px; font-weight: bold;">${product}</td>
+                        </tr>
+                        ` : ''}
+                      </table>
+                      
+                      <div style="background-color: #FAF6F0; border-left: 4px solid #C81D25; padding: 20px; border-radius: 6px;">
+                        <h4 style="margin: 0 0 10px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #1F1B16; font-weight: 700;">Nachricht des Kunden:</h4>
+                        <p style="color: #2C251E; font-size: 14.5px; line-height: 1.6; margin: 0; white-space: pre-wrap;">${message.replace(/\n/g, '<br>')}</p>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="background-color: #1F1B16; padding: 25px; text-align: center; border-top: 1px solid #E8DCC4; font-size: 11px; color: #FAF6F0; line-height: 1.6;">
+                      Anfrage über <a href="https://homan-madical.de" style="color: #D9A24A; text-decoration: none;">homan-madical.de</a><br>
                       Technischer Partner: <strong>Scholz & Friese Webdesign</strong>
                     </td>
                   </tr>
