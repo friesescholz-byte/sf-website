@@ -1723,7 +1723,7 @@ export async function onRequestPost(context) {
       }
 
       fromName = 'HOMANN-MEDICAL Website';
-      if (!isKvRecipient) recipientEmail = 'contact@homann-medical.de';
+      recipientEmail = 'contact@homann-medical.de';
       emailSubject = `[HOMANN-MEDICAL] ✉️ Neue Anfrage von ${name}${company ? ' (' + company + ')' : ''}`;
       emailHtml = `
         <!DOCTYPE html>
