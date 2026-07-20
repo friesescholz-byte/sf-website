@@ -40,7 +40,7 @@ export async function onRequestPost(context) {
       turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_RODES_HOTEL;
     } else if (source === 'Bickbeernhof-Brokeloh') {
       turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_BICKBEERNHOF;
-    } else if (source === 'homan-madical') {
+    } else if (source === 'homan-madical' || source === 'homann-medical') {
       turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_HOMAN_MADICAL || env.CLOUDFLARE_TURNSTILE_SECRET_KEY;
     }
     const verifyResult = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
@@ -1712,7 +1712,7 @@ export async function onRequestPost(context) {
         </body>
         </html>
       `;
-    } else if (source === 'homan-madical') {
+    } else if (source === 'homan-madical' || source === 'homann-medical') {
       const { name, company, email, phone, product, message } = data;
 
       if (!name || !email || !message) {
@@ -1894,6 +1894,10 @@ export async function onRequestPost(context) {
       emailTo = data.email;
       emailBcc = recipientEmail;
       replyToEmail = 'mail@immom.eu';
+    }
+
+    if (source === 'homan-madical' || source === 'homann-medical') {
+      emailTo = 'contact@homann-medical.de';
     }
 
     const resendResponse = await fetch('https://api.resend.com/emails', {
