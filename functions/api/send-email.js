@@ -1356,7 +1356,7 @@ export async function onRequestPost(context) {
       }
 
       fromName = 'Scholz & Friese Webdesign';
-      if (!isKvRecipient) recipientEmail = 'friese.scholz@gmail.com';
+      if (!isKvRecipient) recipientEmail = 'mail@immom.eu';
 
       if (type === 'checklist') {
         emailSubject = `[ImmoM] 📚 Ihre angeforderten Checklisten für den Immobilienverkauf`;
