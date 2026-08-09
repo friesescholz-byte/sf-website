@@ -22,16 +22,28 @@ export async function onRequestGet(context) {
   const apiToken = env.CLOUDFLARE_API_TOKEN;
   const accountId = env.CLOUDFLARE_ACCOUNT_ID;
   const namespaceId = '8d2fe320c4134c368f28c18153d4f82d'; // KUNDEN_DB
-  const key = 'nachtwaechter_config';
 
-  const kvUrl = `https://api.cloudflare.com/client/v4/accounts/${accountId}/storage/kv/namespaces/${namespaceId}/values/${key}`;
+  const url = new URL(request.url);
+  const isDraft = url.searchParams.get('draft') === 'true';
+  const primaryKey = isDraft ? 'nachtwaechter_config_draft' : 'nachtwaechter_config';
+  const fallbackKey = 'nachtwaechter_config';
+
+  const kvUrl = (k) => `https://api.cloudflare.com/client/v4/accounts/${accountId}/storage/kv/namespaces/${namespaceId}/values/${k}`;
 
   try {
-    const kvResponse = await fetch(kvUrl, {
+    let kvResponse = await fetch(kvUrl(primaryKey), {
       headers: {
         'Authorization': `Bearer ${apiToken}`
       }
     });
+
+    if (kvResponse.status !== 200 && isDraft) {
+      kvResponse = await fetch(kvUrl(fallbackKey), {
+        headers: {
+          'Authorization': `Bearer ${apiToken}`
+        }
+      });
+    }
 
     if (kvResponse.status === 200) {
       const configText = await kvResponse.text();
@@ -86,29 +98,63 @@ export async function onRequestPost(context) {
     const apiToken = env.CLOUDFLARE_API_TOKEN;
     const accountId = env.CLOUDFLARE_ACCOUNT_ID;
     const namespaceId = '8d2fe320c4134c368f28c18153d4f82d'; // KUNDEN_DB
-    const key = 'nachtwaechter_config';
 
-    const kvUrl = `https://api.cloudflare.com/client/v4/accounts/${accountId}/storage/kv/namespaces/${namespaceId}/values/${key}`;
+    const url = new URL(request.url);
+    const isDraft = url.searchParams.get('draft') === 'true';
 
-    const kvResponse = await fetch(kvUrl, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${apiToken}`,
-        'Content-Type': 'text/plain'
-      },
-      body: JSON.stringify(config)
-    });
+    const kvUrl = (k) => `https://api.cloudflare.com/client/v4/accounts/${accountId}/storage/kv/namespaces/${namespaceId}/values/${k}`;
 
-    if (kvResponse.ok) {
-      return new Response(JSON.stringify({ success: true }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    const configStr = JSON.stringify(config);
+
+    if (isDraft) {
+      const kvResponse = await fetch(kvUrl('nachtwaechter_config_draft'), {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${apiToken}`,
+          'Content-Type': 'text/plain'
+        },
+        body: configStr
       });
-    } else {
+      if (kvResponse.ok) {
+        return new Response(JSON.stringify({ success: true }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
       const errText = await kvResponse.text();
-      return new Response(JSON.stringify({ success: false, message: 'Fehler beim Speichern in der Cloudflare-Datenbank: ' + errText }), {
+      return new Response(JSON.stringify({ success: false, message: 'Fehler beim Speichern des Entwurfs: ' + errText }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
+    } else {
+      const [resLive, resDraft] = await Promise.all([
+        fetch(kvUrl('nachtwaechter_config'), {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${apiToken}`,
+            'Content-Type': 'text/plain'
+          },
+          body: configStr
+        }),
+        fetch(kvUrl('nachtwaechter_config_draft'), {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${apiToken}`,
+            'Content-Type': 'text/plain'
+          },
+          body: configStr
+        })
+      ]);
+
+      if (resLive.ok && resDraft.ok) {
+        return new Response(JSON.stringify({ success: true }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      } else {
+        return new Response(JSON.stringify({ success: false, message: 'Fehler beim Veröffentlichen in der Cloudflare-Datenbank.' }), {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
     }
   } catch (err) {
     return new Response(JSON.stringify({ success: false, message: 'Verbindungsfehler zur Cloudflare-Datenbank: ' + err.message }), {
