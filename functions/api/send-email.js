@@ -1646,6 +1646,98 @@ export async function onRequestPost(context) {
           </body>
           </html>
         `;
+      } else if (type === 'tippgeber') {
+        const { name, phone, street, zipCity, address, objektAdresse, objektOrt, objektArt, eigentuemerName, hinweise } = data;
+        const fullAddress = address || (street && zipCity ? `${street}, ${zipCity}` : street || zipCity || '');
+        emailSubject = `[ImmoM] 💰 Neuer Tippgeber-Hinweis von ${name}`;
+        emailHtml = `
+          <!DOCTYPE html>
+          <html lang="de">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          </head>
+          <body style="margin: 0; padding: 0; background-color: #F7F1E8; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #071B33;">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #F7F1E8; padding: 40px 10px;">
+              <tr>
+                <td align="center">
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff; border: 1px solid #E8E8E8; border-top: 4px solid #D9A24A; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.03);">
+                    <tr>
+                      <td style="padding: 30px; border-bottom: 1px solid #E8E8E8; background-color: #071B33; text-align: center;">
+                        <h2 style="margin: 0; color: #ffffff; font-family: Georgia, serif; font-size: 22px; font-weight: 400; letter-spacing: 1px;">ImmoM</h2>
+                        <p style="margin: 5px 0 0 0; font-size: 11px; color: #D9A24A; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">Neuer Tippgeber-Hinweis</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 40px 35px;">
+                        <p style="font-size: 15px; line-height: 1.6; color: #071B33; margin: 0 0 20px 0; font-weight: 600;">
+                          Hallo Carsten,
+                        </p>
+                        <p style="font-size: 14.5px; line-height: 1.6; color: #102A4C; margin: 0 0 25px 0;">
+                          über das Tippgeber-Formular wurde ein neuer Immobilien-Tipp eingereicht:
+                        </p>
+                        
+                        <h3 style="margin: 25px 0 10px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; color: #071B33; border-bottom: 1px solid #E8E8E8; padding-bottom: 5px;">Tippgeber (Kontaktdaten)</h3>
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 25px; border-collapse: collapse;">
+                          <tr>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; color: #071B33; width: 40%; font-size: 12px;">Name</td>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px; font-weight: 600;">${name}</td>
+                          </tr>
+                          ${fullAddress ? `<tr>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; color: #071B33; font-size: 12px;">Anschrift</td>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px; font-weight: 600;">${fullAddress}</td>
+                          </tr>` : ''}
+                          <tr>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; color: #071B33; font-size: 12px;">E-Mail</td>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;"><a href="mailto:${email}" style="color: #D9A24A; text-decoration: none;">${email}</a></td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; color: #071B33; font-size: 12px;">Telefon</td>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;"><a href="tel:${phone}" style="color: #102A4C; text-decoration: none;">${phone}</a></td>
+                          </tr>
+                        </table>
+
+                        <h3 style="margin: 25px 0 10px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; color: #071B33; border-bottom: 1px solid #E8E8E8; padding-bottom: 5px;">Empfohlenes Objekt</h3>
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 30px; border-collapse: collapse;">
+                          <tr>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; color: #071B33; width: 40%; font-size: 12px;">Objektadresse</td>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px; font-weight: 600;">${objektAdresse}</td>
+                          </tr>
+                          ${objektOrt ? `<tr>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; color: #071B33; font-size: 12px;">Ort / Stadtteil</td>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;">${objektOrt}</td>
+                          </tr>` : ''}
+                          ${objektArt ? `<tr>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; color: #071B33; font-size: 12px;">Immobilienart</td>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;">${objektArt}</td>
+                          </tr>` : ''}
+                          ${eigentuemerName ? `<tr>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; color: #071B33; font-size: 12px;">Eigentümer</td>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;">${eigentuemerName}</td>
+                          </tr>` : ''}
+                        </table>
+
+                        ${hinweise ? `
+                          <div style="background-color: #F7F1E8; border-left: 4px solid #D9A24A; padding: 15px 20px; border-radius: 4px; margin-top: 25px;">
+                            <h4 style="margin: 0 0 8px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #071B33;">Zusätzliche Notizen:</h4>
+                            <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #102A4C; font-style: italic;">"${hinweise.replace(/\n/g, '<br>')}"</p>
+                          </div>
+                        ` : ''}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="background-color: #071B33; padding: 25px; text-align: center; font-size: 11px; color: #E8E8E8; line-height: 1.6;">
+                        Anfrage über <a href="https://immom.de" style="color: #D9A24A; text-decoration: none;">immom.de</a><br>
+                        Technischer Partner: <strong>Scholz & Friese Webdesign</strong>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </body>
+          </html>
+        `;
       }
     } else if (source === 'Rodes-Hotel') {
       const { name, email, phone, type, message } = data;
