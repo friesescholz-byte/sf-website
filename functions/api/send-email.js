@@ -1433,7 +1433,8 @@ export async function onRequestPost(context) {
           </html>
         `;
       } else if (type === 'expose') {
-        const { name, phone, msg, propertyTitle, propertyLocation, propertyPrice, exposeUrl } = data;
+        const { name, phone, street, zipCity, address, msg, propertyTitle, propertyLocation, propertyPrice, exposeUrl } = data;
+        const fullAddress = address || (street && zipCity ? `${street}, ${zipCity}` : street || zipCity || '');
         emailSubject = `[ImmoM] 🏡 Exposé- & Besichtigungsanfrage von ${name}`;
         emailHtml = `
           <!DOCTYPE html>
@@ -1468,6 +1469,10 @@ export async function onRequestPost(context) {
                             <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; color: #071B33; width: 40%; font-size: 12px;">Name</td>
                             <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;">${name}</td>
                           </tr>
+                          ${fullAddress ? `<tr>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; color: #071B33; font-size: 12px;">Anschrift</td>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px; font-weight: 600;">${fullAddress}</td>
+                          </tr>` : ''}
                           <tr>
                             <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; color: #071B33; font-size: 12px;">E-Mail</td>
                             <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;"><a href="mailto:${email}" style="color: #D9A24A; text-decoration: none;">${email}</a></td>
@@ -1518,8 +1523,9 @@ export async function onRequestPost(context) {
           </html>
         `;
       } else if (type === 'valuation') {
-        const { flow, anrede, vorname, nachname, phone, terminwunsch } = data;
+        const { flow, anrede, vorname, nachname, street, zipCity, address, phone, terminwunsch } = data;
         const nameLabel = `${anrede === 'frau' ? 'Frau' : 'Herr'} ${vorname} ${nachname}`;
+        const fullAddress = address || (street && zipCity ? `${street}, ${zipCity}` : street || zipCity || '');
         
         emailSubject = flow === 'beratung'
           ? `[ImmoM] 📞 Rückruf- & Beratungstermin angefordert von ${vorname} ${nachname}`
@@ -1601,6 +1607,10 @@ export async function onRequestPost(context) {
                             <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; color: #071B33; width: 40%; font-size: 12px;">Name</td>
                             <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;">${nameLabel}</td>
                           </tr>
+                          ${fullAddress ? `<tr>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; color: #071B33; font-size: 12px;">Anschrift</td>
+                            <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px; font-weight: 600;">${fullAddress}</td>
+                          </tr>` : ''}
                           <tr>
                             <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; font-weight: 600; color: #071B33; font-size: 12px;">E-Mail</td>
                             <td style="padding: 10px 12px; border-bottom: 1px solid #F7F1E8; color: #102A4C; font-size: 14px;"><a href="mailto:${email}" style="color: #D9A24A; text-decoration: none;">${email}</a></td>
