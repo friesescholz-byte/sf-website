@@ -2015,7 +2015,7 @@ export async function onRequestPost(context) {
       emailPayload.reply_to = replyToEmail;
     }
 
-    const resendResponse = await fetch('https://api.resend.com/emails', {
+    let resendResponse = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -2023,6 +2023,25 @@ export async function onRequestPost(context) {
       },
       body: JSON.stringify(emailPayload),
     });
+
+    // If sending to custom domain mail@immom.eu failed on Resend, retry with c.meyer.immom@gmail.com fallback
+    if (!resendResponse.ok && source === 'immom' && emailTo !== 'c.meyer.immom@gmail.com') {
+      const fallbackPayload = {
+        ...emailPayload,
+        to: 'c.meyer.immom@gmail.com',
+      };
+      const retryRes = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${resendApiKey}`,
+        },
+        body: JSON.stringify(fallbackPayload),
+      });
+      if (retryRes.ok) {
+        resendResponse = retryRes;
+      }
+    }
 
     if (!resendResponse.ok) {
       const errData = await resendResponse.json();
