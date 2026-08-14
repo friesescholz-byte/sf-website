@@ -1355,7 +1355,7 @@ export async function onRequestPost(context) {
         });
       }
 
-      fromName = 'Scholz & Friese Webdesign';
+      fromName = 'ImmoM';
       if (!isKvRecipient) recipientEmail = 'mail@immom.eu';
 
       if (type === 'checklist') {
