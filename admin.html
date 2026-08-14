@@ -525,13 +525,13 @@
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>
-            <div class="client-name">${client.name}</div>
+            <div class="client-name">${client.name || id}</div>
           </td>
           <td>
             <span class="client-id">${id}</span>
           </td>
           <td>
-            <span class="client-email">${client.email}</span>
+            <span class="client-email">${client.email || '-'}</span>
           </td>
           <td>
             <div class="actions-cell">

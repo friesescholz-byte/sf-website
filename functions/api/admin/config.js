@@ -61,8 +61,8 @@ export async function onRequestGet(context) {
       "email": "finnjamariesch@t-online.de"
     },
     "immom": {
-      "name": "ImmoM (Immobilien)",
-      "email": "friese.scholz@gmail.com"
+      "name": "ImmoM – Carsten Meyer",
+      "email": "mail@immom.eu"
     },
     "Rodes-Hotel": {
       "name": "Rodes Hotel",
@@ -71,6 +71,18 @@ export async function onRequestGet(context) {
     "Bickbeernhof-Brokeloh": {
       "name": "Bickbeernhof Brokeloh",
       "email": "friese.scholz@gmail.com"
+    },
+    "weymann-gebaeudetechnik": {
+      "name": "Karl Weymann GmbH (Gebäudetechnik)",
+      "email": "Anfragen@karl-weymann-gmbh.de"
+    },
+    "work4palace": {
+      "name": "Work4Palace",
+      "email": "info@work4palace.de"
+    },
+    "homann-medical": {
+      "name": "Homann Medical",
+      "email": "contact@homann-medical.de"
     }
   };
 
