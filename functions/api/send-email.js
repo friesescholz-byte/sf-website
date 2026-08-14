@@ -1988,12 +1988,13 @@ export async function onRequestPost(context) {
     }
 
     // 4. E-Mail über Resend senden
+    const isValidEmail = (str) => typeof str === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(str.trim());
     let emailTo = recipientEmail;
     let emailBcc = undefined;
-    let replyToEmail = data.email;
+    let replyToEmail = isValidEmail(data.email) ? data.email.trim() : undefined;
 
     if (source === 'immom' && data.type === 'checklist') {
-      emailTo = data.email;
+      emailTo = data.email.trim();
       emailBcc = recipientEmail;
       replyToEmail = 'mail@immom.eu';
     }
@@ -2002,26 +2003,34 @@ export async function onRequestPost(context) {
       emailTo = 'contact@homann-medical.de';
     }
 
+    const emailPayload = {
+      from: `${fromName} <noreply@scholz-friese-webdesign.de>`,
+      to: emailTo,
+      bcc: emailBcc,
+      subject: emailSubject,
+      html: emailHtml,
+      attachments: data.attachments || [],
+    };
+    if (replyToEmail) {
+      emailPayload.reply_to = replyToEmail;
+    }
+
     const resendResponse = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${resendApiKey}`,
       },
-      body: JSON.stringify({
-        from: `${fromName} <noreply@scholz-friese-webdesign.de>`,
-        to: emailTo,
-        bcc: emailBcc,
-        reply_to: replyToEmail,
-        subject: emailSubject,
-        html: emailHtml,
-        attachments: data.attachments || [],
-      }),
+      body: JSON.stringify(emailPayload),
     });
 
     if (!resendResponse.ok) {
       const errData = await resendResponse.json();
-      return new Response(JSON.stringify({ success: false, message: 'Fehler beim E-Mail-Versand über Resend.', error: errData }), {
+      return new Response(JSON.stringify({ 
+        success: false, 
+        message: errData.message || 'Fehler beim E-Mail-Versand über Resend.', 
+        error: errData 
+      }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
