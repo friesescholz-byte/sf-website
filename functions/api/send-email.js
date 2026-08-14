@@ -1356,7 +1356,7 @@ export async function onRequestPost(context) {
       }
 
       fromName = 'ImmoM';
-      if (!isKvRecipient) recipientEmail = 'mail@immom.eu';
+      recipientEmail = 'mail@immom.eu';
 
       if (type === 'checklist') {
         emailSubject = `[ImmoM] 📚 Ihre angeforderten Checklisten für den Immobilienverkauf`;
