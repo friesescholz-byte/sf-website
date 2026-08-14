@@ -2026,9 +2026,21 @@ export async function onRequestPost(context) {
 
     if (!resendResponse.ok) {
       const errData = await resendResponse.json();
+      let errMsg = 'Unbekannter Resend-Fehler';
+      if (errData) {
+        if (typeof errData.message === 'string') {
+          errMsg = errData.message;
+        } else if (errData.error && typeof errData.error.message === 'string') {
+          errMsg = errData.error.message;
+        } else if (typeof errData === 'string') {
+          errMsg = errData;
+        } else {
+          errMsg = JSON.stringify(errData);
+        }
+      }
       return new Response(JSON.stringify({ 
         success: false, 
-        message: errData.message || 'Fehler beim E-Mail-Versand über Resend.', 
+        message: `Fehler beim E-Mail-Versand über Resend: ${errMsg}`, 
         error: errData 
       }), {
         status: 500,
