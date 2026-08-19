@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin.html
+Disallow: /danke.html
+
+Sitemap: https://scholz-friese-webdesign.de/sitemap.xml
