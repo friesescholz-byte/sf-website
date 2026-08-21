@@ -1888,7 +1888,7 @@ export async function onRequestPost(context) {
                   </tr>
                   <tr>
                     <td style="background-color: #1F1B16; padding: 25px; text-align: center; border-top: 1px solid #E8DCC4; font-size: 11px; color: #FAF6F0; line-height: 1.6;">
-                      Anfrage über <a href="https://homan-madical.de" style="color: #D9A24A; text-decoration: none;">homan-madical.de</a><br>
+                      Anfrage über <a href="https://www.homann-medical.de/" style="color: #D9A24A; text-decoration: none;">homann-medical.de</a><br>
                       Technischer Partner: <strong>Scholz & Friese Webdesign</strong>
                     </td>
                   </tr>
