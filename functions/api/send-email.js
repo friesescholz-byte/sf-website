@@ -887,6 +887,109 @@ export async function onRequestPost(context) {
           </body>
           </html>
         `;
+      } else if (formType === 'klimaanlage') {
+        const { eigentuemer, objekt, anzahlRaeume, geraeteCount, heizenGewuenscht, montage, vorhanden, hersteller, zeitraum, name, phone, email, adresse, ort } = data;
+        const userAddress = adresse || ort || '-';
+        const userPhone = phone || data.telefon || '-';
+        const userRaeume = anzahlRaeume || geraeteCount || '-';
+        const userHeizen = heizenGewuenscht || montage || '-';
+        const userVorhanden = vorhanden || hersteller || '-';
+
+        if (!name || !email || !userPhone || userAddress === '-' || !userAddress) {
+          return new Response(JSON.stringify({ success: false, message: 'Bitte alle Pflichtfelder ausfüllen.' }), {
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+
+        emailSubject = `[weymann-gebaeudetechnik] ❄️ Neuer Klimaanlagen-Check von ${name}`;
+        emailHtml = `
+          <!DOCTYPE html>
+          <html lang="de">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          </head>
+          <body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1e293b;">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f8fafc; padding: 40px 10px;">
+              <tr>
+                <td align="center">
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(13, 43, 94, 0.05);">
+                    <tr>
+                      <td style="background-color: #0d2b5e; padding: 30px; text-align: center; border-bottom: 4px solid #d21e26;">
+                        <h1 style="margin: 0; font-size: 22px; color: #ffffff; font-weight: 700; letter-spacing: 0.5px;">Karl Weymann GmbH</h1>
+                        <p style="margin: 5px 0 0 0; font-size: 12px; color: #a0aab2; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">Klimaanlagen-Anfrage</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 40px 35px;">
+                        <p style="font-size: 16px; font-weight: 600; color: #0d2b5e; margin: 0 0 15px 0;">Hallo Team,</p>
+                        <p style="font-size: 14.5px; line-height: 1.6; color: #475569; margin: 0 0 25px 0;">
+                          über die Website wurde eine neue Klimaanlagen-Anfrage gesendet. Hier sind die erfassten Details:
+                        </p>
+                        
+                        <h3 style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: #d21e26; margin: 0 0 10px 0;">Angaben zum Projekt</h3>
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 25px; border-collapse: collapse;">
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; width: 45%; font-size: 12px; text-transform: uppercase;">Eigentümer?</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${eigentuemer || '-'}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Objekttyp</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${objekt || '-'}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Wie viele Räume?</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${userRaeume}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Winter Heizen?</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${userHeizen}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Erstinstallation?</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${userVorhanden}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Zeitraum</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${zeitraum || '-'}</td>
+                          </tr>
+                        </table>
+
+                        <h3 style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: #d21e26; margin: 20px 0 10px 0;">Kontaktdaten</h3>
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 10px; border-collapse: collapse;">
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; width: 45%; font-size: 12px; text-transform: uppercase;">Name</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${name}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Telefon</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;">${userPhone}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">E-Mail</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14px;"><a href="mailto:${email}" style="color: #d21e26; text-decoration: none;">${email}</a></td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Adresse / Ort</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-weight: 600; font-size: 14px;">${userAddress}</td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="background-color: #f8fafc; padding: 25px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 11px; color: #64748b;">
+                        Karl Weymann GmbH | Burgdorfer Straße 110 | 31275 Lehrte<br>
+                        Technischer Partner: <strong>Scholz & Friese Webdesign</strong>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </body>
+          </html>
+        `;
       } else if (formType === 'karriere') {
         const { name, phone, email, position, erfahrung, message } = data;
 
@@ -965,9 +1068,12 @@ export async function onRequestPost(context) {
           </html>
         `;
       } else {
-        const { name, email, phone, message } = data;
+        const { name, email, phone, message, adresse } = data;
+        const userAddress = adresse || data.ort || '-';
+        const userPhone = phone || data.telefon || '-';
+        const userMessage = message || '-';
 
-        if (!name || !email || !phone || !message) {
+        if (!name || !email || !userPhone || userAddress === '-' || !userAddress) {
           return new Response(JSON.stringify({ success: false, message: 'Bitte alle Pflichtfelder ausfüllen.' }), {
             status: 400,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -1001,7 +1107,7 @@ export async function onRequestPost(context) {
                         </p>
                         <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 30px; border-collapse: collapse;">
                           <tr>
-                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; width: 45%; font-size: 12px; text-transform: uppercase;">Name</td>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; width: 45%; font-size: 12px; text-transform: uppercase;">Name / Firma</td>
                             <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14.5px;">${name}</td>
                           </tr>
                           <tr>
@@ -1010,7 +1116,11 @@ export async function onRequestPost(context) {
                           </tr>
                           <tr>
                             <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Telefon</td>
-                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14.5px;">${phone}</td>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-size: 14.5px;">${userPhone}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #0d2b5e; font-size: 12px; text-transform: uppercase;">Adresse / Ort</td>
+                            <td style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; font-weight: 600; font-size: 14.5px;">${userAddress}</td>
                           </tr>
                         </table>
                         <div style="background-color: #f8fafc; border-left: 4px solid #d21e26; padding: 15px 20px; border-radius: 4px;">
