@@ -123,8 +123,8 @@ export async function onRequestPost(context) {
       const sigReject = await generateSignature(secretKey, tokenDataReject);
       
       const baseActionUrl = 'https://friesescholzwebdesign.pages.dev/api/respond-booking';
-      const acceptLink = `${baseActionUrl}?action=accept&email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}&date=${encodeURIComponent(date)}&time=${encodeURIComponent(time || '')}&tourType=${encodeURIComponent(tourType)}&cost=${cost}&sig=${sigAccept}`;
-      const rejectLink = `${baseActionUrl}?action=reject&email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}&date=${encodeURIComponent(date)}&time=${encodeURIComponent(time || '')}&tourType=${encodeURIComponent(tourType)}&cost=${cost}&sig=${sigReject}`;
+      const acceptLink = `${baseActionUrl}?action=accept&email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}&date=${encodeURIComponent(date)}&time=${encodeURIComponent(time || '')}&tourType=${encodeURIComponent(tourType)}&cost=${cost}&phone=${encodeURIComponent(phone || '')}&groupSize=${encodeURIComponent(groupSize || '')}&sig=${sigAccept}`;
+      const rejectLink = `${baseActionUrl}?action=reject&email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}&date=${encodeURIComponent(date)}&time=${encodeURIComponent(time || '')}&tourType=${encodeURIComponent(tourType)}&cost=${cost}&phone=${encodeURIComponent(phone || '')}&groupSize=${encodeURIComponent(groupSize || '')}&sig=${sigReject}`;
 
       if (isPublic) {
         // --- 1. Admin Email HTML ---

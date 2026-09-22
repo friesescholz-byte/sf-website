@@ -11,6 +11,8 @@ export async function onRequestGet(context) {
   const tourType = url.searchParams.get('tourType');
   const cost = url.searchParams.get('cost');
   const sig = url.searchParams.get('sig');
+  const phone = url.searchParams.get('phone') || '';
+  const groupSize = url.searchParams.get('groupSize') || '';
 
   // CORS headers
   const corsHeaders = {
@@ -213,7 +215,7 @@ export async function onRequestGet(context) {
     `;
   }
 
-  // 4. Über Resend senden
+  // 4. E-Mail an Kunden über Resend senden
   const resendResponse = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
@@ -232,6 +234,136 @@ export async function onRequestGet(context) {
   if (!resendResponse.ok) {
     const errData = await resendResponse.json();
     return new Response(`Fehler beim Senden über Resend: ${JSON.stringify(errData)}`, { status: 500, headers: corsHeaders });
+  }
+
+  // 4b. Status-Dokumentations-E-Mail an den Nachtwächter (Stefan Hilker) senden
+  const isAccepted = action === 'accept';
+  const actionLabel = isAccepted ? 'Bestätigt' : 'Abgelehnt';
+  const tourLabel = isPublicTour ? 'Öffentliche Führung' : (tourType || 'Private Führung');
+  const timeDisplay = time ? `${time} Uhr` : (isPublicTour ? '18:00 Uhr' : '–');
+  const adminSubject = `[Erledigt: ${actionLabel}] ${tourLabel} am ${date} – ${name}`;
+
+  const statusBadgeBg = isAccepted ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)';
+  const statusBadgeColor = isAccepted ? '#10b981' : '#f87171';
+  const statusBadgeBorder = isAccepted ? '#10b981' : '#ef4444';
+  const statusBadgeText = isAccepted ? '✓ ANFRAGE BESTÄTIGT' : '✕ ANFRAGE ABGELEHNT';
+
+  const adminIntroText = isAccepted
+    ? `du hast die Buchungsanfrage von <strong>${name}</strong> soeben erfolgreich <strong>bestätigt</strong>. Die verbindliche Teilnahmebestätigung wurde an den Kunden versandt.`
+    : `du hast die Buchungsanfrage von <strong>${name}</strong> soeben <strong>abgelehnt</strong>. Die Absage-E-Mail wurde an den Kunden versandt.`;
+
+  const adminStatusEmailHtml = `
+    <!DOCTYPE html>
+    <html lang="de">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body style="margin: 0; padding: 0; background-color: #07090d; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #faf6ee;">
+      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #07090d; padding: 40px 10px;">
+        <tr>
+          <td align="center">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #131722; border: 1px solid rgba(217, 162, 74, 0.15); border-radius: 8px; overflow: hidden; box-shadow: 0 25px 60px rgba(0,0,0,0.5);">
+              <tr>
+                <td style="background-color: #0d111a; padding: 30px 25px; text-align: center; border-bottom: 2px solid #d9a24a;">
+                  <h1 style="margin: 0; font-family: Georgia, serif; font-size: 22px; color: #faf6ee; font-weight: 400; text-transform: uppercase; letter-spacing: 0.05em;">Stephan van Hausen</h1>
+                  <p style="margin: 6px 0 0 0; font-size: 11px; color: #d9a24a; text-transform: uppercase; font-weight: 500; letter-spacing: 0.15em;">Buchungssystem · Interne Bestätigung</p>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 35px 30px;">
+                  <div style="margin-bottom: 25px; text-align: center;">
+                    <span style="display: inline-block; background-color: ${statusBadgeBg}; color: ${statusBadgeColor}; border: 1px solid ${statusBadgeBorder}; padding: 7px 18px; border-radius: 50px; font-weight: bold; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;">
+                      ${statusBadgeText}
+                    </span>
+                  </div>
+
+                  <p style="font-family: Georgia, serif; font-size: 18px; color: #faf6ee; margin-bottom: 15px; font-style: italic;">Hallo Stefan,</p>
+                  <p style="color: #94a3b8; font-size: 14.5px; line-height: 1.6; margin-bottom: 25px;">
+                    ${adminIntroText}
+                  </p>
+                  
+                  <h3 style="color: #d9a24a; font-size: 12px; text-transform: uppercase; margin-bottom: 12px; font-weight: 600; letter-spacing: 0.08em;">Zusammenfassung der Anfrage:</h3>
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 25px; border-collapse: collapse; border: 1px solid rgba(255, 255, 255, 0.05); font-size: 13.5px;">
+                    <tr>
+                      <td style="padding: 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: 600; width: 38%; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">Kunde</td>
+                      <td style="padding: 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee; font-weight: bold;">${name}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">E-Mail</td>
+                      <td style="padding: 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee;"><a href="mailto:${email}" style="color: #d9a24a; text-decoration: none;">${email}</a></td>
+                    </tr>
+                    ${phone ? `
+                    <tr>
+                      <td style="padding: 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">Telefon</td>
+                      <td style="padding: 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee;"><a href="tel:${phone}" style="color: #d9a24a; text-decoration: none;">${phone}</a></td>
+                    </tr>` : ''}
+                    <tr>
+                      <td style="padding: 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">Termin</td>
+                      <td style="padding: 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee; font-weight: bold;">${date}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">Uhrzeit</td>
+                      <td style="padding: 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee;">${timeDisplay}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">Führungstyp</td>
+                      <td style="padding: 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee;">${tourType || 'Nachtwächter-Führung'}</td>
+                    </tr>
+                    ${groupSize ? `
+                    <tr>
+                      <td style="padding: 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">Teilnehmer</td>
+                      <td style="padding: 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee;">${groupSize} Personen</td>
+                    </tr>` : ''}
+                    <tr>
+                      <td style="padding: 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">Betrag</td>
+                      <td style="padding: 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: bold; font-size: 15px;">${cost},00 €</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">Treffpunkt</td>
+                      <td style="padding: 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee;">Lange Straße (Höhe Cup&amp;Cino)</td>
+                    </tr>
+                  </table>
+                  
+                  <div style="padding: 14px 16px; background-color: rgba(217, 162, 74, 0.08); border-left: 3px solid #d9a24a; border-radius: 0 4px 4px 0; margin-top: 20px;">
+                    <p style="margin: 0; color: #d9a24a; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;">Interne Dokumentation</p>
+                    <p style="margin: 4px 0 0 0; color: #94a3b8; font-size: 13px; line-height: 1.5;">
+                      Diese Nachricht dient deiner Dokumentation. Wenn du auf diese E-Mail antwortest, erreichst du direkt den Kunden (<strong>${email}</strong>).
+                    </p>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td style="background-color: #0d111a; padding: 20px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.04); font-size: 11px; color: #94a3b8; line-height: 1.5;">
+                  Stephan van Hausen als Nienburger Nachtwächter · Automatisches Buchungssystem<br>
+                  Technischer Partner: <strong>Scholz &amp; Friese Webdesign</strong>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>
+  `;
+
+  try {
+    await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${resendApiKey}`,
+      },
+      body: JSON.stringify({
+        from: `Stephan van Hausen Buchungssystem <noreply@scholz-friese-webdesign.de>`,
+        to: 'Info@nienburger-nachtwaechter.de',
+        reply_to: email,
+        subject: adminSubject,
+        html: adminStatusEmailHtml,
+      }),
+    });
+  } catch (adminMailErr) {
+    console.error('Fehler beim Senden der Admin-Kopie:', adminMailErr);
   }
 
   // 5. Bestätigungseite für Admin ausgeben
@@ -259,19 +391,22 @@ export async function onRequestGet(context) {
           border: 1px solid rgba(217, 162, 74, 0.2);
           border-radius: 8px;
           padding: 40px 30px;
-          max-width: 480px;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+          max-width: 500px;
+          width: 90%;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
         }
         h1 {
           font-family: Georgia, serif;
-          color: #d9a24a;
+          color: ${action === 'accept' ? '#10b981' : '#ef4444'};
           font-size: 24px;
           margin-top: 0;
+          margin-bottom: 15px;
         }
         p {
           color: #94a3b8;
-          font-size: 16px;
+          font-size: 15px;
           line-height: 1.6;
+          margin-bottom: 20px;
         }
         .icon {
           font-size: 48px;
@@ -298,10 +433,13 @@ export async function onRequestGet(context) {
         <div class="icon">${action === 'accept' ? '🏛️' : '❌'}</div>
         <h1>Anfrage ${action === 'accept' ? 'bestätigt!' : 'abgelehnt.'}</h1>
         <p>
-          Die Buchungsanfrage von <strong>${name}</strong> am ${date} um ${time} Uhr wurde erfolgreich ${action === 'accept' ? 'angenommen und bestätigt' : 'abgelehnt'}.
+          Die Buchungsanfrage von <strong>${name}</strong> am ${date} um ${time || (isPublicTour ? '18:00' : '')} Uhr wurde erfolgreich ${action === 'accept' ? 'angenommen und bestätigt' : 'abgelehnt'}.
         </p>
         <p>
           Eine entsprechende E-Mail wurde an den Kunden (<strong>${email}</strong>) gesendet.
+        </p>
+        <p style="color: #94a3b8; font-size: 13.5px; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 15px; margin-top: 15px;">
+          ✓ Ein Bestätigungsbeleg wurde zur internen Dokumentation auch an dein Postfach (<strong>Info@nienburger-nachtwaechter.de</strong>) gesendet.
         </p>
         <a href="https://nienburger-nachtwaechter.de" class="btn">Zurück zur Website</a>
       </div>
