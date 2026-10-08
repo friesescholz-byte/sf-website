@@ -44,6 +44,8 @@ export async function onRequestPost(context) {
       turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_HOMAN_MADICAL || env.CLOUDFLARE_TURNSTILE_SECRET_KEY;
     } else if (source === 'haarmonie' || source === 'Haarmonie') {
       turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_HAARMONIE || '0x4AAAAAAFRIHYh9vWNNEDuWnsXzbgRRDrw';
+    } else if (source === 'ProColour' || source === 'procolour') {
+      turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_PROCOLOUR || '0x4AAAAAAFRMeGFK1lbUX8dYa_jsx-aA6Ak';
     }
     const verifyResult = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
       method: 'POST',
@@ -2095,6 +2097,88 @@ export async function onRequestPost(context) {
                     <td style="background-color: #F4F4F5; padding: 22px 30px; text-align: center; border-top: 1px solid #E4E4E7; font-size: 11px; color: #71717A; line-height: 1.6;">
                       Anfrage über <a href="https://haarmonie-nienburg.com" style="color: #2F5E3D; text-decoration: none; font-weight: 600;">haarmonie-nienburg.com</a><br>
                       Technischer Partner: <strong>Scholz &amp; Friese Webdesign</strong>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </body>
+        </html>
+      `;
+    } else if (source === 'ProColour' || source === 'procolour') {
+      // ───── PRO COLOUR SMART REPAIR E-MAIL ─────
+      const { name, email, phone, message } = data;
+
+      if (!name || !email || !phone) {
+        return new Response(JSON.stringify({ success: false, message: 'Bitte Name, Telefonnummer und E-Mail eingeben.' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      fromName = 'Pro Colour Smart Repair';
+      if (!isKvRecipient) recipientEmail = 'friese.scholz@gmail.com';
+      emailSubject = `[ProColour] 🚗 Neue Schadensanfrage von ${name}`;
+      replyToEmail = email;
+
+      const hasAttachments = Array.isArray(data.attachments) && data.attachments.length > 0;
+
+      emailHtml = `
+        <!DOCTYPE html>
+        <html lang="de">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body style="margin: 0; padding: 0; background-color: #0b0d13; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #FFFFFF;">
+          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #0b0d13; padding: 40px 10px;">
+            <tr>
+              <td align="center">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #12151C; border: 1px solid rgba(255, 255, 255, 0.08); border-top: 4px solid #FF5E1E; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                  <tr>
+                    <td style="padding: 30px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); background-color: #161922;">
+                      <h2 style="margin: 0; color: #FFFFFF; font-size: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;">Pro Colour Smart Repair</h2>
+                      <p style="margin: 5px 0 0 0; font-size: 14px; color: #FF5E1E; font-weight: 600;">Neue Schadens- & Terminanfrage über die Website</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 30px;">
+                      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 25px; border-collapse: collapse;">
+                        <tr>
+                          <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.06); color: #94A3B8; font-size: 13px; font-weight: 600; width: 35%;">Kunde / Name:</td>
+                          <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.06); color: #FFFFFF; font-size: 15px; font-weight: 700;">${name}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.06); color: #94A3B8; font-size: 13px; font-weight: 600;">Telefonnummer:</td>
+                          <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.06); color: #F59E0B; font-size: 15px; font-weight: 700;">
+                            <a href="tel:${phone}" style="color: #F59E0B; text-decoration: none;">${phone}</a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.06); color: #94A3B8; font-size: 13px; font-weight: 600;">E-Mail:</td>
+                          <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.06); color: #FFFFFF; font-size: 14px;">
+                            <a href="mailto:${email}" style="color: #FF5E1E; text-decoration: none;">${email}</a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.06); color: #94A3B8; font-size: 13px; font-weight: 600;">Fotos beigefügt:</td>
+                          <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.06); color: ${hasAttachments ? '#10B981' : '#94A3B8'}; font-size: 14px; font-weight: 600;">
+                            ${hasAttachments ? `Ja (${data.attachments.length} Bild(er) im Anhang)` : 'Nein (keine Fotos angehängt)'}
+                          </td>
+                        </tr>
+                      </table>
+                      
+                      <div style="background-color: rgba(255, 255, 255, 0.03); border-left: 3px solid #FF5E1E; padding: 18px; border-radius: 0 6px 6px 0;">
+                        <h4 style="margin: 0 0 8px 0; color: #FFFFFF; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em;">Schadenbeschreibung:</h4>
+                        <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #CBD5E1; white-space: pre-wrap;">${message || 'Keine nähere Beschreibung angegeben.'}</p>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="background-color: #0d0f14; padding: 20px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.06); font-size: 11px; color: #94A3B8;">
+                      Gesendet über die Website <a href="https://www.pro-colour.de/" style="color: #FF5E1E; text-decoration: none;">www.pro-colour.de</a><br>
+                      Technischer Partner: <strong>Scholz & Friese Webdesign</strong>
                     </td>
                   </tr>
                 </table>
