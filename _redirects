@@ -1,0 +1,3 @@
+/wp-admin  /admin.html  302
+/wp-admin/*  /admin.html  302
+/wp-login.php  /admin.html  302

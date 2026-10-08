@@ -34,7 +34,7 @@
   <script src="https://autumn-flower-76fa.friese-scholz.workers.dev/embed.js"
     data-tenant-id="friese-scholz-gbr-1af189a5" defer></script>
 
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
 
@@ -57,7 +57,7 @@
       font-family: 'Outfit', sans-serif;
       background-color: transparent;
       color: #1d1d1f;
-      overflow-x: hidden;
+      overflow-x: clip;
       scroll-behavior: smooth;
       scroll-padding-top: 150px;
       position: relative;
@@ -725,230 +725,411 @@
       }
     }
 
-    /* Showcase Section */
-    .showcase-section {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 2rem;
-      padding: 5rem 2rem;
-      font-family: 'Outfit', sans-serif;
-      overflow: hidden;
-      /* Verhindert Scrollbalken bei Animationen */
-      max-width: 1200px;
-      margin: 0 auto;
+    /* =========================================
+       WEBSITE SHOWCASE: UNIFIED CONTINUOUS BROWSER
+       WITH COMPACT HANDWRITTEN DESIGN ANNOTATIONS
+       ========================================= */
+    .handwritten-showcase-section {
+      position: relative;
+      width: 100%;
+      margin: 60px 0 90px 0;
+      padding: 0 20px;
+      box-sizing: border-box;
     }
 
-    .info-column {
-      flex: 1;
-      max-width: 250px;
+    .handwritten-showcase-container {
+      width: 100%;
+      max-width: 1720px;
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
+
+    .showcase-header-center {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    /* Master Stage */
+    .weymann-unified-stage {
+      position: relative;
+      width: 100%;
+      max-width: 1720px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      box-sizing: border-box;
+      padding: 0 30px;
+    }
+
+    /* Unified Browser Frame: ONE single continuous window */
+    .unified-browser-mockup {
+      width: 100%;
+      max-width: 860px;
+      background: #ffffff;
+      border-radius: 20px;
+      border: 1px solid rgba(15, 23, 42, 0.1);
+      box-shadow: 
+        0 25px 60px -15px rgba(15, 23, 42, 0.12),
+        0 0 0 1px rgba(15, 23, 42, 0.05);
+      position: relative;
       display: flex;
       flex-direction: column;
-      gap: 2rem;
-      z-index: 2;
+      box-sizing: border-box;
     }
 
-    .info-box {
-      position: relative;
-      background: rgba(255, 255, 255, 0.45);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.5);
-      border-top: 1px solid rgba(255, 255, 255, 0.8);
-      border-radius: 1.7rem;
-      padding: 1.8rem 1.5rem;
-      box-shadow:
-        0 8px 32px rgba(0, 0, 0, 0.08),
-        0 2px 8px rgba(0, 0, 0, 0.04),
-        inset 0 1px 1px rgba(255, 255, 255, 0.6);
-      text-align: center;
-      cursor: default;
-      overflow: hidden;
-      transition: transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-        box-shadow 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-
-    .info-box::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -50%;
-      right: -50%;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    .info-box h3 {
-      font-size: 1.2rem;
-      font-weight: 800;
-      margin-bottom: 0.8rem;
-      background: var(--gradient-colors);
-      background-size: 600% 600%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: gradientLoop 12s ease infinite;
-    }
-
-    .info-box p {
-      font-size: 1rem;
-      color: #444;
-      line-height: 1.6;
-    }
-
-    /* --- CARD CONTAINER DESKTOP --- */
-    .card-swap-container {
-      position: relative;
-      width: 550px;
-      /* 16:9 Format für den Container */
-      aspect-ratio: 16 / 9;
-      height: auto;
-      margin: 0 auto;
-      perspective: 1200px;
-      transform-style: preserve-3d;
-      z-index: 1;
-      flex-shrink: 0;
-    }
-
-    .card {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 100%;
-      height: 100%;
-      border-radius: 1.5rem;
-      overflow: hidden;
-      background: #111;
-      color: #fff;
-      transform: translate(-50%, -50%);
-      will-change: transform;
-      backface-visibility: hidden;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    .unified-chrome-header {
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+      border-radius: 20px 20px 0 0;
+      height: 44px;
       display: flex;
-      justify-content: center;
       align-items: center;
-      pointer-events: none;
+      padding: 0 18px;
+      gap: 16px;
+      user-select: none;
+      box-sizing: border-box;
     }
 
-    .card img {
+    .browser-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .browser-dots .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+    .browser-dots .dot.red { background: #ff5f56; }
+    .browser-dots .dot.yellow { background: #ffbd2e; }
+    .browser-dots .dot.green { background: #27c93f; }
+
+    .browser-url-pill {
+      flex: 1;
+      max-width: 320px;
+      margin: 0 auto;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 4px 14px;
+      font-size: 11.5px;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    }
+
+    .browser-url-pill svg {
+      width: 12px;
+      height: 12px;
+      stroke: #10b981;
+    }
+
+    .browser-live-tag {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #6366f1;
+      background: rgba(99, 102, 241, 0.1);
+      padding: 3px 9px;
+      border-radius: 6px;
+    }
+
+    /* Segments: seamless without any gap */
+    .screenshot-segment {
+      position: relative;
       width: 100%;
-      height: 100%;
-      /* WICHTIG: Cover füllt das Bild, top center fixiert es oben */
-      object-fit: cover;
-      object-position: top center;
-      border-radius: 1.5rem;
+      margin: 0;
+      padding: 0;
+      line-height: 0;
+      font-size: 0;
     }
 
-    /* Desktop vs Mobile Sichtbarkeit */
-    .card.desktop {
+    /* DO NOT use overflow:hidden here so floating Note 3 is 100% visible */
+    .segment-services {
+      position: relative;
+    }
+
+    .segment-services .seamless-screenshot {
+      border-radius: 0 0 20px 20px;
+    }
+
+    .seamless-screenshot {
       display: block;
+      width: 100%;
+      height: auto;
+      margin: 0;
+      padding: 0;
+      border: none;
+      pointer-events: none;
+      user-select: none;
     }
 
-    .card.mobile {
-      display: none;
+    /* Floating Handwritten Notes anchored to each segment */
+    .handwritten-note-sticker {
+      position: absolute;
+      width: 350px;
+      font-family: 'Caveat', cursive, sans-serif;
+      user-select: none;
+      line-height: 1.2;
+      z-index: 30;
+      background: transparent;
+      padding: 0;
     }
 
-    @media (max-width: 900px) {
-      .card.desktop {
-        display: none;
+    .handwritten-note-sticker.note-hero {
+      right: calc(100% + 36px);
+      top: 35%;
+      transform: translateY(-50%) rotate(-2deg);
+    }
+
+    .handwritten-note-sticker.note-trust {
+      left: calc(100% + 36px);
+      top: 48%;
+      transform: translateY(-50%) rotate(1.5deg);
+    }
+
+    .handwritten-note-sticker.note-services {
+      right: calc(100% + 36px);
+      top: 48%;
+      transform: translateY(-50%) rotate(-1.5deg);
+    }
+
+    /* Badges */
+    .handwritten-badge {
+      display: inline-block;
+      font-size: 1.45rem;
+      font-weight: 700;
+      padding: 3px 12px;
+      border-radius: 6px;
+      margin-bottom: 5px;
+      line-height: 1.15;
+    }
+
+    .handwritten-badge.badge-teal {
+      background: rgba(0, 201, 183, 0.18);
+      color: #00776b;
+    }
+
+    .handwritten-badge.badge-blue {
+      background: rgba(109, 127, 251, 0.18);
+      color: #3b4cca;
+    }
+
+    /* Title - much larger */
+    .handwritten-title {
+      font-family: 'Caveat', cursive, sans-serif;
+      font-size: clamp(2.6rem, 2.7vw, 3.15rem);
+      font-weight: 700;
+      line-height: 1.05;
+      color: #0f172a;
+      margin: 4px 0 12px 0;
+    }
+
+    /* Short Bullets - much larger */
+    .handwritten-short-bullets {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .handwritten-short-bullets li {
+      font-family: 'Caveat', cursive, sans-serif;
+      font-size: clamp(1.65rem, 1.7vw, 1.95rem);
+      font-weight: 600;
+      line-height: 1.25;
+      color: #1e293b;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .handwritten-short-bullets li strong {
+      color: #020617;
+      font-weight: 700;
+    }
+
+    .bullet-star {
+      font-size: 1.35rem;
+      line-height: 1.2;
+      margin-top: 2px;
+      flex-shrink: 0;
+      color: #00C9B7;
+    }
+
+    .note-trust .bullet-star {
+      color: #6D7FFB;
+    }
+
+    /* Pointing Arrows bridging gap to browser with zero overlap */
+    .pointing-arrow {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      pointer-events: none;
+      z-index: 35;
+    }
+
+    .arrow-hero {
+      left: 100%;
+      top: 20px;
+      margin-left: 6px;
+      align-items: flex-start;
+    }
+
+    .arrow-trust {
+      right: 100%;
+      top: 24px;
+      margin-right: 6px;
+      align-items: flex-end;
+    }
+
+    .arrow-services {
+      left: 100%;
+      top: 24px;
+      margin-left: 6px;
+      align-items: flex-start;
+    }
+
+    .arrow-svg {
+      width: 90px;
+      height: 42px;
+      overflow: visible;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.06));
+    }
+
+    .arrow-text {
+      font-family: 'Caveat', cursive, sans-serif;
+      font-size: 1.45rem;
+      font-weight: 700;
+      white-space: nowrap;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .arrow-hero .arrow-text,
+    .arrow-services .arrow-text {
+      color: #008779;
+      transform: rotate(-2deg);
+    }
+
+    .arrow-trust .arrow-text {
+      color: #3b4cca;
+      transform: rotate(2deg);
+    }
+
+    /* Responsive: Below 1550px */
+    @media (max-width: 1550px) {
+      .handwritten-note-sticker {
+        width: 290px;
       }
-
-      .card.mobile {
-        display: block;
+      .handwritten-note-sticker.note-hero,
+      .handwritten-note-sticker.note-services {
+        right: calc(100% + 22px);
+      }
+      .handwritten-note-sticker.note-trust {
+        left: calc(100% + 22px);
+      }
+      .handwritten-title {
+        font-size: 2.35rem;
+      }
+      .handwritten-short-bullets li {
+        font-size: 1.5rem;
+      }
+      .arrow-svg {
+        width: 75px;
+        height: 36px;
+      }
+      .arrow-text {
+        font-size: 1.25rem;
       }
     }
 
-    /* --- MOBILE LAYOUT (Original wiederhergestellt) --- */
-    @media (max-width: 1150px) {
-      .showcase-section {
+    /* Responsive: Below 1280px */
+    @media (max-width: 1280px) {
+      .unified-browser-mockup {
+        max-width: 700px;
+      }
+      .handwritten-note-sticker {
+        width: 240px;
+      }
+      .handwritten-note-sticker.note-hero,
+      .handwritten-note-sticker.note-services {
+        right: calc(100% + 18px);
+      }
+      .handwritten-note-sticker.note-trust {
+        left: calc(100% + 18px);
+      }
+      .handwritten-title {
+        font-size: 2rem;
+      }
+      .handwritten-short-bullets li {
+        font-size: 1.3rem;
+      }
+      .arrow-svg {
+        width: 60px;
+        height: 30px;
+      }
+      .arrow-text {
+        font-size: 1.15rem;
+      }
+    }
+
+    /* Mobile & Tablet: Below 1024px */
+    @media (max-width: 1024px) {
+      .weymann-unified-stage {
+        padding: 0 12px;
+      }
+      .unified-browser-mockup {
+        max-width: 100%;
+        border-radius: 16px;
+      }
+      .unified-chrome-header {
+        border-radius: 16px 16px 0 0;
+      }
+      .segment-services .seamless-screenshot {
+        border-radius: 0 0 16px 16px;
+      }
+      .screenshot-segment {
+        display: flex;
         flex-direction: column;
-        align-items: center;
-        padding: 3rem 1rem;
       }
-
-      .info-column {
-        max-width: none;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 1.5rem;
+      .handwritten-note-sticker {
+        position: relative;
+        order: -1;
+        right: auto !important;
+        left: auto !important;
+        top: auto !important;
+        width: calc(100% - 24px);
+        max-width: 100%;
+        margin: 20px auto 14px auto;
+        padding: 16px 18px;
+        background: #f8fafc;
+        border: 1px dashed rgba(15, 23, 42, 0.18);
+        border-radius: 14px;
+        transform: none !important;
+        text-align: left;
+        box-sizing: border-box;
+      }
+      .seamless-screenshot {
         order: 1;
-      }
-
-      .info-box {
-        flex: 1 1 45%;
-        padding: 1.5rem 1.2rem;
-      }
-
-      /* Hier wieder die ursprüngliche Berechnung */
-      .card-swap-container {
-        width: 280px;
-        height: calc(280px * 16 / 9);
-        /* Hohes Format */
-        aspect-ratio: auto;
-        /* aspect-ratio resetten, damit calc greift */
-        margin-top: 1rem;
-        order: 2;
-      }
-
-      .card {
+        display: block;
         width: 100%;
-        height: 100%;
       }
-
-      .card img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: top center;
-        /* Auch mobil oben fixieren */
-        border-radius: 1.2rem;
+      .handwritten-title {
+        font-size: 2.25rem;
       }
-
-      /* Accordion Style für Mobile */
-      .info-box::after {
-        content: '+';
-        position: absolute;
-        right: 1rem;
-        top: 1rem;
-        font-size: 1.4rem;
-        font-weight: 700;
-        background: linear-gradient(270deg, #3EC8C0, #6D7FFB, #D16BA5);
-        background-size: 400% 400%;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        animation: plusShift 6s ease-in-out infinite;
+      .handwritten-short-bullets li {
+        font-size: 1.55rem;
       }
-
-      @keyframes plusShift {
-        0% {
-          background-position: 0% 50%;
-        }
-
-        50% {
-          background-position: 100% 50%;
-        }
-
-        100% {
-          background-position: 0% 50%;
-        }
-      }
-
-      .info-box p {
-        max-height: 0;
-        opacity: 0;
-        overflow: hidden;
-        transition: max-height .35s ease, opacity .35s ease;
-      }
-
-      .info-box.open p {
-        max-height: 400px;
-        opacity: 1;
-      }
-
-      .info-box.open::after {
-        transform: rotate(45deg);
+      .pointing-arrow {
+        display: none;
       }
     }
 
@@ -2853,56 +3034,155 @@
       <a href="website-hosting.html" class="custom-button">Kostenlosen Entwurf sichern</a>
     </div>
 
-    <h2 id="webseiten" class="section-title-global"
-      style="text-align: center; max-width: 1000px; margin-left: auto; margin-right: auto; margin-top: 60px; margin-bottom: 20px;"
-      data-aos="fade-up" data-aos-duration="1200" data-aos-delay="200">
-      Warum unsere Webseiten <br><span class="gradient-text">besser funktionieren</span>
-    </h2>
-
-    <section class="showcase-section">
-      <div class="info-column left">
-        <div class="info-box positive" data-aos="fade-up">
-          <h3>Klar und aufgeräumt</h3>
-          <p>Unsere Webseiten sind clean, modern und frei von unnötigem Ballast – für einen starken ersten Eindruck.</p>
+    <!-- Website Showcase: 3 Grand Screenshots with Free Handwritten Design Notes -->
+    <section class="handwritten-showcase-section" id="webseiten">
+      <div class="handwritten-showcase-container">
+        
+        <!-- Header -->
+        <div class="showcase-header-center" data-aos="fade-up">
+          <h2 class="section-title-global" style="text-align: center; margin-bottom: 16px;">
+            Warum unsere Webseiten <br><span class="gradient-text">besser funktionieren</span>
+          </h2>
+          <p style="text-align: center; max-width: 680px; margin: 0 auto 50px auto; color: #64748b; font-size: 1.05rem;">
+            Echte psychologische Nutzerführung statt oberflächlicher Klick-Deko. Ein Blick hinter die Kulissen an unserem Live-Projekt <strong>Karl Weymann GmbH</strong>:
+          </p>
         </div>
-        <div class="info-box positive" data-aos="fade-up" data-aos-delay="200">
-          <h3>Intuitive Bedienung</h3>
-          <p>Wir setzen auf nutzerfreundliche Oberflächen, die Besucher mühelos zur gewünschten Aktion führen.</p>
-        </div>
-      </div>
 
-      <div class="card-swap-container" data-aos="zoom-in" data-aos-delay="300" id="cardSwapContainer">
-        <div class="card desktop"><img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/webseiten_desktop_1.jpg"
-            alt="Desktop Webdesign Beispiel 1 Scholz & Friese"></div>
-        <div class="card desktop"><img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/webseiten_desktop-2.jpg"
-            alt="Desktop Webdesign Beispiel 2 Scholz & Friese"></div>
-        <div class="card desktop"><img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/webseiten_desktop_3.jpg"
-            alt="Desktop Webdesign Beispiel 3 Scholz & Friese"></div>
-        <div class="card desktop"><img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/webseiten_desktop_4.jpg"
-            alt="Desktop Webdesign Beispiel 4 Scholz & Friese"></div>
-        <div class="card desktop"><img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/webseiten_Desktop_5.jpg"
-            alt="Desktop Webdesign Beispiel 5 Scholz & Friese"></div>
+        <!-- Unified Continuous Browser Stage (0px Gap) with Compact Handwritten Annotations -->
+        <div class="weymann-unified-stage" data-aos="fade-up">
+          <div class="unified-browser-mockup">
+            
+            <!-- Browser Header Bar -->
+            <div class="unified-chrome-header">
+              <div class="browser-dots">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+              </div>
+              <div class="browser-url-pill">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                <span>karl-weymann-gmbh.de</span>
+              </div>
+              <span class="browser-live-tag">Live Projekt</span>
+            </div>
 
-        <div class="card mobile"><img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Websiten_mobil_1.jpeg" alt="Mobile Webdesign Ansicht 1"></div>
-        <div class="card mobile"><img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Websiten_Mobil_2.jpeg" alt="Mobile Webdesign Ansicht 2"></div>
-        <div class="card mobile"><img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Websiten_Mobil_3.jpeg" alt="Mobile Webdesign Ansicht 3"></div>
-        <div class="card mobile"><img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Websiten_Mobil_4.jpeg" alt="Mobile Webdesign Ansicht 4"></div>
-        <div class="card mobile"><img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Websiten_Mobil_5.jpg" alt="Mobile Webdesign Ansicht 5"></div>
-        <div class="card mobile"><img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Websiten_Mobil_6.jpg" alt="Mobile Webdesign Ansicht 6"></div>
-        <div class="card mobile"><img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Websiten_Mobil_7.jpg" alt="Mobile Webdesign Ansicht 7"></div>
-        <div class="card mobile"><img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Websiten_Mobil_8.jpg" alt="Mobile Webdesign Ansicht 8"></div>
-      </div>
+            <!-- Segment 1: Hero & Botschaft -->
+            <div class="screenshot-segment segment-hero">
+              <img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/weymann1.1_01.webp" 
+                   alt="Website Hero Section Karl Weymann GmbH" 
+                   class="seamless-screenshot" 
+                   loading="lazy">
+              
+              <!-- Floating Handwritten Note 1 (Left) -->
+              <div class="handwritten-note-sticker note-hero">
+                <div class="note-content-box">
+                  <span class="handwritten-badge badge-teal">01 // Hero &amp; Einstieg</span>
+                  <h3 class="handwritten-title">Klarheit in 3 Sekunden</h3>
+                  <ul class="handwritten-short-bullets">
+                    <li>
+                      <span class="bullet-star">✦</span>
+                      <span><strong>2x CTA direkt sichtbar:</strong> Menü- &amp; Hero-Button</span>
+                    </li>
+                    <li>
+                      <span class="bullet-star">✦</span>
+                      <span><strong>Klare Positionierung:</strong> Sofort verständlich</span>
+                    </li>
+                    <li>
+                      <span class="bullet-star">✦</span>
+                      <span><strong>Direktkontakt:</strong> Telefon &amp; Notruf ohne Scrollen</span>
+                    </li>
+                  </ul>
+                </div>
+                <div class="pointing-arrow arrow-hero">
+                  <span class="arrow-text">2x CTA sofort klickbar</span>
+                  <svg viewBox="0 0 90 42" class="arrow-svg" fill="none">
+                    <path d="M6,30 C30,36 58,26 84,12" stroke="#00C9B7" stroke-width="2.8" stroke-linecap="round"/>
+                    <path d="M66,9 L84,12 L74,25" stroke="#00C9B7" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
 
-      <div class="info-column right">
-        <div class="info-box negative" data-aos="fade-up" data-aos-delay="400">
-          <h3>Kein Roter Faden</h3>
-          <p>Ohne klare Struktur springen Besucher schnell ab, bevor sie verstehen, was du eigentlich anbietest.</p>
+            <!-- Segment 2: Trust & Glaubwürdigkeit -->
+            <div class="screenshot-segment segment-trust">
+              <img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/weymann1.2_02.webp" 
+                   alt="Website Unternehmensvorstellung und Trust Weymann" 
+                   class="seamless-screenshot" 
+                   loading="lazy">
+              
+              <!-- Floating Handwritten Note 2 (Right) -->
+              <div class="handwritten-note-sticker note-trust">
+                <div class="note-content-box">
+                  <span class="handwritten-badge badge-blue">02 // Trust &amp; Glaubwürdigkeit</span>
+                  <h3 class="handwritten-title">Echtes Vertrauen</h3>
+                  <ul class="handwritten-short-bullets">
+                    <li>
+                      <span class="bullet-star">✦</span>
+                      <span><strong>Echtes Inhaberfoto:</strong> Sympathie statt Stockfotos</span>
+                    </li>
+                    <li>
+                      <span class="bullet-star">✦</span>
+                      <span><strong>3 harte Beweise:</strong> Tradition, Meister &amp; Service</span>
+                    </li>
+                    <li>
+                      <span class="bullet-star">✦</span>
+                      <span><strong>CTA wiederholt:</strong> „Team kennenlernen“</span>
+                    </li>
+                  </ul>
+                </div>
+                <div class="pointing-arrow arrow-trust">
+                  <span class="arrow-text">Harte Vertrauensbeweise</span>
+                  <svg viewBox="0 0 90 42" class="arrow-svg" fill="none">
+                    <path d="M84,30 C60,36 32,26 6,12" stroke="#6D7FFB" stroke-width="2.8" stroke-linecap="round"/>
+                    <path d="M24,9 L6,12 L16,25" stroke="#6D7FFB" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Segment 3: Leistungen & Direkte Conversion -->
+            <div class="screenshot-segment segment-services">
+              <img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/weymann1.3_03.webp" 
+                   alt="Website Leistungen und Team Weymann" 
+                   class="seamless-screenshot" 
+                   loading="lazy">
+              
+              <!-- Floating Handwritten Note 3 (Left) -->
+              <div class="handwritten-note-sticker note-services">
+                <div class="note-content-box">
+                  <span class="handwritten-badge badge-teal">03 // Leistungen &amp; Leads</span>
+                  <h3 class="handwritten-title">Direkte Conversion</h3>
+                  <ul class="handwritten-short-bullets">
+                    <li>
+                      <span class="bullet-star">✦</span>
+                      <span><strong>Echte Mannschaft:</strong> Team-Foto beweist Stärke</span>
+                    </li>
+                    <li>
+                      <span class="bullet-star">✦</span>
+                      <span><strong>1-Klick-Anfrage:</strong> Separater Button je Gewerk</span>
+                    </li>
+                    <li>
+                      <span class="bullet-star">✦</span>
+                      <span><strong>Verkaufs-Hebel:</strong> „70% Förderung“ animiert sofort</span>
+                    </li>
+                  </ul>
+                </div>
+                <div class="pointing-arrow arrow-services">
+                  <span class="arrow-text">1 Klick pro Gewerk</span>
+                  <svg viewBox="0 0 90 42" class="arrow-svg" fill="none">
+                    <path d="M6,12 C30,10 58,18 84,28" stroke="#00C9B7" stroke-width="2.8" stroke-linecap="round"/>
+                    <path d="M68,16 L84,28 L68,37" stroke="#00C9B7" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
-        <div class="info-box negative" data-aos="fade-up" data-aos-delay="600">
-          <h3>Kein Call to Action</h3>
-          <p>Fehlen eindeutige Handlungsaufforderungen, wissen Besucher nicht, was der nächste Schritt ist – und du
-            verlierst wertvolle Leads.</p>
-        </div>
+
       </div>
     </section>
 
@@ -3319,6 +3599,7 @@
   <script async src="https://tally.so/widgets/embed.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -3511,106 +3792,7 @@
         });
       }
 
-      // 6. GSAP Card Swap Animation
-      const container = document.getElementById("cardSwapContainer");
-      if (container) {
-        let visibleCards = [], order = [], isAnimating = false, sliderTimer = null;
-
-        const cardDistance = 40;
-        const verticalDistance = 50;
-        const delay = 3500;
-
-        function updateCards() {
-          const allCards = Array.from(container.querySelectorAll(".card"));
-          visibleCards = allCards.filter(card => getComputedStyle(card).display !== "none");
-          order = visibleCards.map((_, i) => i);
-        }
-
-        function makeSlot(i) {
-          return {
-            x: i * cardDistance,
-            y: -i * verticalDistance,
-            z: -i * 100,
-            zIndex: visibleCards.length - i,
-          };
-        }
-
-        function placeInitial() {
-          visibleCards.forEach((card, i) => {
-            const slot = makeSlot(i);
-            gsap.set(card, {
-              x: slot.x,
-              y: slot.y,
-              z: slot.z,
-              xPercent: -50,
-              yPercent: -50,
-              skewY: 5,
-              zIndex: slot.zIndex,
-              rotationX: 0, rotationY: 0, scale: 1
-            });
-          });
-        }
-
-        function animateSwap() {
-          if (order.length < 2 || isAnimating) return;
-          isAnimating = true;
-
-          const [front, ...rest] = order;
-          const frontCard = visibleCards[front];
-          const tl = gsap.timeline();
-
-          tl.to(frontCard, {
-            y: "+=600",
-            rotationY: 15,
-            opacity: 0,
-            duration: 0.8,
-            ease: "power3.in"
-          });
-
-          rest.forEach((idx, i) => {
-            const card = visibleCards[idx];
-            const slot = makeSlot(i);
-            tl.to(card, {
-              x: slot.x, y: slot.y, z: slot.z,
-              zIndex: slot.zIndex,
-              duration: 0.8,
-              ease: "power2.out"
-            }, "<0.1");
-          });
-
-          const backSlot = makeSlot(visibleCards.length - 1);
-          tl.set(frontCard, { zIndex: backSlot.zIndex });
-          tl.to(frontCard, {
-            x: backSlot.x,
-            y: backSlot.y,
-            z: backSlot.z,
-            opacity: 1,
-            rotationY: 0,
-            duration: 0.6,
-            ease: "power2.out"
-          });
-
-          tl.call(() => {
-            order = [...rest, front];
-            isAnimating = false;
-          });
-        }
-
-        function startSlider() {
-          if (sliderTimer) clearInterval(sliderTimer);
-          updateCards();
-          placeInitial();
-          sliderTimer = setInterval(animateSwap, delay);
-        }
-
-        startSlider();
-
-        let resizeTimer;
-        window.addEventListener("resize", () => {
-          clearTimeout(resizeTimer);
-          resizeTimer = setTimeout(startSlider, 300);
-        });
-      }
+      // 6. Website Showcase: Native smooth presentation (no scroll-pinning)
 
       // 7. Kunden Logo Slider Animation
       const logos = [
