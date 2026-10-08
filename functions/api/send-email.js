@@ -42,6 +42,8 @@ export async function onRequestPost(context) {
       turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_BICKBEERNHOF;
     } else if (source === 'homan-madical' || source === 'homann-medical') {
       turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_HOMAN_MADICAL || env.CLOUDFLARE_TURNSTILE_SECRET_KEY;
+    } else if (source === 'haarmonie' || source === 'Haarmonie') {
+      turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_HAARMONIE || '0x4AAAAAAFRIHYh9vWNNEDuWnsXzbgRRDrw';
     }
     const verifyResult = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
       method: 'POST',
@@ -2000,6 +2002,99 @@ export async function onRequestPost(context) {
                     <td style="background-color: #1F1B16; padding: 25px; text-align: center; border-top: 1px solid #E8DCC4; font-size: 11px; color: #FAF6F0; line-height: 1.6;">
                       Anfrage über <a href="https://www.homann-medical.de/" style="color: #D9A24A; text-decoration: none;">homann-medical.de</a><br>
                       Technischer Partner: <strong>Scholz & Friese Webdesign</strong>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </body>
+        </html>
+      `;
+    } else if (source === 'haarmonie' || source === 'Haarmonie') {
+      const { name, phone, email, service, preferredDay, preferredTime, message } = data;
+
+      if (!name || !phone) {
+        return new Response(JSON.stringify({ success: false, message: 'Bitte Name und Telefonnummer ausfüllen.' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      fromName = 'Haarmonie Nienburg';
+      recipientEmail = 'friese.scholz@gmail.com';
+      emailSubject = `[Haarmonie] ✂️ Neue Terminanfrage von ${name}`;
+
+      emailHtml = `
+        <!DOCTYPE html>
+        <html lang="de">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body style="margin: 0; padding: 0; background-color: #FAF9F6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: #18181B;">
+          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #FAF9F6; padding: 40px 10px;">
+            <tr>
+              <td align="center">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff; border: 1px solid #E4E4E7; border-top: 4px solid #2F5E3D; overflow: hidden; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);">
+                  <tr>
+                    <td style="background-color: #000000; padding: 32px 30px; text-align: center;">
+                      <h1 style="margin: 0; font-family: Georgia, serif; font-size: 24px; letter-spacing: 0.08em; color: #ffffff; text-transform: uppercase; font-weight: 400;">Haarmonie</h1>
+                      <p style="margin: 6px 0 0 0; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #2F5E3D; font-weight: 700;">Friseurmeister Matthias Zahn &bull; Parkstraße 15, Nienburg</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 36px 32px;">
+                      <h2 style="font-size: 18px; color: #000000; margin: 0 0 12px 0; font-weight: 700;">Neue Terminanfrage über die Website</h2>
+                      <p style="color: #52525B; font-size: 14px; line-height: 1.6; margin: 0 0 28px 0;">
+                        Über das Online-Formular ist eine neue Terminanfrage eingegangen:
+                      </p>
+                      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 28px; border-collapse: collapse; border: 1px solid #E4E4E7;">
+                        <tr>
+                          <td style="padding: 12px 16px; border-bottom: 1px solid #E4E4E7; font-weight: 700; color: #2F5E3D; width: 38%; text-transform: uppercase; font-size: 11px; letter-spacing: 0.06em; background-color: #FAFAFA;">Kunde / Name</td>
+                          <td style="padding: 12px 16px; border-bottom: 1px solid #E4E4E7; color: #18181B; font-size: 14px; font-weight: 600;">${name}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 12px 16px; border-bottom: 1px solid #E4E4E7; font-weight: 700; color: #2F5E3D; width: 38%; text-transform: uppercase; font-size: 11px; letter-spacing: 0.06em; background-color: #FAFAFA;">Telefon</td>
+                          <td style="padding: 12px 16px; border-bottom: 1px solid #E4E4E7; color: #18181B; font-size: 14px; font-weight: 600;"><a href="tel:${phone.replace(/\s+/g, '')}" style="color: #000000; text-decoration: underline;">${phone}</a></td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 12px 16px; border-bottom: 1px solid #E4E4E7; font-weight: 700; color: #2F5E3D; width: 38%; text-transform: uppercase; font-size: 11px; letter-spacing: 0.06em; background-color: #FAFAFA;">E-Mail</td>
+                          <td style="padding: 12px 16px; border-bottom: 1px solid #E4E4E7; color: #18181B; font-size: 14px;">${email ? `<a href="mailto:${email}" style="color: #2F5E3D; text-decoration: none;">${email}</a>` : '<span style="color: #A1A1AA;">Nicht angegeben</span>'}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 12px 16px; border-bottom: 1px solid #E4E4E7; font-weight: 700; color: #2F5E3D; width: 38%; text-transform: uppercase; font-size: 11px; letter-spacing: 0.06em; background-color: #FAFAFA;">Leistung</td>
+                          <td style="padding: 12px 16px; border-bottom: 1px solid #E4E4E7; color: #18181B; font-size: 14px; font-weight: 600;">${service || 'Schnitt & Styling'}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 12px 16px; border-bottom: 1px solid #E4E4E7; font-weight: 700; color: #2F5E3D; width: 38%; text-transform: uppercase; font-size: 11px; letter-spacing: 0.06em; background-color: #FAFAFA;">Wunschtag</td>
+                          <td style="padding: 12px 16px; border-bottom: 1px solid #E4E4E7; color: #18181B; font-size: 14px;">${preferredDay || 'Keine Angabe'}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 12px 16px; border-bottom: 1px solid #E4E4E7; font-weight: 700; color: #2F5E3D; width: 38%; text-transform: uppercase; font-size: 11px; letter-spacing: 0.06em; background-color: #FAFAFA;">Wunschzeit</td>
+                          <td style="padding: 12px 16px; border-bottom: 1px solid #E4E4E7; color: #18181B; font-size: 14px;">${preferredTime || 'Keine Angabe'}</td>
+                        </tr>
+                      </table>
+                      ${message ? `
+                      <div style="background-color: #FAF9F6; border-left: 3px solid #2F5E3D; padding: 18px 20px; margin-bottom: 24px;">
+                        <p style="margin: 0 0 6px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #2F5E3D; font-weight: 700;">Nachricht / Wünsche des Kunden:</p>
+                        <p style="color: #27272A; font-size: 14px; line-height: 1.6; margin: 0; font-style: italic;">"${message.replace(/\n/g, '<br>')}"</p>
+                      </div>` : ''}
+                      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-top: 24px; border-top: 1px solid #E4E4E7; padding-top: 20px;">
+                        <tr>
+                          <td>
+                            <p style="color: #71717A; font-size: 12px; margin: 0; line-height: 1.5;">
+                              💡 <strong>Tipp:</strong> Sie können direkt auf diese E-Mail antworten oder den Kunden unter <a href="tel:${phone.replace(/\s+/g, '')}" style="color: #000000; font-weight: 600;">${phone}</a> kontaktieren.
+                            </p>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="background-color: #F4F4F5; padding: 22px 30px; text-align: center; border-top: 1px solid #E4E4E7; font-size: 11px; color: #71717A; line-height: 1.6;">
+                      Anfrage über <a href="https://haarmonie-nienburg.com" style="color: #2F5E3D; text-decoration: none; font-weight: 600;">haarmonie-nienburg.com</a><br>
+                      Technischer Partner: <strong>Scholz &amp; Friese Webdesign</strong>
                     </td>
                   </tr>
                 </table>
