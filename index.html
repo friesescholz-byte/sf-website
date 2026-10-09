@@ -475,44 +475,72 @@
       align-items: center;
       justify-content: center;
       padding: 6px 12px;
-      border-radius: 12px;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      border-radius: 10px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       pointer-events: none;
-      box-shadow: 0 6px 20px -2px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.25);
       transition: transform 0.25s ease, box-shadow 0.25s ease;
       transform: translateZ(25px);
+      box-sizing: border-box;
+      flex-shrink: 0;
+      white-space: nowrap;
     }
 
     .client-logo-badge.badge-light {
       background: rgba(255, 255, 255, 0.94);
       border: 1px solid rgba(15, 23, 42, 0.08);
-      box-shadow: 0 6px 20px -2px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.15);
     }
 
     .client-logo-badge.badge-dark {
       background: rgba(15, 23, 42, 0.85);
       border: 1px solid rgba(255, 255, 255, 0.16);
-      box-shadow: 0 6px 20px -2px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.35);
     }
 
     .client-logo-badge.badge-circle {
       padding: 4px;
       border-radius: 50%;
+      width: 36px;
+      height: 36px;
     }
 
     .client-logo-badge img {
-      height: 22px;
-      width: auto;
-      max-width: 80px;
-      object-fit: contain;
       display: block;
+      object-fit: contain;
+      flex-shrink: 0;
     }
 
-    .client-logo-badge.badge-circle img {
-      height: 26px;
+    .client-logo-badge img.logo-purewhisky {
+      width: 22px;
+      height: 22px;
+    }
+
+    .client-logo-badge img.logo-eberhardt {
+      width: 78px;
+      height: 22px;
+    }
+
+    .client-logo-badge img.logo-zanetti {
       width: 26px;
+      height: 22px;
+    }
+
+    .client-logo-badge img.logo-svh {
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
+    }
+
+    .client-logo-badge img.logo-logogarn {
+      width: 39px;
+      height: 22px;
+    }
+
+    .client-logo-badge img.logo-weymann {
+      width: 74px;
+      height: 22px;
     }
 
     @media (max-width: 768px) {
@@ -520,21 +548,39 @@
         grid-template-columns: repeat(2, 1fr);
       }
       .client-logo-badge {
-        top: 10px;
-        right: 10px;
+        top: 8px;
+        right: 8px;
         padding: 4px 8px;
-        border-radius: 8px;
-      }
-      .client-logo-badge img {
-        height: 17px;
-        max-width: 60px;
+        border-radius: 7px;
       }
       .client-logo-badge.badge-circle {
         padding: 3px;
+        width: 26px;
+        height: 26px;
       }
-      .client-logo-badge.badge-circle img {
-        height: 20px;
+      .client-logo-badge img.logo-purewhisky {
+        width: 16px;
+        height: 16px;
+      }
+      .client-logo-badge img.logo-eberhardt {
+        width: 53px;
+        height: 15px;
+      }
+      .client-logo-badge img.logo-zanetti {
+        width: 18px;
+        height: 15px;
+      }
+      .client-logo-badge img.logo-svh {
         width: 20px;
+        height: 20px;
+      }
+      .client-logo-badge img.logo-logogarn {
+        width: 27px;
+        height: 15px;
+      }
+      .client-logo-badge img.logo-weymann {
+        width: 51px;
+        height: 15px;
       }
     }
 
@@ -3066,7 +3112,7 @@
           <div class="tilt-inner">
             <img class="tilt-card" src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Kundenbilder/Referenzen_SF_Webdesign_01.webp" alt="Erfolgreiche Zusammenarbeit – Pure Whisky Kundenprojekt Scholz & Friese" loading="lazy">
             <div class="client-logo-badge badge-light">
-              <img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Kundenbilder/logo-pure-whisky_04.webp" alt="Pure Whisky Logo" loading="lazy">
+              <img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Kundenbilder/logo-pure-whisky_04.webp" alt="Pure Whisky Logo" class="logo-purewhisky" width="300" height="300">
             </div>
           </div>
         </div>
@@ -3074,7 +3120,7 @@
           <div class="tilt-inner">
             <img class="tilt-card" src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Kundenbilder/Referenzen_SF_Webdesign_02.webp" alt="Erfolgreiche Zusammenarbeit – Kundenberatung & Webdesign Scholz & Friese" loading="lazy">
             <div class="client-logo-badge badge-dark">
-              <img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Kundenbilder/eberhardt-logo-rgb-white-J3fS5LBOMqJVo2w7%20(1).webp" alt="Eberhardt Bestattungen Logo" loading="lazy">
+              <img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Kundenbilder/eberhardt-logo-rgb-white-J3fS5LBOMqJVo2w7%20(1).webp" alt="Eberhardt Bestattungen Logo" class="logo-eberhardt" width="3200" height="900">
             </div>
           </div>
         </div>
@@ -3082,7 +3128,7 @@
           <div class="tilt-inner">
             <img class="tilt-card" src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Zusammenarbeit_Zanetti.jpg" alt="Erfolgreiche Zusammenarbeit – Zanetti Haustechnik Webseite" loading="lazy">
             <div class="client-logo-badge badge-dark">
-              <img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Kundenbilder/logo_zanetti-haustechnik_rw-mv0W81JKj5FRQ5bD%20(1)_02.webp" alt="Zanetti Haustechnik Logo" loading="lazy">
+              <img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Kundenbilder/logo_zanetti-haustechnik_rw-mv0W81JKj5FRQ5bD%20(1)_02.webp" alt="Zanetti Haustechnik Logo" class="logo-zanetti" width="375" height="312">
             </div>
           </div>
         </div>
@@ -3090,7 +3136,7 @@
           <div class="tilt-inner">
             <img class="tilt-card" src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Kundenbilder/Referenzen_SF_Webdesign_03.webp" alt="Erfolgreiche Zusammenarbeit – Historischer Nachtwächter Webdesign" loading="lazy">
             <div class="client-logo-badge badge-circle badge-dark">
-              <img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Kundenbilder/SVH-Flavercon%20(1)_05.webp" alt="SVH Nachtwächter Logo" loading="lazy">
+              <img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Kundenbilder/SVH-Flavercon%20(1)_05.webp" alt="SVH Nachtwächter Logo" class="logo-svh" width="1254" height="1254">
             </div>
           </div>
         </div>
@@ -3098,7 +3144,7 @@
           <div class="tilt-inner">
             <img class="tilt-card" src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Zusammenarbeit_Logo_in_Garn.jpg" alt="Erfolgreiche Zusammenarbeit – Logo in Garn E-Commerce Referenz" loading="lazy">
             <div class="client-logo-badge badge-dark">
-              <img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Kundenbilder/logo-in-garn-weia-logo-mv0J3Qxpx1FzD2K4_03.webp" alt="Logo in Garn Logo" loading="lazy">
+              <img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Kundenbilder/logo-in-garn-weia-logo-mv0J3Qxpx1FzD2K4_03.webp" alt="Logo in Garn Logo" class="logo-logogarn" width="375" height="210">
             </div>
           </div>
         </div>
@@ -3106,7 +3152,7 @@
           <div class="tilt-inner">
             <img class="tilt-card" src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Kundenbilder/Referenzen_SF_Webdesign_04.webp" alt="Erfolgreiche Zusammenarbeit – Karl Weymann Gebäudetechnik Webseite" loading="lazy">
             <div class="client-logo-badge badge-light">
-              <img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Kundenbilder/Weymann_logo_transparent%20(2)_06.webp" alt="Weymann Gebäudetechnik Logo" loading="lazy">
+              <img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Kundenbilder/Weymann_logo_transparent%20(2)_06.webp" alt="Weymann Gebäudetechnik Logo" class="logo-weymann" width="328" height="97">
             </div>
           </div>
         </div>
