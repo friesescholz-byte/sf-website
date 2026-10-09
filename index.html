@@ -439,25 +439,102 @@
 
     .tilt-wrapper {
       position: relative;
+      perspective: 1000px;
       transform-style: preserve-3d;
       border-radius: 16px;
-      aspect-ratio: 4/3;
+      aspect-ratio: 4/5;
+    }
+
+    .tilt-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      border-radius: 16px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+      transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.2s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
     .tilt-card {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      object-position: center top;
       border-radius: 16px;
       aspect-ratio: 4/5;
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
       display: block;
-      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    /* Client Logo Badges */
+    .client-logo-badge {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      z-index: 5;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 12px;
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      pointer-events: none;
+      box-shadow: 0 6px 20px -2px rgba(0, 0, 0, 0.25);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      transform: translateZ(25px);
+    }
+
+    .client-logo-badge.badge-light {
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      box-shadow: 0 6px 20px -2px rgba(0, 0, 0, 0.15);
+    }
+
+    .client-logo-badge.badge-dark {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      box-shadow: 0 6px 20px -2px rgba(0, 0, 0, 0.35);
+    }
+
+    .client-logo-badge.badge-circle {
+      padding: 4px;
+      border-radius: 50%;
+    }
+
+    .client-logo-badge img {
+      height: 22px;
+      width: auto;
+      max-width: 80px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .client-logo-badge.badge-circle img {
+      height: 26px;
+      width: 26px;
+      border-radius: 50%;
     }
 
     @media (max-width: 768px) {
       .grid-container {
         grid-template-columns: repeat(2, 1fr);
+      }
+      .client-logo-badge {
+        top: 10px;
+        right: 10px;
+        padding: 4px 8px;
+        border-radius: 8px;
+      }
+      .client-logo-badge img {
+        height: 17px;
+        max-width: 60px;
+      }
+      .client-logo-badge.badge-circle {
+        padding: 3px;
+      }
+      .client-logo-badge.badge-circle img {
+        height: 20px;
+        width: 20px;
       }
     }
 
@@ -2985,18 +3062,54 @@
       <p data-aos="fade-up" data-aos-delay="100">Gemeinsam entwickeln wir digitale Lösungen, die wirken – kreativ,
         zielgerichtet und auf Augenhöhe.</p>
       <div class="grid-container">
-        <div class="tilt-wrapper trigger-tilt" data-aos="fade-up"><img class="tilt-card"
-            src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Zusammenarbeit_ImpetusTT.webp" alt="ImpetusTT Webdesign Referenz"></div>
-        <div class="tilt-wrapper trigger-tilt" data-aos="fade-up" data-aos-delay="100"><img class="tilt-card"
-            src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Zusammenarbeit_Zahnarzt_HKK.webp" alt="Zahnärztin HKK Webdesign Melle"></div>
-        <div class="tilt-wrapper trigger-tilt" data-aos="fade-up" data-aos-delay="200"><img class="tilt-card"
-            src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Zusammenarbeit_Zanetti.jpg" alt="Zanetti Haustechnik Webseite"></div>
-        <div class="tilt-wrapper trigger-tilt" data-aos="fade-up" data-aos-delay="300"><img class="tilt-card"
-            src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Zusammenarbeit_Simple.jpg" alt="Simple Webseite Projekt"></div>
-        <div class="tilt-wrapper trigger-tilt" data-aos="fade-up" data-aos-delay="400"><img class="tilt-card"
-            src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Zusammenarbeit_Logo_in_Garn.jpg" alt="Logo in Garn E-Commerce Referenz"></div>
-        <div class="tilt-wrapper trigger-tilt" data-aos="fade-up" data-aos-delay="500"><img class="tilt-card"
-            src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Zusammenarbeit_Radio_Mittelweser.jpg" alt="Wir Mittelweser Webseite"></div>
+        <div class="tilt-wrapper trigger-tilt" data-aos="fade-up">
+          <div class="tilt-inner">
+            <img class="tilt-card" src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Kundenbilder/Referenzen_SF_Webdesign_01.webp" alt="Erfolgreiche Zusammenarbeit – Pure Whisky Kundenprojekt Scholz & Friese" loading="lazy">
+            <div class="client-logo-badge badge-light">
+              <img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Kundenbilder/logo-pure-whisky_04.webp" alt="Pure Whisky Logo" loading="lazy">
+            </div>
+          </div>
+        </div>
+        <div class="tilt-wrapper trigger-tilt" data-aos="fade-up" data-aos-delay="100">
+          <div class="tilt-inner">
+            <img class="tilt-card" src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Kundenbilder/Referenzen_SF_Webdesign_02.webp" alt="Erfolgreiche Zusammenarbeit – Kundenberatung & Webdesign Scholz & Friese" loading="lazy">
+            <div class="client-logo-badge badge-dark">
+              <img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Kundenbilder/eberhardt-logo-rgb-white-J3fS5LBOMqJVo2w7%20(1).webp" alt="Eberhardt Bestattungen Logo" loading="lazy">
+            </div>
+          </div>
+        </div>
+        <div class="tilt-wrapper trigger-tilt" data-aos="fade-up" data-aos-delay="200">
+          <div class="tilt-inner">
+            <img class="tilt-card" src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Zusammenarbeit_Zanetti.jpg" alt="Erfolgreiche Zusammenarbeit – Zanetti Haustechnik Webseite" loading="lazy">
+            <div class="client-logo-badge badge-dark">
+              <img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Kundenbilder/logo_zanetti-haustechnik_rw-mv0W81JKj5FRQ5bD%20(1)_02.webp" alt="Zanetti Haustechnik Logo" loading="lazy">
+            </div>
+          </div>
+        </div>
+        <div class="tilt-wrapper trigger-tilt" data-aos="fade-up" data-aos-delay="300">
+          <div class="tilt-inner">
+            <img class="tilt-card" src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Kundenbilder/Referenzen_SF_Webdesign_03.webp" alt="Erfolgreiche Zusammenarbeit – Historischer Nachtwächter Webdesign" loading="lazy">
+            <div class="client-logo-badge badge-circle badge-dark">
+              <img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Kundenbilder/SVH-Flavercon%20(1)_05.webp" alt="SVH Nachtwächter Logo" loading="lazy">
+            </div>
+          </div>
+        </div>
+        <div class="tilt-wrapper trigger-tilt" data-aos="fade-up" data-aos-delay="400">
+          <div class="tilt-inner">
+            <img class="tilt-card" src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Zusammenarbeit_Logo_in_Garn.jpg" alt="Erfolgreiche Zusammenarbeit – Logo in Garn E-Commerce Referenz" loading="lazy">
+            <div class="client-logo-badge badge-dark">
+              <img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Kundenbilder/logo-in-garn-weia-logo-mv0J3Qxpx1FzD2K4_03.webp" alt="Logo in Garn Logo" loading="lazy">
+            </div>
+          </div>
+        </div>
+        <div class="tilt-wrapper trigger-tilt" data-aos="fade-up" data-aos-delay="500">
+          <div class="tilt-inner">
+            <img class="tilt-card" src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Kundenbilder/Referenzen_SF_Webdesign_04.webp" alt="Erfolgreiche Zusammenarbeit – Karl Weymann Gebäudetechnik Webseite" loading="lazy">
+            <div class="client-logo-badge badge-light">
+              <img src="https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev/Scholz-Friese-Webdesign/Kundenbilder/Weymann_logo_transparent%20(2)_06.webp" alt="Weymann Gebäudetechnik Logo" loading="lazy">
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -3657,18 +3770,18 @@
       // 5. 3D Tilt Logic (Für Galerie & Team)
       if (window.innerWidth > 768) {
         document.querySelectorAll('.trigger-tilt, .tilt-wrapper').forEach(wrapper => {
-          const image = wrapper.querySelector('img, .tilt-card');
-          if (!image) return;
+          const target = wrapper.querySelector('.tilt-inner') || wrapper.querySelector('img, .tilt-card');
+          if (!target) return;
           wrapper.addEventListener('mousemove', (e) => {
             const rect = wrapper.getBoundingClientRect();
             const x = e.clientX - rect.left, y = e.clientY - rect.top;
             const cx = rect.width / 2, cy = rect.height / 2;
-            image.style.transform = `rotateX(${-((y - cy) / cy) * 8}deg) rotateY(${((x - cx) / cx) * 8}deg) scale(1.03)`;
-            image.style.boxShadow = `0 25px 45px rgba(0, 201, 183, 0.2), 0 35px 65px rgba(168, 85, 247, 0.15)`;
+            target.style.transform = `rotateX(${-((y - cy) / cy) * 8}deg) rotateY(${((x - cx) / cx) * 8}deg) scale(1.03)`;
+            target.style.boxShadow = `0 25px 45px rgba(0, 201, 183, 0.2), 0 35px 65px rgba(168, 85, 247, 0.15)`;
           });
           wrapper.addEventListener('mouseleave', () => {
-            image.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
-            image.style.boxShadow = '0 15px 40px rgba(0, 0, 0, 0.15)';
+            target.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
+            target.style.boxShadow = '0 15px 40px rgba(0, 0, 0, 0.15)';
           });
         });
       }
