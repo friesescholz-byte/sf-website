@@ -522,6 +522,10 @@
 
     /* --- MOBILE ANSICHT --- */
     @media (max-width: 992px) {
+      .site-header {
+        height: 76px;
+        overflow: hidden;
+      }
 
       .header-nav,
       .header-socials {
@@ -529,8 +533,16 @@
         /* Auf Handy standardmäßig ausblenden */
       }
 
+      .header-container {
+        position: relative;
+      }
+
       .mobile-menu-btn {
         display: block;
+        position: absolute;
+        top: 24px;
+        right: 20px;
+        z-index: 10001;
       }
 
       /* Wenn das Menü aktiv ist (wird über JS gesteuert) */
@@ -544,6 +556,14 @@
         flex-direction: column;
         align-items: center;
         padding-top: 20px;
+      }
+
+      .site-header.menu-open .burger-icon {
+        display: none !important;
+      }
+
+      .site-header.menu-open .close-icon {
+        display: block !important;
       }
 
       .site-header.menu-open .header-nav {
@@ -1687,11 +1707,16 @@
         </div>
 
         <button class="mobile-menu-btn" aria-label="Menü öffnen">
-          <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none"
-            stroke-linecap="round" stroke-linejoin="round">
+          <svg class="burger-icon" viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2"
+            fill="none" stroke-linecap="round" stroke-linejoin="round">
             <line x1="3" y1="12" x2="21" y2="12"></line>
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+          <svg class="close-icon" viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2"
+            fill="none" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
         </button>
       </div>
