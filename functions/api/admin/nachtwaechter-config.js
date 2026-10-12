@@ -10,12 +10,9 @@ export async function onRequestGet(context) {
   const authHeader = request.headers.get('Authorization') || '';
   const password = authHeader.replace(/^Bearer\s+/i, '').trim();
   const envPass = (env.ADMIN_PASSWORD || env.APP_PASSWORD || env.PASSWORD || env.MASTER_PASSWORD || '').toString().trim();
-  const clientPassword = 'nienburg1025';
+  const clientPassword = (env.CLIENT_PASSWORD_NACHTWAECHTER || env.NACHTWAECHTER_PASSWORD || 'nienburg1025').toString().trim();
 
-  const isMatch = password === 'Start.123#' || 
-                  password === 'sfwebdesign2026' || 
-                  password === clientPassword ||
-                  (envPass && password === envPass);
+  const isMatch = (envPass && password === envPass) || (clientPassword && password === clientPassword);
 
   if (!isMatch) {
     return new Response(JSON.stringify({ success: false, message: 'Nicht autorisiert.' }), {
@@ -82,12 +79,9 @@ export async function onRequestPost(context) {
   const authHeader = request.headers.get('Authorization') || '';
   const password = authHeader.replace(/^Bearer\s+/i, '').trim();
   const envPass = (env.ADMIN_PASSWORD || env.APP_PASSWORD || env.PASSWORD || env.MASTER_PASSWORD || '').toString().trim();
-  const clientPassword = 'nienburg1025';
+  const clientPassword = (env.CLIENT_PASSWORD_NACHTWAECHTER || env.NACHTWAECHTER_PASSWORD || 'nienburg1025').toString().trim();
 
-  const isMatch = password === 'Start.123#' || 
-                  password === 'sfwebdesign2026' || 
-                  password === clientPassword ||
-                  (envPass && password === envPass);
+  const isMatch = (envPass && password === envPass) || (clientPassword && password === clientPassword);
 
   if (!isMatch) {
     return new Response(JSON.stringify({ success: false, message: 'Nicht autorisiert.' }), {

@@ -50,13 +50,31 @@ export async function onRequestGet(context) {
 
   // 2. Signatur validieren
   const resendApiKey = env.RESEND_API_KEY;
-  const secretKey = resendApiKey || 'stephan-secret';
+  const secretKey = env.SIGNATURE_SECRET || resendApiKey;
+  if (!secretKey) {
+    return new Response("Server-Konfigurationsfehler: Kein Signatur-Secret hinterlegt.", { status: 500, headers: corsHeaders });
+  }
+
   const tokenData = `${action}|${email}|${date}|${time || ''}|${cost}`;
   
   const expectedSig = await generateSignature(secretKey, tokenData);
   if (sig !== expectedSig) {
     return new Response("Ungültige Signatur. Der Link ist ungültig, manipuliert oder abgelaufen.", { status: 400, headers: corsHeaders });
   }
+
+  const escapeHtml = (str) => {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  };
+
+  const safeName = escapeHtml(name);
+  const safeDate = escapeHtml(date);
+  const safeTime = escapeHtml(time);
 
   // 3. E-Mail bauen
   let subject, emailHtml;
@@ -93,7 +111,7 @@ export async function onRequestGet(context) {
                 </tr>
                 <tr>
                   <td style="padding: 40px 30px;">
-                    <p style="font-family: Georgia, serif; font-size: 18px; color: #faf6ee; margin-bottom: 20px; font-style: italic;">Hallo ${name},</p>
+                    <p style="font-family: Georgia, serif; font-size: 18px; color: #faf6ee; margin-bottom: 20px; font-style: italic;">Hallo ${safeName},</p>
                     <p style="color: #94a3b8; font-size: 15px; line-height: 1.6; margin-bottom: 25px;">
                       ${introText}
                     </p>
@@ -184,7 +202,7 @@ export async function onRequestGet(context) {
                 </tr>
                 <tr>
                   <td style="padding: 40px 30px;">
-                    <p style="font-family: Georgia, serif; font-size: 18px; color: #faf6ee; margin-bottom: 20px; font-style: italic;">Hallo ${name},</p>
+                    <p style="font-family: Georgia, serif; font-size: 18px; color: #faf6ee; margin-bottom: 20px; font-style: italic;">Hallo ${safeName},</p>
                     <p style="color: #94a3b8; font-size: 15px; line-height: 1.6; margin-bottom: 25px;">
                       ${rejectIntro}
                     </p>
@@ -241,7 +259,7 @@ export async function onRequestGet(context) {
   const actionLabel = isAccepted ? 'Bestätigt' : 'Abgelehnt';
   const tourLabel = isPublicTour ? 'Öffentliche Führung' : (tourType || 'Private Führung');
   const timeDisplay = time ? `${time} Uhr` : (isPublicTour ? '18:00 Uhr' : '–');
-  const adminSubject = `[Erledigt: ${actionLabel}] ${tourLabel} am ${date} – ${name}`;
+  const adminSubject = `[Erledigt: ${actionLabel}] ${tourLabel} am ${safeDate} – ${safeName}`;
 
   const statusBadgeBg = isAccepted ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)';
   const statusBadgeColor = isAccepted ? '#10b981' : '#f87171';
@@ -249,8 +267,8 @@ export async function onRequestGet(context) {
   const statusBadgeText = isAccepted ? '✓ ANFRAGE BESTÄTIGT' : '✕ ANFRAGE ABGELEHNT';
 
   const adminIntroText = isAccepted
-    ? `du hast die Buchungsanfrage von <strong>${name}</strong> soeben erfolgreich <strong>bestätigt</strong>. Die verbindliche Teilnahmebestätigung wurde an den Kunden versandt.`
-    : `du hast die Buchungsanfrage von <strong>${name}</strong> soeben <strong>abgelehnt</strong>. Die Absage-E-Mail wurde an den Kunden versandt.`;
+    ? `du hast die Buchungsanfrage von <strong>${safeName}</strong> soeben erfolgreich <strong>bestätigt</strong>. Die verbindliche Teilnahmebestätigung wurde an den Kunden versandt.`
+    : `du hast die Buchungsanfrage von <strong>${safeName}</strong> soeben <strong>abgelehnt</strong>. Die Absage-E-Mail wurde an den Kunden versandt.`;
 
   const adminStatusEmailHtml = `
     <!DOCTYPE html>
@@ -287,11 +305,11 @@ export async function onRequestGet(context) {
                   <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 25px; border-collapse: collapse; border: 1px solid rgba(255, 255, 255, 0.05); font-size: 13.5px;">
                     <tr>
                       <td style="padding: 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: 600; width: 38%; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">Kunde</td>
-                      <td style="padding: 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee; font-weight: bold;">${name}</td>
+                      <td style="padding: 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee; font-weight: bold;">${safeName}</td>
                     </tr>
                     <tr>
                       <td style="padding: 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #d9a24a; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">E-Mail</td>
-                      <td style="padding: 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee;"><a href="mailto:${email}" style="color: #d9a24a; text-decoration: none;">${email}</a></td>
+                      <td style="padding: 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #faf6ee;"><a href="mailto:${safeEmail}" style="color: #d9a24a; text-decoration: none;">${safeEmail}</a></td>
                     </tr>
                     ${phone ? `
                     <tr>
@@ -433,10 +451,10 @@ export async function onRequestGet(context) {
         <div class="icon">${action === 'accept' ? '🏛️' : '❌'}</div>
         <h1>Anfrage ${action === 'accept' ? 'bestätigt!' : 'abgelehnt.'}</h1>
         <p>
-          Die Buchungsanfrage von <strong>${name}</strong> am ${date} um ${time || (isPublicTour ? '18:00' : '')} Uhr wurde erfolgreich ${action === 'accept' ? 'angenommen und bestätigt' : 'abgelehnt'}.
+          Die Buchungsanfrage von <strong>${safeName}</strong> am ${safeDate} um ${safeTime || (isPublicTour ? '18:00' : '')} Uhr wurde erfolgreich ${action === 'accept' ? 'angenommen und bestätigt' : 'abgelehnt'}.
         </p>
         <p>
-          Eine entsprechende E-Mail wurde an den Kunden (<strong>${email}</strong>) gesendet.
+          Eine entsprechende E-Mail wurde an den Kunden (<strong>${safeEmail}</strong>) gesendet.
         </p>
         <p style="color: #94a3b8; font-size: 13.5px; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 15px; margin-top: 15px;">
           ✓ Ein Bestätigungsbeleg wurde zur internen Dokumentation auch an dein Postfach (<strong>Info@nienburger-nachtwaechter.de</strong>) gesendet.

@@ -1,0 +1,8 @@
+/*
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  X-XSS-Protection: 1; mode=block
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fast.wistia.com https://autumn-flower-76fa.friese-scholz.workers.dev https://tally.so https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com https://connect.facebook.net https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev https://fast.wistia.net https://*.wistia.com https://www.facebook.com; connect-src 'self' https://autumn-flower-76fa.friese-scholz.workers.dev https://fast.wistia.com https://*.wistia.com https://challenges.cloudflare.com https://www.facebook.com https://connect.facebook.net https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev; frame-src 'self' https://tally.so https://fast.wistia.net https://*.wistia.com https://challenges.cloudflare.com; media-src 'self' blob: https://*.wistia.com https://fast.wistia.net https://pub-b33108412309406a9a941ddc51e9a5b9.r2.dev;

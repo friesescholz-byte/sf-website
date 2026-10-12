@@ -11,11 +11,7 @@ export async function onRequestGet(context) {
   const password = authHeader.replace(/^Bearer\s+/i, '').trim();
   const envPass = (env.ADMIN_PASSWORD || env.APP_PASSWORD || env.PASSWORD || env.MASTER_PASSWORD || '').toString().trim();
 
-  const isMatch = password === 'Start.123#' || 
-                  password === 'sfwebdesign2026' || 
-                  (envPass && password === envPass);
-
-  if (!isMatch) {
+  if (!envPass || password !== envPass) {
     return new Response(JSON.stringify({ success: false, message: 'Nicht autorisiert.' }), {
       status: 401,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -43,54 +39,11 @@ export async function onRequestGet(context) {
       });
     }
   } catch (err) {
-    // Log error, fall back to default
+    // Log error, fall back to empty
   }
 
-  // Fallback defaults
-  const defaults = {
-    "Stephan-van-Hausen": {
-      "name": "Stephan van Hausen (Nachtwächter Nienburg)",
-      "email": "info@nienburger-nachtwaechter.de"
-    },
-    "elementbau-nienburg": {
-      "name": "Elementbau Nienburg",
-      "email": "info@elementbau-ni.de"
-    },
-    "bestattungen-eberhardt": {
-      "name": "Bestattungen Eberhardt",
-      "email": "info@bestattungen-eberhardt.de"
-    },
-    "fm-freie-rednerin": {
-      "name": "Finnja Marie (Freie Rednerin)",
-      "email": "finnjamariesch@t-online.de"
-    },
-    "immom": {
-      "name": "ImmoM – Carsten Meyer",
-      "email": "mail@immom.eu"
-    },
-    "Rodes-Hotel": {
-      "name": "Rodes Hotel",
-      "email": "info@rodes-hotel.de"
-    },
-    "Bickbeernhof-Brokeloh": {
-      "name": "Bickbeernhof Brokeloh",
-      "email": "friese.scholz@gmail.com"
-    },
-    "weymann-gebaeudetechnik": {
-      "name": "Karl Weymann GmbH (Gebäudetechnik)",
-      "email": "Anfragen@karl-weymann-gmbh.de"
-    },
-    "work4palace": {
-      "name": "Work4Palace",
-      "email": "info@work4palace.de"
-    },
-    "homann-medical": {
-      "name": "Homann Medical",
-      "email": "contact@homann-medical.de"
-    }
-  };
-
-  return new Response(JSON.stringify({ success: true, config: defaults }), {
+  return new Response(JSON.stringify({ success: false, message: 'Keine Konfiguration in der Cloudflare-Datenbank gefunden.' }), {
+    status: 404,
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   });
 }
@@ -108,11 +61,7 @@ export async function onRequestPost(context) {
   const password = authHeader.replace(/^Bearer\s+/i, '').trim();
   const envPass = (env.ADMIN_PASSWORD || env.APP_PASSWORD || env.PASSWORD || env.MASTER_PASSWORD || '').toString().trim();
 
-  const isMatch = password === 'Start.123#' || 
-                  password === 'sfwebdesign2026' || 
-                  (envPass && password === envPass);
-
-  if (!isMatch) {
+  if (!envPass || password !== envPass) {
     return new Response(JSON.stringify({ success: false, message: 'Nicht autorisiert.' }), {
       status: 401,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

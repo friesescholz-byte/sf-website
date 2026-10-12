@@ -12,9 +12,14 @@ export async function onRequestPost(context) {
     const inputPass = (password || '').toString().trim();
     const envPass = (env.ADMIN_PASSWORD || env.APP_PASSWORD || env.PASSWORD || env.MASTER_PASSWORD || '').toString().trim();
 
-    const isMatch = inputPass === 'Start.123#' || 
-                    inputPass === 'sfwebdesign2026' || 
-                    (envPass && inputPass === envPass);
+    if (!envPass) {
+      return new Response(JSON.stringify({ success: false, message: 'Server-Konfiguration unvollständig: Kein ADMIN_PASSWORD in Cloudflare Environment hinterlegt.' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const isMatch = inputPass === envPass;
 
     if (isMatch) {
       return new Response(JSON.stringify({ success: true }), {

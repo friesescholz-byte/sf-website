@@ -43,9 +43,9 @@ export async function onRequestPost(context) {
     } else if (source === 'homan-madical' || source === 'homann-medical') {
       turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_HOMAN_MADICAL || env.CLOUDFLARE_TURNSTILE_SECRET_KEY;
     } else if (source === 'haarmonie' || source === 'Haarmonie') {
-      turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_HAARMONIE || '0x4AAAAAAFRIHYh9vWNNEDuWnsXzbgRRDrw';
+      turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_HAARMONIE || env.CLOUDFLARE_TURNSTILE_SECRET_KEY;
     } else if (source === 'ProColour' || source === 'procolour') {
-      turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_PROCOLOUR || '0x4AAAAAAFRMeGFK1lbUX8dYa_jsx-aA6Ak';
+      turnstileSecret = env.CLOUDFLARE_TURNSTILE_SECRET_KEY_PROCOLOUR || env.CLOUDFLARE_TURNSTILE_SECRET_KEY;
     }
     const verifyResult = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
       method: 'POST',
@@ -119,7 +119,13 @@ export async function onRequestPost(context) {
           .join('');
       }
 
-      const secretKey = resendApiKey || 'stephan-secret';
+      const secretKey = env.SIGNATURE_SECRET || resendApiKey;
+      if (!secretKey) {
+        return new Response(JSON.stringify({ success: false, message: 'Server-Konfiguration fehlt: Kein Signatur-Secret hinterlegt.' }), {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
       const tokenDataAccept = `accept|${email}|${date}|${time || ''}|${cost}`;
       const tokenDataReject = `reject|${email}|${date}|${time || ''}|${cost}`;
       

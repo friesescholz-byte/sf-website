@@ -7,8 +7,8 @@ export async function onRequest(context) {
     return Response.redirect(`${url.origin}/admin.html`, 302);
   }
 
-  // Redirect root "/" to "/admin.html" on pages.dev/localhost
-  if ((hostname.includes('friesescholzwebdesign.pages.dev') || hostname.includes('localhost') || hostname.includes('127.0.0.1')) && url.pathname === '/') {
+  // Redirect root "/" to "/admin.html" on pages.dev
+  if (hostname.includes('friesescholzwebdesign.pages.dev') && url.pathname === '/') {
     return Response.redirect(`${url.origin}/admin.html`, 302);
   }
 

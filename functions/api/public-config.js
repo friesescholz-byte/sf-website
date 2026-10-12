@@ -5,6 +5,7 @@ export async function onRequestGet(context) {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
   };
 
   const apiToken = env.CLOUDFLARE_API_TOKEN;
