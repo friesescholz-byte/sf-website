@@ -1,0 +1,12 @@
+.git
+.git/**
+.gitignore
+.wrangler
+.wrangler/**
+.dev.vars*
+.env*
+*.bak
+*.log
+functions/**
+functions/
+wrangler.jsonc
