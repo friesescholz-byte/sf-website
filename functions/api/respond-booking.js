@@ -2,17 +2,6 @@
 export async function onRequestGet(context) {
   const { request, env } = context;
   const url = new URL(request.url);
-  
-  const action = url.searchParams.get('action');
-  const email = url.searchParams.get('email');
-  const name = url.searchParams.get('name');
-  const date = url.searchParams.get('date');
-  const time = url.searchParams.get('time');
-  const tourType = url.searchParams.get('tourType');
-  const cost = url.searchParams.get('cost');
-  const sig = url.searchParams.get('sig');
-  const phone = url.searchParams.get('phone') || '';
-  const groupSize = url.searchParams.get('groupSize') || '';
 
   // CORS headers
   const corsHeaders = {
@@ -25,64 +14,80 @@ export async function onRequestGet(context) {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // 1. Inputs validieren
-  if (!action || !email || !name || !date || !sig) {
-    return new Response("Fehlende Pflichtparameter.", { status: 400, headers: corsHeaders });
-  }
+  try {
+    const action = url.searchParams.get('action');
+    const email = url.searchParams.get('email');
+    const name = url.searchParams.get('name');
+    const date = url.searchParams.get('date');
+    const time = url.searchParams.get('time');
+    const tourType = url.searchParams.get('tourType');
+    const cost = url.searchParams.get('cost');
+    const sig = url.searchParams.get('sig');
+    const phone = url.searchParams.get('phone') || '';
+    const groupSize = url.searchParams.get('groupSize') || '';
 
-  // Helper to generate a verification signature
-  async function generateSignature(secret, dataStr) {
-    const encoder = new TextEncoder();
-    const keyData = encoder.encode(secret);
-    const dataData = encoder.encode(dataStr);
-    const cryptoKey = await crypto.subtle.importKey(
-      'raw',
-      keyData,
-      { name: 'HMAC', hash: 'SHA-256' },
-      false,
-      ['sign']
-    );
-    const signature = await crypto.subtle.sign('HMAC', cryptoKey, dataData);
-    return Array.from(new Uint8Array(signature))
-      .map(b => b.toString(16).padStart(2, '0'))
-      .join('');
-  }
+    // 1. Inputs validieren
+    if (!action || !email || !name || !date || !sig) {
+      return new Response("Fehlende Pflichtparameter.", { status: 400, headers: corsHeaders });
+    }
 
-  // 2. Signatur validieren
-  const resendApiKey = env.RESEND_API_KEY;
-  const secretKey = env.SIGNATURE_SECRET || resendApiKey;
-  if (!secretKey) {
-    return new Response("Server-Konfigurationsfehler: Kein Signatur-Secret hinterlegt.", { status: 500, headers: corsHeaders });
-  }
+    // Helper to generate a verification signature
+    async function generateSignature(secret, dataStr) {
+      const encoder = new TextEncoder();
+      const keyData = encoder.encode(secret);
+      const dataData = encoder.encode(dataStr);
+      const cryptoKey = await crypto.subtle.importKey(
+        'raw',
+        keyData,
+        { name: 'HMAC', hash: 'SHA-256' },
+        false,
+        ['sign']
+      );
+      const signature = await crypto.subtle.sign('HMAC', cryptoKey, dataData);
+      return Array.from(new Uint8Array(signature))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+    }
 
-  const tokenData = `${action}|${email}|${date}|${time || ''}|${cost}`;
-  
-  const expectedSig = await generateSignature(secretKey, tokenData);
-  if (sig !== expectedSig) {
-    return new Response("Ungültige Signatur. Der Link ist ungültig, manipuliert oder abgelaufen.", { status: 400, headers: corsHeaders });
-  }
+    // 2. Signatur validieren
+    const resendApiKey = env.RESEND_API_KEY;
+    const secretKey = env.SIGNATURE_SECRET || resendApiKey;
+    if (!secretKey) {
+      return new Response("Server-Konfigurationsfehler: Kein Signatur-Secret hinterlegt.", { status: 500, headers: corsHeaders });
+    }
 
-  const escapeHtml = (str) => {
-    if (!str) return '';
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
-  };
+    const tokenData = `${action}|${email}|${date}|${time || ''}|${cost}`;
+    
+    const expectedSig = await generateSignature(secretKey, tokenData);
+    if (sig !== expectedSig) {
+      return new Response("Ungültige Signatur. Der Link ist ungültig, manipuliert oder abgelaufen.", { status: 400, headers: corsHeaders });
+    }
 
-  const safeName = escapeHtml(name);
-  const safeDate = escapeHtml(date);
-  const safeTime = escapeHtml(time);
+    const escapeHtml = (str) => {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    };
 
-  // 3. E-Mail bauen
-  let subject, emailHtml;
-  const isPublicTour = tourType && (tourType.includes('Öffentliche') || tourType.includes('öffentliche'));
-  
-  if (action === 'accept') {
-    subject = isPublicTour 
-      ? `Teilnahmebestätigung: Öffentliche Nachtwächter-Führung am ${date}`
+    const safeName = escapeHtml(name);
+    const safeEmail = escapeHtml(email);
+    const safeDate = escapeHtml(date);
+    const safeTime = escapeHtml(time);
+    const safeTourType = escapeHtml(tourType);
+    const safePhone = escapeHtml(phone);
+    const safeGroupSize = escapeHtml(groupSize);
+
+    // 3. E-Mail bauen
+    let subject, emailHtml;
+    const isPublicTour = tourType && (tourType.includes('Öffentliche') || tourType.includes('öffentliche'));
+    
+    if (action === 'accept') {
+      subject = isPublicTour 
+        ? `Teilnahmebestätigung: Öffentliche Nachtwächter-Führung am ${date}`
       : `Bestätigung Ihrer Nachtwächter-Führung am ${date}`;
 
     const introText = isPublicTour
@@ -385,7 +390,7 @@ export async function onRequestGet(context) {
   }
 
   // 5. Bestätigungseite für Admin ausgeben
-  return new Response(`
+    return new Response(`
     <!DOCTYPE html>
     <html lang="de">
     <head>
@@ -469,4 +474,53 @@ export async function onRequestGet(context) {
       ...corsHeaders
     }
   });
+  } catch (err) {
+    console.error("Fehler in respond-booking:", err);
+    return new Response(`
+      <!DOCTYPE html>
+      <html lang="de">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Hinweis - Nienburger Nachtwächter</title>
+        <style>
+          body {
+            background-color: #07090d;
+            color: #faf6ee;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+          }
+          .container {
+            background-color: #131722;
+            border: 1px solid rgba(217, 162, 74, 0.2);
+            border-radius: 8px;
+            padding: 40px 30px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+          }
+          h1 { color: #f87171; font-family: Georgia, serif; font-size: 22px; margin-top: 0; }
+          p { color: #94a3b8; font-size: 14.5px; line-height: 1.6; }
+          .btn { display: inline-block; margin-top: 20px; background-color: #d9a24a; color: #07090d; text-decoration: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div style="font-size: 44px; margin-bottom: 15px;">⚠️</div>
+          <h1>Hinweis zur Anfragebearbeitung</h1>
+          <p>Die Anfrage konnte nicht vollständig verarbeitet werden oder wurde bereits bearbeitet.</p>
+          <a href="https://nienburger-nachtwaechter.de" class="btn">Zurück zur Website</a>
+        </div>
+      </body>
+      </html>
+    `, {
+      status: 500,
+      headers: { 'Content-Type': 'text/html; charset=utf-8', ...corsHeaders }
+    });
+  }
 }
