@@ -3,3 +3,4 @@
 .env*
 .dev.vars
 .DS_Store
+node_modules/
