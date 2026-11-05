@@ -63,7 +63,7 @@ export async function onRequestPost(context) {
 
     // 3. E-Mail bauen – je nach Quelle (source)
     const resendApiKey = env.RESEND_API_KEY;
-    let emailSubject, emailHtml, fromName, replyToEmail;
+    let emailSubject, emailHtml, emailText, fromName, replyToEmail;
     let recipientEmail = 'support@scholz-friese-chatbot.de';
     let isKvRecipient = false;
 
@@ -2124,11 +2124,19 @@ export async function onRequestPost(context) {
       }
 
       fromName = 'Scholz & Friese Webdesign';
-      if (!isKvRecipient) recipientEmail = 'friese.scholz@gmail.com';
-      emailSubject = `[ProColour] 🚗 Neue Schadensanfrage von ${name}`;
+      if (!isKvRecipient) recipientEmail = 'info@pro-colour.de';
+      emailSubject = `[ProColour] Neue Schadensanfrage: ${name}`;
       replyToEmail = email;
 
       const hasAttachments = Array.isArray(data.attachments) && data.attachments.length > 0;
+
+      emailText = `Neue Schadens- & Terminanfrage über www.pro-colour.de\n\n` +
+        `Kunde / Name: ${name}\n` +
+        `Telefonnummer: ${phone}\n` +
+        `E-Mail: ${email}\n` +
+        `Fotos beigefügt: ${hasAttachments ? `Ja (${data.attachments.length} Bild(er) im Anhang)` : 'Nein'}\n\n` +
+        `Schadenbeschreibung:\n${message || 'Keine nähere Beschreibung angegeben.'}\n\n` +
+        `Gesendet über die Website www.pro-colour.de`;
 
       emailHtml = `
         <!DOCTYPE html>
@@ -2306,7 +2314,14 @@ export async function onRequestPost(context) {
       bcc: emailBcc,
       subject: emailSubject,
       html: emailHtml,
+      headers: {
+        'Auto-Submitted': 'auto-generated',
+        'X-Entity-Ref-ID': `${source || 'sf'}-${Date.now()}`
+      },
     };
+    if (emailText) {
+      emailPayload.text = emailText;
+    }
     if (replyToEmail) {
       emailPayload.reply_to = replyToEmail;
     }
