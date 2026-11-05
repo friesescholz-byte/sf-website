@@ -63,7 +63,7 @@ export async function onRequestPost(context) {
 
     // 3. E-Mail bauen – je nach Quelle (source)
     const resendApiKey = env.RESEND_API_KEY;
-    let emailSubject, emailHtml, fromName;
+    let emailSubject, emailHtml, fromName, replyToEmail;
     let recipientEmail = 'support@scholz-friese-chatbot.de';
     let isKvRecipient = false;
 
@@ -2123,7 +2123,7 @@ export async function onRequestPost(context) {
         });
       }
 
-      fromName = 'Pro Colour Smart Repair';
+      fromName = 'Scholz & Friese Webdesign';
       if (!isKvRecipient) recipientEmail = 'friese.scholz@gmail.com';
       emailSubject = `[ProColour] 🚗 Neue Schadensanfrage von ${name}`;
       replyToEmail = email;
@@ -2286,7 +2286,9 @@ export async function onRequestPost(context) {
     const isValidEmail = (str) => typeof str === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(str.trim());
     let emailTo = recipientEmail;
     let emailBcc = undefined;
-    let replyToEmail = isValidEmail(data.email) ? data.email.trim() : undefined;
+    if (!replyToEmail) {
+      replyToEmail = isValidEmail(data.email) ? data.email.trim() : undefined;
+    }
 
     if (source === 'immom' && data.type === 'checklist') {
       emailTo = data.email.trim();
@@ -2304,10 +2306,12 @@ export async function onRequestPost(context) {
       bcc: emailBcc,
       subject: emailSubject,
       html: emailHtml,
-      attachments: data.attachments || [],
     };
     if (replyToEmail) {
       emailPayload.reply_to = replyToEmail;
+    }
+    if (Array.isArray(data.attachments) && data.attachments.length > 0) {
+      emailPayload.attachments = data.attachments;
     }
 
     let resendResponse = await fetch('https://api.resend.com/emails', {
