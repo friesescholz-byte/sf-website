@@ -2202,6 +2202,80 @@ export async function onRequestPost(context) {
         </body>
         </html>
       `;
+    } else if (source === 'jessica-meyer-malermeisterin') {
+      // ───── JESSICA MEYER MALERMEISTERIN E-MAIL ─────
+      const { name, email, phone, message } = data;
+
+      if (!name || !phone) {
+        return new Response(JSON.stringify({ success: false, message: 'Bitte geben Sie Ihren Namen und Ihre Telefonnummer an.' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      if (!isKvRecipient) recipientEmail = 'mail@jessica-meyer-malermeisterin.de';
+      fromName = 'Scholz & Friese Webdesign';
+      replyToEmail = email || undefined;
+      emailSubject = `[jessica-meyer-malermeisterin] 🎨 Neue Projektanfrage: ${name}`;
+
+      emailHtml = `
+        <!DOCTYPE html>
+        <html lang="de">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body style="margin: 0; padding: 0; background-color: #FBF9F5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #171815;">
+          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #FBF9F5; padding: 40px 10px;">
+            <tr>
+              <td align="center">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #FFFFFF; border: 1px solid #EBE6DD; border-top: 4px solid #0084C7; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.04);">
+                  <tr>
+                    <td style="padding: 30px; border-bottom: 1px solid #EBE6DD; background-color: #171815;">
+                      <h2 style="margin: 0; color: #FFFFFF; font-size: 20px; font-weight: 800; letter-spacing: 0.02em;">Jessica Meyer · Malermeisterin</h2>
+                      <p style="margin: 5px 0 0 0; font-size: 13px; color: #0084C7; font-weight: 600;">Neue Projektanfrage über die Website</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 32px 30px;">
+                      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 25px; border-collapse: collapse;">
+                        <tr>
+                          <td style="padding: 10px 0; border-bottom: 1px solid #F1F5F9; color: #64748B; font-size: 13px; font-weight: 600; width: 35%;">Kunde / Name:</td>
+                          <td style="padding: 10px 0; border-bottom: 1px solid #F1F5F9; color: #171815; font-size: 15px; font-weight: 700;">${name}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 10px 0; border-bottom: 1px solid #F1F5F9; color: #64748B; font-size: 13px; font-weight: 600;">Telefonnummer:</td>
+                          <td style="padding: 10px 0; border-bottom: 1px solid #F1F5F9; color: #0084C7; font-size: 15px; font-weight: 700;">
+                            <a href="tel:${phone}" style="color: #0084C7; text-decoration: none;">${phone}</a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 10px 0; border-bottom: 1px solid #F1F5F9; color: #64748B; font-size: 13px; font-weight: 600;">E-Mail:</td>
+                          <td style="padding: 10px 0; border-bottom: 1px solid #F1F5F9; color: #171815; font-size: 14px;">
+                            ${email ? `<a href="mailto:${email}" style="color: #0084C7; text-decoration: none;">${email}</a>` : '<span style="color: #94A3B8; font-style: italic;">Keine E-Mail angegeben (nur Telefon)</span>'}
+                          </td>
+                        </tr>
+                      </table>
+                      
+                      <div style="background-color: #FBF9F5; border-left: 3px solid #0084C7; padding: 18px; border-radius: 0 6px 6px 0;">
+                        <h4 style="margin: 0 0 8px 0; color: #171815; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Vorhaben / Beschreibung:</h4>
+                        <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #334155; white-space: pre-wrap;">${message || 'Keine nähere Beschreibung angegeben.'}</p>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="background-color: #FAFAFA; padding: 20px; text-align: center; border-top: 1px solid #EBE6DD; font-size: 11px; color: #94A3B8;">
+                      Gesendet über die Website <a href="https://jessica-meyer-malermeisterin.de" style="color: #0084C7; text-decoration: none;">jessica-meyer-malermeisterin.de</a><br>
+                      Technischer Partner: <strong>Scholz & Friese Webdesign</strong>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </body>
+        </html>
+      `;
     } else {
       // ───── STANDARD SF WEBDESIGN E-MAIL (Original) ─────
       const { companyName, contactName, phone, email, wishes } = data;
