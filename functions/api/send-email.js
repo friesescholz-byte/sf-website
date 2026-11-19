@@ -1347,10 +1347,12 @@ export async function onRequestPost(context) {
           replyToEmail = String(ev.optionalContact).trim();
         }
 
-        const freeText = ev.feedbackText || ev.noGoogleText;
+        const freeText = ev.feedbackText || ev.persoenlicheWorte || ev.noGoogleText;
         const freeTextTitle = ev.feedbackText
           ? 'Verbesserungsideen / Rückmeldung'
-          : 'Persönliche Worte (ohne Google-Konto)';
+          : ev.persoenlicheWorte
+            ? 'Persönliche Worte / Nachricht'
+            : 'Persönliche Worte (ohne Google-Konto)';
 
         emailHtml = `
           <!DOCTYPE html>
