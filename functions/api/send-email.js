@@ -1292,77 +1292,221 @@ export async function onRequestPost(context) {
 
     } else if (source === 'bestattungen-eberhardt') {
       // ───── BESTATTUNGEN EBERHARDT E-MAIL ─────
-      const { name, email, phone, subject, message } = data;
-
-      if (!name || !email || !message) {
-        return new Response(JSON.stringify({ success: false, message: 'Bitte Name, E-Mail und Ihre Nachricht eingeben.' }), {
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-
       fromName = 'Bestattungen Eberhardt';
       if (!isKvRecipient) recipientEmail = 'info@bestattungen-eberhardt.de';
-      emailSubject = `[bestattungen-eberhardt] ✉️ Neue Nachricht von ${name}`;
 
-      emailHtml = `
-        <!DOCTYPE html>
-        <html lang="de">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        </head>
-        <body style="margin: 0; padding: 0; background-color: #161816; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #FFFFFF;">
-          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #161816; padding: 40px 10px;">
-            <tr>
-              <td align="center">
-                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #1c1f1c; border: 1px solid rgba(255, 255, 255, 0.05); border-top: 4px solid #85a31f; border-radius: 6px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-                  <tr>
-                    <td style="padding: 30px; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
-                      <h2 style="margin: 0; color: #FFFFFF; font-size: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Bestattungen Eberhardt</h2>
-                      <p style="margin: 5px 0 0 0; font-size: 14px; color: #85a31f;">Neue Kontaktanfrage über die Website</p>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style="padding: 30px;">
-                      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 25px; border-collapse: collapse;">
-                        <tr>
-                          <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #A1A1AA; font-size: 13px; font-weight: 600; width: 35%;">Name:</td>
-                          <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #FFFFFF; font-size: 14px;">${name}</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #A1A1AA; font-size: 13px; font-weight: 600;">E-Mail:</td>
-                          <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #FFFFFF; font-size: 14px;"><a href="mailto:${email}" style="color: #85a31f; text-decoration: none;">${email}</a></td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #A1A1AA; font-size: 13px; font-weight: 600;">Telefon:</td>
-                          <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #FFFFFF; font-size: 14px;">${phone ? `<a href="tel:${phone}" style="color: #85a31f; text-decoration: none;">${phone}</a>` : '-'}</td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #A1A1AA; font-size: 13px; font-weight: 600;">Betreff:</td>
-                          <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #85a31f; font-size: 14px; font-weight: bold;">${subject || 'Allgemeine Anfrage'}</td>
-                        </tr>
-                      </table>
-                      
-                      <div style="background-color: rgba(255, 255, 255, 0.02); border-left: 3px solid #85a31f; padding: 15px; border-radius: 0 4px 4px 0;">
-                        <h4 style="margin: 0 0 10px 0; color: #FFFFFF; font-size: 12px; text-transform: uppercase;">Nachricht:</h4>
-                        <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #D1D5DB; white-space: pre-wrap;">${message}</p>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style="background-color: #0d0f0c; padding: 20px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.05); font-size: 11px; color: #A1A1AA;">
-                      Gesendet über die Website <a href="https://bestattungen-eberhardt.de" style="color: #85a31f; text-decoration: none;">bestattungen-eberhardt.de</a><br>
-                      Technischer Partner: <strong>Scholz & Friese Webdesign</strong>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-          </table>
-        </body>
-        </html>
-      `;
+      const esc = (val) =>
+        String(val ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+
+      if (data.formType === 'bewertung' && data.evaluation) {
+        const ev = data.evaluation;
+        const filiale = ev.filiale || 'Nicht angegeben';
+        const weiterempfehlung = ev.weiterempfehlung || '-';
+        const bekanntheitList = Array.isArray(ev.bekanntheit) && ev.bekanntheit.length > 0
+          ? ev.bekanntheit.map(esc).join(', ')
+          : 'Keine Angabe';
+
+        const badgeColor = (val) => {
+          const v = String(val || '').toLowerCase();
+          if (v.startsWith('sehr zufrieden') || v === 'sehr fair' || v === 'sehr wahrscheinlich') {
+            return 'background-color: rgba(133, 163, 31, 0.18); color: #a3c238; border: 1px solid rgba(133, 163, 31, 0.45);';
+          }
+          if (v === 'zufrieden' || v === 'fair' || v === 'wahrscheinlich') {
+            return 'background-color: rgba(133, 163, 31, 0.10); color: #bef264; border: 1px solid rgba(133, 163, 31, 0.30);';
+          }
+          if (v === 'neutral') {
+            return 'background-color: rgba(245, 158, 11, 0.14); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35);';
+          }
+          if (v.includes('unzufrieden') || v.includes('unfair') || v.includes('unwahrscheinlich')) {
+            return 'background-color: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.38);';
+          }
+          return 'background-color: rgba(255, 255, 255, 0.06); color: #d1d5db; border: 1px solid rgba(255, 255, 255, 0.12);';
+        };
+
+        const rowHtml = (label, val) => `
+          <tr>
+            <td style="padding: 13px 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); color: #A1A1AA; font-size: 13px; font-weight: 600; width: 46%; vertical-align: middle;">${esc(label)}</td>
+            <td style="padding: 13px 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); vertical-align: middle;">
+              <span style="display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: 13px; font-weight: 600; ${badgeColor(val)}">${esc(val || '-')}</span>
+            </td>
+          </tr>
+        `;
+
+        emailSubject = `[Bestattungen Eberhardt] Neue Kundenbewertung – ${filiale} (${weiterempfehlung})`;
+        emailText = data.message || `Neue Kundenbewertung über bestattungen-eberhardt.de/bewertungen\n\nFiliale: ${filiale}\nWeiterempfehlung: ${weiterempfehlung}`;
+
+        const hasOptionalContact = Boolean(ev.optionalName || ev.optionalContact);
+        if (!isValidEmail(ev.optionalContact || '')) {
+          replyToEmail = undefined;
+        } else {
+          replyToEmail = String(ev.optionalContact).trim();
+        }
+
+        const freeText = ev.feedbackText || ev.noGoogleText;
+        const freeTextTitle = ev.feedbackText
+          ? 'Verbesserungsideen / Rückmeldung'
+          : 'Persönliche Worte (ohne Google-Konto)';
+
+        emailHtml = `
+          <!DOCTYPE html>
+          <html lang="de">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          </head>
+          <body style="margin: 0; padding: 0; background-color: #161816; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #FFFFFF;">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #161816; padding: 40px 10px;">
+              <tr>
+                <td align="center">
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 620px; background-color: #1c1f1c; border: 1px solid rgba(255, 255, 255, 0.07); border-top: 4px solid #85a31f; border-radius: 8px; overflow: hidden; box-shadow: 0 12px 32px rgba(0,0,0,0.45);">
+                    <tr>
+                      <td style="padding: 28px 30px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); background-color: #141614;">
+                        <h2 style="margin: 0; color: #FFFFFF; font-size: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Bestattungen Eberhardt</h2>
+                        <p style="margin: 6px 0 0 0; font-size: 13.5px; color: #85a31f; font-weight: 600;">Neuer Bewertungsbogen über /bewertungen</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 28px 30px 16px 30px;">
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 24px; background-color: rgba(133, 163, 31, 0.08); border: 1px solid rgba(133, 163, 31, 0.25); border-radius: 8px;">
+                          <tr>
+                            <td style="padding: 16px 18px;">
+                              <p style="margin: 0 0 6px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #a3c238; font-weight: 700;">Zusammenfassung</p>
+                              <p style="margin: 0; font-size: 14.5px; color: #FFFFFF; line-height: 1.55;">
+                                <strong>Niederlassung:</strong> ${esc(filiale)}<br>
+                                <strong>Weiterempfehlung:</strong> ${esc(weiterempfehlung)}<br>
+                                <strong>Google-Bewertung:</strong> ${esc(ev.googleBereitschaft || '-')}
+                              </p>
+                            </td>
+                          </tr>
+                        </table>
+
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 24px; border-collapse: collapse; background-color: rgba(255, 255, 255, 0.02); border-radius: 8px; overflow: hidden;">
+                          ${rowHtml('1. Betreuung & Beratung', ev.betreuung)}
+                          ${rowHtml('2. Abholung des Verstorbenen', ev.abholung)}
+                          ${rowHtml('3. Ablauf der Bestattung', ev.ablauf)}
+                          ${rowHtml('4. Preis-Leistungs-Verhältnis', ev.preisLeistung)}
+                          <tr>
+                            <td style="padding: 13px 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); color: #A1A1AA; font-size: 13px; font-weight: 600; width: 46%; vertical-align: top;">5. Aufmerksam geworden durch</td>
+                            <td style="padding: 13px 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); color: #FFFFFF; font-size: 13.5px; line-height: 1.5;">${bekanntheitList}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 13px 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); color: #A1A1AA; font-size: 13px; font-weight: 600; width: 46%;">6. Betreuende Filiale</td>
+                            <td style="padding: 13px 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); color: #FFFFFF; font-size: 14px; font-weight: 600;">${esc(filiale)}</td>
+                          </tr>
+                          ${rowHtml('7. Weiterempfehlung', weiterempfehlung)}
+                        </table>
+
+                        ${freeText ? `
+                        <div style="background-color: rgba(255, 255, 255, 0.03); border-left: 3px solid #85a31f; padding: 16px 18px; border-radius: 0 6px 6px 0; margin-bottom: 22px;">
+                          <h4 style="margin: 0 0 8px 0; color: #a3c238; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em;">${freeTextTitle}</h4>
+                          <p style="margin: 0; font-size: 14.5px; line-height: 1.6; color: #F3F4F6; white-space: pre-wrap;">${esc(freeText)}</p>
+                        </div>` : ''}
+
+                        <div style="padding: 12px 16px; background-color: rgba(255, 255, 255, 0.02); border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.05); margin-bottom: 10px;">
+                          ${hasOptionalContact ? `
+                            <p style="margin: 0; font-size: 13px; color: #D1D5DB; line-height: 1.5;">
+                              <strong style="color: #85a31f;">Optionale Kontaktdaten für Rückmeldung:</strong><br>
+                              Name: ${esc(ev.optionalName || '-')}<br>
+                              Kontakt: ${esc(ev.optionalContact || '-')}
+                            </p>
+                          ` : `
+                            <p style="margin: 0; font-size: 13px; color: #9CA3AF;">
+                              <strong>Teilnahme:</strong> Anonym (keine persönlichen Kontaktdaten hinterlassen)
+                            </p>
+                          `}
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="background-color: #0d0f0c; padding: 20px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.05); font-size: 11px; color: #A1A1AA; line-height: 1.6;">
+                        Gesendet über den digitalen Bewertungsbogen auf <a href="https://bestattungen-eberhardt.de/bewertungen" style="color: #85a31f; text-decoration: none;">bestattungen-eberhardt.de/bewertungen</a><br>
+                        Technischer Partner: <strong>Scholz &amp; Friese Webdesign</strong>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </body>
+          </html>
+        `;
+      } else {
+        const { name, email, phone, subject, message } = data;
+
+        if (!name || !email || !message) {
+          return new Response(JSON.stringify({ success: false, message: 'Bitte Name, E-Mail und Ihre Nachricht eingeben.' }), {
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+
+        emailSubject = `[bestattungen-eberhardt] Neue Nachricht von ${name}`;
+        emailText = `Neue Kontaktanfrage über bestattungen-eberhardt.de\n\nName: ${name}\nE-Mail: ${email}\nTelefon: ${phone || '-'}\nBetreff: ${subject || 'Allgemeine Anfrage'}\n\nNachricht:\n${message}`;
+
+        emailHtml = `
+          <!DOCTYPE html>
+          <html lang="de">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          </head>
+          <body style="margin: 0; padding: 0; background-color: #161816; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #FFFFFF;">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #161816; padding: 40px 10px;">
+              <tr>
+                <td align="center">
+                  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #1c1f1c; border: 1px solid rgba(255, 255, 255, 0.05); border-top: 4px solid #85a31f; border-radius: 6px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                    <tr>
+                      <td style="padding: 30px; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+                        <h2 style="margin: 0; color: #FFFFFF; font-size: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Bestattungen Eberhardt</h2>
+                        <p style="margin: 5px 0 0 0; font-size: 14px; color: #85a31f;">Neue Kontaktanfrage über die Website</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 30px;">
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 25px; border-collapse: collapse;">
+                          <tr>
+                            <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #A1A1AA; font-size: 13px; font-weight: 600; width: 35%;">Name:</td>
+                            <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #FFFFFF; font-size: 14px;">${esc(name)}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #A1A1AA; font-size: 13px; font-weight: 600;">E-Mail:</td>
+                            <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #FFFFFF; font-size: 14px;"><a href="mailto:${esc(email)}" style="color: #85a31f; text-decoration: none;">${esc(email)}</a></td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #A1A1AA; font-size: 13px; font-weight: 600;">Telefon:</td>
+                            <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #FFFFFF; font-size: 14px;">${phone ? `<a href="tel:${esc(phone)}" style="color: #85a31f; text-decoration: none;">${esc(phone)}</a>` : '-'}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #A1A1AA; font-size: 13px; font-weight: 600;">Betreff:</td>
+                            <td style="padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #85a31f; font-size: 14px; font-weight: bold;">${esc(subject || 'Allgemeine Anfrage')}</td>
+                          </tr>
+                        </table>
+                        
+                        <div style="background-color: rgba(255, 255, 255, 0.02); border-left: 3px solid #85a31f; padding: 15px; border-radius: 0 4px 4px 0;">
+                          <h4 style="margin: 0 0 10px 0; color: #FFFFFF; font-size: 12px; text-transform: uppercase;">Nachricht:</h4>
+                          <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #D1D5DB; white-space: pre-wrap;">${esc(message)}</p>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="background-color: #0d0f0c; padding: 20px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.05); font-size: 11px; color: #A1A1AA;">
+                        Gesendet über die Website <a href="https://bestattungen-eberhardt.de" style="color: #85a31f; text-decoration: none;">bestattungen-eberhardt.de</a><br>
+                        Technischer Partner: <strong>Scholz & Friese Webdesign</strong>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </body>
+          </html>
+        `;
+      }
 
     } else if (source === 'fm-freie-rednerin') {
       // ───── FINNJA MARIE (FM-FREIE-REDNERIN) E-MAIL ─────
